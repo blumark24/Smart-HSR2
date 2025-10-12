@@ -10,145 +10,148 @@
     <meta name="keywords" content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
     <meta name="author" content="Smart HSR">
     <meta name="robots" content="index, follow">
+    
     <meta property="og:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta property="og:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ar_SA">
+    
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta name="twitter:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
 
-    <link rel="stylesheet" href="output.css"> 
-    <link rel="stylesheet" href="css_fix.css">
-    <link rel="stylesheet" href="custom-styles.css"> 
+    <link href="output.css" rel="stylesheet">
+    <link href="css_fix.css" rel="stylesheet">
+    <link href="custom-styles.css" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
 
-<body class="text-gray-800">
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+<body class="bg-gray-100 min-h-screen">
     
-    <section id="login-screen" class="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center border-t-8 border-teal-500">
-            <h2 class="text-4xl font-extrabold mb-6" style="color: var(--color-navy);">تسجيل الدخول</h2>
-            <p class="text-gray-600 mb-6">الرجاء استخدام حسابك المُسجل في Firebase.</p>
-            <input type="email" id="emailInput" placeholder="البريد الإلكتروني"
-                class="w-full p-3 border border-gray-300 rounded-lg mb-4 text-right" dir="rtl">
-            <input type="password" id="passwordInput" placeholder="كلمة المرور"
-                class="w-full p-3 border border-gray-300 rounded-lg mb-6 text-right" dir="rtl">
-            <button id="loginButton" class="ai-button-primary rounded-xl px-6 py-3 text-lg font-bold w-full">
-                تسجيل الدخول
-            </button>
-            <p id="authError" class="text-red-500 mt-4 hidden">بيانات الدخول خاطئة أو غير صالحة.</p>
-        </div>
-    </section>
-
-    <div id="dashboard-content" class="hidden">
-        <header class="p-4 flex justify-between items-center bg-white shadow-lg no-print sticky top-0 z-40">
-            <div class="flex items-center">
-                <h1 class="text-3xl font-extrabold text-gray-900" style="color: var(--color-navy);">Smart HSR
-                </h1>
-                <span class="text-xl font-bold ml-3" style="color: var(--color-teal);">Dashboard</span>
+    <div id="login-screen" class="fixed inset-0 bg-gray-50 flex items-center justify-center p-4">
+        <div class="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full text-center" style="border-top: 8px solid var(--color-teal);">
+            <div class="logo-container mb-6">
+                <h1 class="text-4xl font-black" style="color: var(--color-navy);">Smart HSR</h1>
             </div>
-            <div class="flex items-center gap-4">
-                <p id="userEmailDisplay" class="text-gray-600 text-sm hidden sm:block"></p>
-                <button id="logoutButton" class="ai-button-secondary rounded-full px-4 py-2 text-sm font-bold flex items-center">
-                    <i data-lucide="log-out" class="w-4 h-4 ml-2"></i> خروج
+            <h2 class="text-2xl font-bold mb-6" style="color: var(--color-teal);">تسجيل الدخول إلى لوحة القيادة</h2>
+            
+            <div id="authError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden" role="alert">
+                <span class="block sm:inline">خطأ في اسم المستخدم أو كلمة المرور.</span>
+            </div>
+
+            <div class="mb-4 text-right">
+                <label for="emailInput" class="block text-gray-700 font-medium mb-2">البريد الإلكتروني:</label>
+                <input type="email" id="emailInput" placeholder="البريد الإلكتروني" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal-500 transition duration-150" required>
+            </div>
+            
+            <div class="mb-6 text-right">
+                <label for="passwordInput" class="block text-gray-700 font-medium mb-2">كلمة المرور:</label>
+                <input type="password" id="passwordInput" placeholder="كلمة المرور" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal-500 transition duration-150" required>
+            </div>
+            
+            <button id="loginButton" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md">
+                الرجاء استخدام حسابك المُسجل في Firebase.
+            </button>
+        </div>
+    </div>
+
+    <div id="dashboard-content" class="min-h-screen hidden">
+        
+        <header class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
+            <div class="flex items-center">
+                <h1 class="text-3xl font-black ml-4" style="color: var(--color-navy);">Smart HSR</h1>
+                <span class="text-sm text-gray-500" id="userEmailDisplay">مرحباً، المستخدم</span>
+            </div>
+            <div class="flex items-center">
+                <button onclick="openModal('smartInputModal')" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg flex items-center shadow-md transition duration-200">
+                    <i data-lucide="plus-circle" class="w-5 h-5 ml-2"></i>إضافة ملاحظة ذكية
+                </button>
+                <button id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg ml-4 shadow-md transition duration-200">
+                    تسجيل الخروج
                 </button>
             </div>
         </header>
 
-        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-            <section id="hero"
-                class="text-center py-12 md:py-16 bg-white rounded-3xl shadow-2xl mb-12 border-b-8 border-t-8 border-teal-100 no-print">
-                <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight"
-                    style="color: var(--color-navy);">Smart HSR <span style="color: var(--color-teal);">Dashboard</span>
-                </h1>
-                <h2 class="text-xl md:text-3xl font-extrabold text-gray-600 mt-4">نظام المراقبة وإدارة الجودة الرقمي</h2>
-                <p class="mt-4 text-lg max-w-4xl mx-auto text-gray-500 font-medium">"شاشتك التنفيذية الأذكى: سيطرة شاملة على
-                    الأداء التشغيلي بوضوح البيانات الموثوقة."</p>
-            </section>
-
-            <section id="operational-dashboard" class="my-20">
-                <div id="kpisContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <main class="p-6">
+            
+            <section class="mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="kpisContainer">
+                    <div class="kpi-card-total p-6 rounded-3xl shadow-lg transform hover:scale-[1.02] transition duration-300 cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="list-checks" class="w-10 h-10 text-white"></i>
+                            <span class="text-5xl font-extrabold" id="totalReports">0</span>
+                        </div>
+                        <h3 class="text-lg font-bold mt-4 text-white">إجمالي الملاحظات</h3>
                     </div>
-            </section>
 
-            <section id="observations-log" class="my-20">
-                <div class="text-center mb-12 no-print">
-                    <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">سجل
-                        الملاحظات التفاعلي: دقة الصورة والنص</h3>
-                    <p class="mt-3 text-lg text-gray-600">عرض تفصيلي للملاحظات الميدانية مع أدوات التحليل الآلي.</p>
+                    <div class="kpi-card-open p-6 rounded-3xl shadow-lg transform hover:scale-[1.02] transition duration-300 cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="bell" class="w-10 h-10 text-white"></i>
+                            <span class="text-5xl font-extrabold" id="openReports">0</span>
+                        </div>
+                        <h3 class="text-lg font-bold mt-4 text-white">ملاحظات مفتوحة</h3>
+                    </div>
+                    
+                    <div class="kpi-card-closed p-6 rounded-3xl shadow-lg transform hover:scale-[1.02] transition duration-300 cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="check-circle" class="w-10 h-10 text-white"></i>
+                            <span class="text-5xl font-extrabold" id="closedReports">0</span>
+                        </div>
+                        <h3 class="text-lg font-bold mt-4 text-white">ملاحظات مغلقة</h3>
+                    </div>
 
-                    <button id="add-observation-btn"
-                        class="ai-button-primary rounded-full px-6 py-2 text-md font-bold mt-4 flex items-center justify-center mx-auto"
-                        onclick="openModal('smartInputModal')">
-                        <i data-lucide="plus-circle" class="w-5 h-5 ml-2"></i> إضافة ملاحظة جديدة (الإدخال الذكي)
-                    </button>
+                    <div class="kpi-card-percentage p-6 rounded-3xl shadow-lg transform hover:scale-[1.02] transition duration-300 cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="percent" class="w-10 h-10 text-white"></i>
+                            <span class="text-5xl font-extrabold" id="closurePercentage">0%</span>
+                        </div>
+                        <h3 class="text-lg font-bold mt-4 text-white">معدل الإغلاق</h3>
+                    </div>
                 </div>
+            </section>
+            
+            <section class="mb-8" id="kpiInsightResult">
+                </section>
 
-                <div
-                    class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-8 border border-gray-200">
 
-                    <div
-                        class="lg:col-span-1 border-b lg:border-b-0 lg:border-l border-gray-300 lg:pr-6 pb-6 lg:pb-0 no-print">
-                        <h4 class="text-2xl font-bold mb-4" style="color: var(--color-teal);">تصفية الملاحظات</h4>
-                        <select id="observationFilter"
-                            class="w-full p-3 border border-gray-300 rounded-xl focus:ring-[--color-teal] focus:border-[--color-teal] text-gray-700 shadow-sm transition-all duration-300"
-                            onchange="handleFilterChange()">
-                            <option value="الكل">عرض كل الملاحظات</option>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="lg:col-span-1 bg-white p-6 rounded-3xl shadow-lg h-full overflow-hidden" style="border-top: 5px solid var(--color-teal);">
+                    <div class="flex justify-between items-center mb-4 border-b pb-4">
+                        <h2 class="text-2xl font-bold" style="color: var(--color-navy);">قائمة الملاحظات الأخيرة</h2>
+                        <select id="observationFilter" onchange="handleFilterChange()" class="border border-gray-300 rounded-lg p-2 focus:ring-teal-500 focus:border-teal-500">
+                            <option value="الكل">عرض الكل</option>
                             <option value="جديد">جديد</option>
                             <option value="قيد التنفيذ">قيد التنفيذ</option>
                             <option value="تمت المعالجة">تمت المعالجة</option>
+                            <option disabled>---</option>
                             <option value="جودة">جودة</option>
                             <option value="صيانة">صيانة</option>
                             <option value="سلامة">سلامة</option>
                             <option value="بيئة">بيئة</option>
                         </select>
-                        <h4 class="text-2xl font-bold mt-8 mb-3" style="color: var(--color-navy);">القائمة المصفاة</h4>
-                        <div id="observationsList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                            <div class="text-center text-gray-500 mt-10">... جاري تحميل البيانات من Firebase...</div>
-                        </div>
                     </div>
-
-                    <div class="lg:col-span-2 bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-inner">
-
-                        <div class="print-logo hidden mb-6 p-4 border-b border-gray-300">
-                            <h2 class="text-3xl font-extrabold text-gray-900" style="color: var(--color-navy);">تقرير Smart
-                                HSR التنفيذي</h2>
-                            <p id="printTitle" class="text-xl font-bold text-teal-600 mt-2"></p>
+                    <div class="space-y-3 max-h-[70vh] overflow-y-auto pr-2" id="observationsList">
                         </div>
+                </div>
 
-                        <h4 class="text-2xl font-extrabold mb-4 border-b-2 border-gray-300 pb-2"
-                            style="color: var(--color-teal);">عرض التفاصيل والتحليل (AI Insights)</h4>
-
-                        <div id="observationDetail" class="hidden">
-                            </div>
-
-                        <div id="detailPlaceholder" class="text-center space-y-4">
-                            <p class="text-gray-500 text-lg">الرجاء اختيار ملاحظة من القائمة لعرض التفاصيل.</p>
-                            <i data-lucide="layers" class="w-16 h-16 text-gray-300 mx-auto"></i>
-                        </div>
-
+                <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-lg" style="border-top: 5px solid var(--color-navy);">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-3" style="color: var(--color-navy);">تفاصيل الملاحظة والتحليل الذكي</h2>
+                    <div id="observationDetailContent">
+                        <div class="text-center text-gray-500 mt-20">اختر ملاحظة من القائمة لعرض التفاصيل.</div>
                     </div>
                 </div>
 
-            </section>
-
+            </div>
         </main>
-
+        
         <div id="smartInputModal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content relative p-8 max-w-2xl w-full rounded-2xl">
                 <button onclick="closeModal('smartInputModal')" class="close-button absolute top-4 left-4 text-3xl text-gray-600">&times;</button>
                 <h3 class="text-3xl font-bold mb-4" style="color: var(--color-navy);">إدخال ملاحظة جديدة (الإدخال الذكي)</h3>
                 <p class="text-gray-600">... نموذج الإدخال سيتم إضافته هنا لاحقاً ...</p>
@@ -156,7 +159,7 @@
         </div>
 
         <div id="closeoutModal" class="modal">
-             <div class="modal-content">
+             <div class="modal-content relative p-8 max-w-2xl w-full rounded-2xl">
                 <button onclick="closeModal('closeoutModal')" class="close-button absolute top-4 left-4 text-3xl text-gray-600">&times;</button>
                 <h3 class="text-3xl font-bold mb-4" style="color: var(--color-navy);">نموذج الإغلاق التنفيذي</h3>
                 <p class="text-gray-600">... نموذج الإغلاق سيتم إضافته هنا لاحقاً ...</p>
@@ -164,18 +167,38 @@
         </div>
 
     </div>
+    
     <script src="firebase-setup.js"></script>  
     <script src="auth-manager.js"></script>    
     <script src="app-logic.js"></script>       
     <script>
         // ملف صغير لتهيئة أيقونات Lucide
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof lucide !== 'undefined' && lucide.createIcons) {
                 lucide.createIcons();
             }
+
+            // إخفاء الـ modal عند الضغط خارجها
+            window.onclick = function(event) {
+                const smartInputModal = document.getElementById('smartInputModal');
+                const closeoutModal = document.getElementById('closeoutModal');
+
+                if (event.target == smartInputModal) {
+                    smartInputModal.style.display = 'none';
+                }
+                if (event.target == closeoutModal) {
+                    closeoutModal.style.display = 'none';
+                }
+            }
         });
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     </script>
 </body>
 
