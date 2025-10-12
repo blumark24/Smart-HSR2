@@ -2,6 +2,10 @@
 // هذا الملف يحتوي على منطق لوحة القيادة (KPIs, rendering, showDetail)
 // يجب استبدال هذا المتغير (observationsData) بالقراءة من قاعدة بيانات Firestore لاحقاً
 
+// ----------------------------------------------------------------------
+// 1. البيانات الثابتة (لغرض العرض)
+// ----------------------------------------------------------------------
+
 const observationsData = [ 
     // بيانات تجريبية بسيطة للتأكد من ربط Firebase يعمل
     {
@@ -30,104 +34,274 @@ const observationsData = [
         description: 'مشكلة في إضاءة الممر الرئيسي تم إصلاحها وتوثيقها.',
         priority: 'متوسط',
         isComparative: false,
-        createdAt: new Date('2025-05-01T12:00:00').getTime(),
-        closedAt: new Date('2025-05-05T15:30:00').getTime(),
+        createdAt: new Date('2025-05-08T15:30:00').getTime(),
+        closedAt: new Date('2025-05-09T10:00:00').getTime(),
         attachments: [
-            { type: 'image', url: 'https://via.placeholder.com/300/F08080/FFFFFF?text=Initial+Maintenance+Issue' },
-        ]
+            { type: 'image', url: './65651.png' },
+        ],
+        closeoutAttachments: [
+            { type: 'image', url: './66666.png' },
+        ],
+        aiInsightResult: 'تم تحليل البيانات وتأكيد الإغلاق الفعال. معدل الاستجابة ممتاز.'
+    },
+    // ملاحظة إضافية للسلامة
+    {
+        id: 'obs3',
+        type: 'سلامة',
+        status: 'قيد التنفيذ',
+        department: 'HSE',
+        description: 'اكتشاف ثغرة أمنية في السور الخارجي للموقع A.',
+        priority: 'عالي',
+        isComparative: false,
+        createdAt: new Date('2025-05-11T09:00:00').getTime(),
+        closedAt: null,
+        attachments: [
+            { type: 'image', url: './65651.png' },
+        ],
+        closeoutAttachments: [],
+        aiInsightResult: 'تتطلب هذه الملاحظة إجراءً فورياً. تم تصنيفها كخطر أمني عاجل.'
+    },
+    // ملاحظة إضافية للبيئة
+    {
+        id: 'obs4',
+        type: 'بيئة',
+        status: 'جديد',
+        department: 'ENVIRONMENTAL',
+        description: 'ملاحظة حول زيادة الضوضاء في منطقة التخزين الخارجية B.',
+        priority: 'متوسط',
+        isComparative: false,
+        createdAt: new Date('2025-05-12T08:00:00').getTime(),
+        closedAt: null,
+        attachments: [
+            { type: 'image', url: './65651.png' },
+        ],
+        closeoutAttachments: [],
+        aiInsightResult: 'تحليل الضوضاء يشير إلى تجاوز الحدود المسموح بها. يجب فحص المعدات.'
     }
-    // يرجى إضافة كل كود الـ JavaScript الطويل (بداية من const observationsData) هنا
 ];
 
 let currentSelectedObservation = null;
 
+// ----------------------------------------------------------------------
+// 2. حساب مؤشرات الأداء (KPIs)
+// ----------------------------------------------------------------------
+
 function calculateKPIs() {
-    // ... (منطق حساب KPIs)
     const totalReports = observationsData.length;
     const openReports = observationsData.filter(obs => obs.status !== 'تمت المعالجة').length;
     const closedReports = totalReports - openReports;
-    return { totalReports, openReports, closedReports };
+    const closurePercentage = totalReports > 0 ? Math.round((closedReports / totalReports) * 100) : 0;
+
+    return { totalReports, openReports, closedReports, closurePercentage };
 }
+
+// ----------------------------------------------------------------------
+// 3. عرض مؤشرات الأداء (Rendering)
+// ----------------------------------------------------------------------
 
 function renderKPIs() {
     const kpis = calculateKPIs();
-    const container = document.getElementById('kpisContainer');
-    if (container) {
-        container.innerHTML = `
-            <div class="kpi-card-professional kpi-open-gradient p-6 text-center">
-                <h5 class="text-xl font-medium mb-1 opacity-80">التقارير المفتوحة</h5>
-                <p class="text-5xl font-extrabold">${kpis.openReports}</p>
-            </div>
-            <div class="kpi-card-professional kpi-closed-gradient p-6 text-center">
-                <h5 class="text-xl font-medium mb-1 opacity-80">التقارير المغلقة</h5>
-                <p class="text-5xl font-extrabold">${kpis.closedReports}</p>
-            </div>
-            <div class="kpi-card-professional kpi-images-gradient p-6 text-center">
-                <h5 class="text-xl font-medium mb-1 opacity-80">إجمالي التقارير</h5>
-                <p class="text-5xl font-extrabold">${kpis.totalReports}</p>
-            </div>
-            <div class="kpi-card-professional kpi-missing-gradient p-6 text-center">
-                <h5 class="text-xl font-medium mb-1 opacity-80" style="color: var(--color-navy);">KPI رابع مؤقت</h5>
-                <p class="text-5xl font-extrabold" style="color: var(--color-navy);">0</p>
-            </div>
-        `;
-        // تهيئة أيقونات Lucide بعد الإضافة
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
+
+    document.getElementById('totalReports').textContent = kpis.totalReports;
+    document.getElementById('openReports').textContent = kpis.openReports;
+    document.getElementById('closedReports').textContent = kpis.closedReports;
+    document.getElementById('closurePercentage').textContent = `${kpis.closurePercentage}%`;
+    
+    // عرض ملخص تنفيذي (AI Insight)
+    renderExecutiveSummary(kpis);
 }
+
+function renderExecutiveSummary(kpis) {
+    let insightText;
+    if (kpis.openReports > 1) {
+        insightText = `تظهر البيانات أن هناك ${kpis.openReports} ملاحظات مفتوحة، مع وجود تركيز حالي على ملاحظات الجودة والسلامة. يجب على الفريق التنفيذي مراجعة خطط العمل الفورية لتقليل متوسط زمن الإغلاق والتركيز على توثيق جميع الملاحظات بالصور لضمان جودة الإغلاق.`;
+    } else if (kpis.closurePercentage === 100) {
+        insightText = `تهانينا! معدل الإغلاق الكلي يبلغ 100%. أداء فرق الجودة والصيانة ممتاز. يجب الاستمرار في المراقبة لضمان الحفاظ على هذا المستوى.`;
+    } else {
+        insightText = `النظام يعمل بكفاءة، مع وجود ملاحظة مفتوحة واحدة فقط. معدل الإغلاق جيد جداً عند ${kpis.closurePercentage}%.`;
+    }
+
+    document.getElementById('kpiInsightResult').innerHTML = `
+        <div class="kpi-insight-container p-6 bg-white rounded-3xl shadow-lg" style="border-top: 5px solid var(--color-navy);">
+            <h3 class="text-2xl font-bold mb-3" style="color: var(--color-navy);">ملخص تحليلي تنفيذي (AI Insight)</h3>
+            <p class="text-gray-700 leading-relaxed">${insightText}</p>
+        </div>
+    `;
+}
+
+// ----------------------------------------------------------------------
+// 4. عرض قائمة الملاحظات (Rendering List)
+// ----------------------------------------------------------------------
 
 function renderObservationsList(data) {
-    const listElement = document.getElementById('observationsList');
-    if (listElement) {
-        listElement.innerHTML = data.map(obs => `
-            <div class="observation-item p-3 border rounded-xl shadow-sm text-right" data-id="${obs.id}" onclick="showObservationDetail('${obs.id}')">
-                <p class="font-bold text-lg text-gray-900">${obs.department}</p>
-                <p class="text-sm text-gray-500">${obs.description.substring(0, 40)}...</p>
-                <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full" 
-                    style="background-color: ${obs.status === 'جديد' ? '#fecaca' : obs.status === 'قيد التنفيذ' ? '#fef3c7' : '#d1fae5'}; 
-                           color: ${obs.status === 'جديد' ? '#b91c1c' : obs.status === 'قيد التنفيذ' ? '#d97706' : '#059669'};">
-                    ${obs.status}
-                </span>
-            </div>
-        `).join('');
+    const listContainer = document.getElementById('observationsList');
+    listContainer.innerHTML = ''; // إفراغ القائمة قبل العرض
+
+    if (data.length === 0) {
+        listContainer.innerHTML = '<div class="text-center text-gray-500 mt-10">لا توجد ملاحظات لعرضها.</div>';
+        return;
     }
-}
 
-function showObservationDetail(id) {
-    const detailContainer = document.getElementById('observationDetail');
-    const placeholder = document.getElementById('detailPlaceholder');
-    currentSelectedObservation = observationsData.find(obs => obs.id === id);
+    data.forEach(obs => {
+        let statusClass;
+        if (obs.status === 'جديد') {
+            statusClass = 'bg-red-500';
+        } else if (obs.status === 'قيد التنفيذ') {
+            statusClass = 'bg-yellow-500';
+        } else {
+            statusClass = 'bg-green-600';
+        }
 
-    if (currentSelectedObservation) {
-        // إظهار التفاصيل وإخفاء العنصر النائب
-        placeholder.classList.add('hidden');
-        detailContainer.classList.remove('hidden');
-
-        // تحديث محتوى التفاصيل (هذا الجزء هو كود HTML الطويل لديك)
-        detailContainer.innerHTML = `
-            <div class="p-4 bg-white rounded-xl shadow-md mb-6">
-                <h3 class="text-3xl font-extrabold" style="color: var(--color-navy);">${currentSelectedObservation.department}</h3>
-                <p class="text-xl font-bold mt-2 text-gray-700">الحالة: <span class="${currentSelectedObservation.status === 'تمت المعالجة' ? 'text-green-600' : 'text-red-600'}">${currentSelectedObservation.status}</span></p>
-                <p class="mt-4 text-gray-600">${currentSelectedObservation.description}</p>
-            </div>
-
-            ${currentSelectedObservation.attachments && currentSelectedObservation.attachments.length > 0 ? `
-                <h4 class="text-2xl font-bold mt-8 mb-4" style="color: var(--color-teal);">صور الملاحظة</h4>
-                <div class="image-container mb-6">
-                    <img src="${currentSelectedObservation.attachments[0].url}" alt="صورة الملاحظة" class="w-full h-auto rounded-xl">
-                    <span class="image-label">قبل المعالجة</span>
+        const itemHtml = `
+            <div id="obs-${obs.id}" class="observation-item p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition duration-200 cursor-pointer" onclick="showObservationDetail('${obs.id}')">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm font-bold" style="color: var(--color-navy);">${obs.department}</span>
+                    <span class="text-xs font-semibold text-white px-2 py-0.5 rounded-full ${statusClass}">${obs.status}</span>
                 </div>
-            ` : ''}
-
-            <div class="kpi-insight-container p-4 mt-4 bg-white rounded-2xl shadow-lg border border-teal-100">
-                <p class="font-bold text-lg text-teal-700 flex items-center"><i data-lucide="brain" class="w-5 h-5 ml-2"></i> ملخص تنفيذي مقترح (AI Insight):</p>
-                <p class="text-gray-700 mt-2">${currentSelectedObservation.aiInsightResult || 'جاري تحليل هذه الملاحظة...'}</p>
+                <p class="text-sm text-gray-700">${obs.description.substring(0, 50)}...</p>
             </div>
         `;
-        // تفعيل أيقونات Lucide
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        listContainer.innerHTML += itemHtml;
+    });
+
+    // إضافة الفئة النشطة للملاحظة المحددة حاليًا
+    if (currentSelectedObservation) {
+        const activeElement = document.getElementById(`obs-${currentSelectedObservation.id}`);
+        if (activeElement) {
+            activeElement.classList.add('active');
+        }
     }
 }
+
+// ----------------------------------------------------------------------
+// 5. عرض التفاصيل (Show Detail)
+// ----------------------------------------------------------------------
+
+function showObservationDetail(id) {
+    const obs = observationsData.find(o => o.id === id);
+    if (!obs) return;
+
+    // إزالة الفئة النشطة من العنصر السابق
+    if (currentSelectedObservation) {
+        const prevActive = document.getElementById(`obs-${currentSelectedObservation.id}`);
+        if (prevActive) {
+            prevActive.classList.remove('active');
+        }
+    }
+    
+    currentSelectedObservation = obs;
+
+    // إضافة الفئة النشطة للعنصر الجديد
+    const newActive = document.getElementById(`obs-${currentSelectedObservation.id}`);
+    if (newActive) {
+        newActive.classList.add('active');
+    }
+
+    let statusColor, buttonHtml = '';
+    if (obs.status === 'جديد') {
+        statusColor = 'text-red-600';
+        buttonHtml = `<button onclick="openModal('closeoutModal')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg flex items-center shadow-md transition duration-200 mt-4">إغلاق وتوثيق الملاحظة</button>`;
+    } else if (obs.status === 'قيد التنفيذ') {
+        statusColor = 'text-yellow-600';
+        buttonHtml = `<button onclick="openModal('closeoutModal')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg flex items-center shadow-md transition duration-200 mt-4">إغلاق وتوثيق الملاحظة</button>`;
+    } else {
+        statusColor = 'text-green-600';
+    }
+
+    // بناء عرض الصور
+    let imagesHtml = '';
+    if (obs.isComparative) {
+        // حالة مقارنة الصور (قبل وبعد)
+        imagesHtml = `
+            <div class="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-semibold text-gray-600 mb-2">قبل المعالجة</h4>
+                    <img src="${obs.attachments[0].url}" alt="Before Fix" class="w-full h-auto rounded-lg shadow-md">
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-600 mb-2">بعد المعالجة (التوثيق)</h4>
+                    <img src="${obs.closeoutAttachments[0].url}" alt="After Fix" class="w-full h-auto rounded-lg shadow-md">
+                </div>
+            </div>
+        `;
+    } else if (obs.attachments.length > 0) {
+        // حالة صورة واحدة
+        imagesHtml = `
+            <div class="mt-4">
+                <h4 class="font-semibold text-gray-600 mb-2">صور الملاحظة</h4>
+                <img src="${obs.attachments[0].url}" alt="Observation Image" class="w-full h-auto rounded-lg shadow-md max-w-sm">
+            </div>
+        `;
+    }
+
+    // بناء محتوى التحليل الذكي (AI)
+    const aiHtml = obs.aiInsightResult ? `
+        <div class="mt-6 p-4 rounded-xl" style="background-color: var(--color-light-teal);">
+            <h4 class="font-bold mb-2 flex items-center" style="color: var(--color-navy);"><i data-lucide="brain" class="w-5 h-5 ml-2"></i>ملخص تحليلي (AI Insight):</h4>
+            <p class="text-sm">${obs.aiInsightResult}</p>
+        </div>
+    ` : '';
+
+
+    const detailHtml = `
+        <div class="space-y-4">
+            <div class="flex justify-between items-start border-b pb-3">
+                <div>
+                    <span class="text-sm font-semibold text-gray-500">${new Date(obs.createdAt).toLocaleDateString('ar-SA')}</span>
+                    <h3 class="text-3xl font-bold mt-1" style="color: var(--color-navy);">${obs.department}</h3>
+                </div>
+                <div class="text-right">
+                    <span class="text-lg font-bold ${statusColor}">الحالة: ${obs.status}</span>
+                    <span class="block text-sm text-gray-600">الأولوية: ${obs.priority}</span>
+                </div>
+            </div>
+            
+            <p class="text-xl leading-relaxed text-gray-800">${obs.description}</p>
+
+            ${imagesHtml}
+            ${aiHtml}
+            ${buttonHtml}
+        </div>
+    `;
+
+    document.getElementById('observationDetailContent').innerHTML = detailHtml;
+    
+    // إعادة إنشاء أيقونات Lucide بعد تحديث محتوى الـ HTML
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+
+// ----------------------------------------------------------------------
+// 6. وظيفة التهيئة الرئيسية
+// ----------------------------------------------------------------------
+
+// دالة تجميع كل الوظائف
+function calculateAndRenderAll() {
+    // فرز البيانات الأحدث أولاً
+    observationsData.sort((a, b) => b.createdAt - a.createdAt);
+    
+    renderKPIs();
+    renderObservationsList(observationsData);
+
+    if (observationsData.length > 0) {
+         // عرض أول ملاحظة عند التحميل لتظهر التفاصيل
+         showObservationDetail(observationsData[0].id);
+    }
+}
+
+
+// دالة التهيئة العامة (يتم استدعاؤها من auth-manager.js)
+function initApp() {
+    // هذه الوظيفة تبدأ عمل التطبيق بعد تسجيل الدخول
+    calculateAndRenderAll();
+    
+    // تفعيل أيقونات Lucide (يتم تفعيلها أيضًا في showObservationDetail)
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ----------------------------------------------------------------------
+// 7. ربط الفلاتر (Handle Filter Change)
+// ----------------------------------------------------------------------
 
 function handleFilterChange() {
     const filterValue = document.getElementById('observationFilter').value;
@@ -141,32 +315,12 @@ function handleFilterChange() {
         filteredData = observationsData.filter(obs => obs.type === filterValue);
     }
     renderObservationsList(filteredData);
+
     if (filteredData.length > 0) {
         showObservationDetail(filteredData[0].id);
     } else {
+        document.getElementById('observationDetailContent').innerHTML = '<div class="text-center text-gray-500 mt-20">اختر ملاحظة من القائمة لعرض التفاصيل.</div>';
         document.getElementById('observationsList').innerHTML = '<div class="text-center text-gray-500 mt-10">لا توجد ملاحظات مطابقة.</div>';
+        currentSelectedObservation = null; // لا توجد ملاحظة محددة
     }
-}
-
-
-// دالة تجميع كل الوظائف
-function calculateAndRenderAll() {
-    observationsData.sort((a, b) => b.createdAt - a.createdAt);
-    renderKPIs();
-    renderObservationsList(observationsData);
-
-    if (observationsData.length > 0) {
-         // عرض أول ملاحظة عند التحميل
-         showObservationDetail(observationsData[0].id);
-    }
-}
-
-
-// دالة التهيئة الرئيسية (يتم استدعاؤها من auth-manager.js عند تسجيل الدخول)
-function initApp() {
-    // 1. حساب وعرض كل البيانات
-    calculateAndRenderAll(); 
-    
-    // 2. تهيئة أيقونات Lucide
-    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
