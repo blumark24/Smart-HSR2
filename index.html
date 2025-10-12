@@ -1,21 +1,19 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart HSR | لوحة القيادة التنفيذية - نظام المراقبة وإدارة الجودة الرقمي</title>
-    
+        
     <meta name="description" content="نظام Smart HSR للمراقبة وإدارة الجودة الرقمي - لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
     <meta name="keywords" content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
     <meta name="author" content="Smart HSR">
     <meta name="robots" content="index, follow">
-    
+        
     <meta property="og:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta property="og:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ar_SA">
-    
+        
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta name="twitter:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
@@ -29,17 +27,17 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-</head>
 
+</head>
 <body class="bg-gray-100 min-h-screen">
-    
+        
     <div id="login-screen" class="fixed inset-0 bg-gray-50 flex items-center justify-center p-4">
         <div class="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full text-center" style="border-top: 8px solid var(--color-teal);">
             <div class="logo-container mb-6">
                 <h1 class="text-4xl font-black" style="color: var(--color-navy);">Smart HSR</h1>
             </div>
             <h2 class="text-2xl font-bold mb-6" style="color: var(--color-teal);">تسجيل الدخول إلى لوحة القيادة</h2>
-            
+                        
             <div id="authError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden" role="alert">
                 <span class="block sm:inline">خطأ في اسم المستخدم أو كلمة المرور.</span>
             </div>
@@ -48,12 +46,12 @@
                 <label for="emailInput" class="block text-gray-700 font-medium mb-2">البريد الإلكتروني:</label>
                 <input type="email" id="emailInput" placeholder="البريد الإلكتروني" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal-500 transition duration-150" required>
             </div>
-            
+                        
             <div class="mb-6 text-right">
                 <label for="passwordInput" class="block text-gray-700 font-medium mb-2">كلمة المرور:</label>
                 <input type="password" id="passwordInput" placeholder="كلمة المرور" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal-500 transition duration-150" required>
             </div>
-            
+                        
             <button id="loginButton" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md">
                 الرجاء استخدام حسابك المُسجل في Firebase.
             </button>
@@ -61,7 +59,7 @@
     </div>
 
     <div id="dashboard-content" class="min-h-screen hidden">
-        
+                
         <header class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
             <div class="flex items-center">
                 <h1 class="text-3xl font-black ml-4" style="color: var(--color-navy);">Smart HSR</h1>
@@ -78,7 +76,7 @@
         </header>
 
         <main class="p-6">
-            
+                        
             <section class="mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="kpisContainer">
                     <div class="kpi-card-total p-6 rounded-3xl shadow-lg transform hover:scale-[1.02] transition duration-300 cursor-pointer">
@@ -96,7 +94,7 @@
                         </div>
                         <h3 class="text-lg font-bold mt-4 text-white">ملاحظات مفتوحة</h3>
                     </div>
-                    
+                                        
                     <div class="kpi-card-closed p-6 rounded-3xl shadow-lg transform hover:scale-[1.02] transition duration-300 cursor-pointer">
                         <div class="flex items-center justify-between">
                             <i data-lucide="check-circle" class="w-10 h-10 text-white"></i>
@@ -114,13 +112,12 @@
                     </div>
                 </div>
             </section>
-            
+                        
             <section class="mb-8" id="kpiInsightResult">
-                </section>
-
+            </section>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
+                                
                 <div class="lg:col-span-1 bg-white p-6 rounded-3xl shadow-lg h-full overflow-hidden" style="border-top: 5px solid var(--color-teal);">
                     <div class="flex justify-between items-center mb-4 border-b pb-4">
                         <h2 class="text-2xl font-bold" style="color: var(--color-navy);">قائمة الملاحظات الأخيرة</h2>
@@ -146,10 +143,9 @@
                         <div class="text-center text-gray-500 mt-20">اختر ملاحظة من القائمة لعرض التفاصيل.</div>
                     </div>
                 </div>
-
             </div>
         </main>
-        
+                
         <div id="smartInputModal" class="modal">
             <div class="modal-content relative p-8 max-w-2xl w-full rounded-2xl">
                 <button onclick="closeModal('smartInputModal')" class="close-button absolute top-4 left-4 text-3xl text-gray-600">&times;</button>
@@ -165,12 +161,11 @@
                 <p class="text-gray-600">... نموذج الإغلاق سيتم إضافته هنا لاحقاً ...</p>
             </div>
         </div>
-
     </div>
     
-    <script src="firebase-setup.js"></script>  
-    <script src="auth-manager.js"></script>    
-    <script src="app-logic.js"></script>       
+    <script src="firebase-setup.js?v=1"></script>  
+    <script src="auth-manager.js?v=1"></script>    
+    <script src="app-logic.js?v=1"></script>       
     <script>
         // ملف صغير لتهيئة أيقونات Lucide
         function closeModal(id) {
@@ -201,5 +196,4 @@
         });
     </script>
 </body>
-
 </html>
