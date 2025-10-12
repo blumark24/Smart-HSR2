@@ -27,184 +27,29 @@ body {
     box-shadow: 0 10px 20px rgba(24, 165, 162, 0.4);
 }
 
-/* Gradient for Total Images (Information - Blue/Navy) */
-.kpi-images-gradient {
-    background: linear-gradient(135deg, #3B82F6 0%, #0A1931 100%); /* Blue to Navy */
+/* General KPI Card Styling */
+.kpi-card-total {
+    background: linear-gradient(135deg, var(--color-navy) 0%, #34495e 100%);
     color: white;
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 10px 20px rgba(10, 25, 49, 0.4);
 }
 
-/* Gradient for Missing Images (Warning - Yellow/Orange) */
-.kpi-missing-gradient {
-    background: linear-gradient(135deg, #FCD34D 0%, #F97316 100%); /* Yellow to Orange */
-    color: var(--color-navy); /* Dark text for contrast on light gradient */
-    box-shadow: 0 10px 20px rgba(253, 211, 77, 0.4);
+.kpi-card-open {
+    @extend .kpi-open-gradient;
 }
-
-/* Common KPI Card Styles */
-.kpi-card-professional {
-    transition: all 0.3s ease;
-    border-radius: 1.5rem; /* Rounded corners */
-    position: relative;
-    overflow: hidden;
-    transform: perspective(1px) translateZ(0); /* For hardware acceleration */
+.kpi-card-closed {
+    @extend .kpi-closed-gradient;
 }
-
-.kpi-card-professional::before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background-color: rgba(255, 255, 255, 0.2);
-    transition: height 0.3s ease;
-}
-
-.kpi-card-professional:hover {
-    transform: translateY(-8px) scale(1.02);
-    z-index: 10;
-}
-
-.kpi-card-professional:hover::before {
-    height: 100%;
-    opacity: 0.1;
-}
-
-/* General UI Elements */
-.ai-button-primary {
-    background-color: var(--color-teal);
+.kpi-card-percentage {
+    background: linear-gradient(135deg, #FFC371 0%, #FF5F6D 100%); /* Warm tones for rate */
     color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(24, 165, 162, 0.5);
+    box-shadow: 0 10px 20px rgba(255, 95, 109, 0.4);
 }
 
-.ai-button-primary:hover:not(:disabled) {
-    background-color: #148f8c;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(24, 165, 162, 0.8);
-}
-
-.ai-button-secondary {
-    background-color: var(--color-navy);
-    color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(10, 25, 49, 0.6);
-}
-
-.ai-button-secondary:hover:not(:disabled) {
-    background-color: #1a3053;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(10, 25, 49, 0.8);
-}
-
-/* Vision Button Style (Purple) */
-.ai-button-vision {
-    background-color: #9333ea;
-    color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(147, 51, 234, 0.5);
-}
-
-.ai-button-vision:hover:not(:disabled) {
-    background-color: #7e22ce;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(147, 51, 234, 0.8);
-}
-
-/* Root Cause Button Style (Dark Red/Maroon) */
-.ai-button-root-cause {
-    background-color: #881337; /* Maroon 900 */
-    color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(136, 19, 55, 0.5);
-}
-
-.ai-button-root-cause:hover:not(:disabled) {
-    background-color: #9f1239;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(136, 19, 55, 0.8);
-}
-
-/* Communication Button Style (Orange) */
-.ai-button-comm {
-    background-color: #F97316; /* Orange */
-    color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(249, 115, 22, 0.5);
-}
-
-.ai-button-comm:hover:not(:disabled) {
-    background-color: #ea580c;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.8);
-}
-
-/* Grounding Button Style (Green) */
-.ai-button-grounding {
-    background-color: #10B981; /* Green */
-    color: white;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(16, 185, 129, 0.5);
-}
-
-.ai-button-grounding:hover:not(:disabled) {
-    background-color: #059669;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.8);
-}
-
-.loading-spinner {
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid var(--color-light-teal); /* Use light teal on dark buttons */
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
-    margin-left: 8px;
-}
-
-.ai-button-primary .loading-spinner,
-.ai-button-vision .loading-spinner,
-.ai-button-comm .loading-spinner,
-.ai-button-grounding .loading-spinner,
-.ai-button-secondary .loading-spinner,
-.ai-button-root-cause .loading-spinner {
-    border-top: 4px solid #0A1931; /* Darker spinner on lighter buttons */
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.image-container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 10px var(--color-shadow-base);
-}
-
-.image-label {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background-color: var(--color-navy);
-    color: white;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 700;
-    border-top-left-radius: 0.75rem;
-}
-
+/* Observation List Styling */
 .observation-item {
-    transition: all 0.2s;
-    border-right: 4px solid transparent;
-    cursor: pointer;
+    border-right: 5px solid transparent;
+    transition: all 0.3s ease;
 }
 
 .observation-item:hover {
@@ -243,33 +88,20 @@ body {
     background-color: #fefefe;
     margin: 5% auto;
     padding: 30px;
-    border-radius: 1.5rem;
-    width: 90%;
-    max-width: 800px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    animation: slide-up 0.3s ease-out;
-    position: relative;
+    border-radius: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* PDF Print Styles */
-@media print {
-    body {
-        background-color: white !important;
-        color: black !important;
-        width: 210mm; 
-        min-height: 297mm; 
-        margin: 0;
-    }
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
 
-    .no-print,
-    #observationsList,
-    #hero,
-    #operational-dashboard,
-    .modal {
-        display: none !important;
-    }
-
-    .print-logo {
-        display: block !important;
-    }
+.close-button:hover,
+.close-button:focus {
+    color: var(--color-navy);
+    text-decoration: none;
+    cursor: pointer;
 }
