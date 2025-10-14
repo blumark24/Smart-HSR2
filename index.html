@@ -5,25 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart HSR | لوحة القيادة التنفيذية - نظام المراقبة وإدارة الجودة الرقمي</title>
-    
-    <meta name="description" content="نظام Smart HSR للمراقبة وإدارة الجودة الرقمي - لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
-    <meta name="keywords" content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
+
+    <meta name="description"
+        content="نظام Smart HSR للمراقبة وإدارة الجودة الرقمي - لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
+    <meta name="keywords"
+        content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
     <meta name="author" content="Smart HSR">
     <meta name="robots" content="index, follow">
-    
+
     <meta property="og:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
-    <meta property="og:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
+    <meta property="og:description"
+        content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ar_SA">
-    
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta name="twitter:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية">
-    
+
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="alternate icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="favicon.svg">
-    
+
     <link rel="stylesheet" href="output.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -433,6 +436,22 @@
             animation: slide-up 0.3s ease-out;
             position: relative;
         }
+        
+        /* Close button styling */
+        .close-btn {
+            color: #aaa;
+            float: left; /* Pushes to the left in RTL */
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #0A1931;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
         /* Custom Location/Image Wrapper */
         .input-group-wrapper {
@@ -757,9 +776,9 @@
                 <p class="mt-3 text-lg text-gray-600">تتبع البلاغات وحالة التوثيق بالصور لضمان كفاءة الإغلاق.</p>
             </div>
             <div id="kpiContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="p-6 bg-white rounded-2xl shadow-xl border-t-4 border-gray-200">
-                    <p class="text-xl font-medium text-gray-500">جاري التحميل...</p>
-                    <p class="text-5xl font-extrabold text-gray-700 mt-2">--</p>
+                <div class="lg:col-span-4 text-center p-8 bg-white rounded-2xl shadow-xl">
+                    <h4 class="text-2xl font-bold text-gray-500">لا توجد ملاحظات حالياً.</h4>
+                    <p class="text-gray-400 mt-2">الرجاء استخدام زر "إضافة ملاحظة جديدة" في الأعلى للبدء.</p>
                 </div>
             </div>
             <div class="mt-12 text-center">
@@ -963,6 +982,7 @@
         </div>
     </div>
 
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
@@ -988,7 +1008,7 @@
                 document.body.style.display = 'none'; // لإخفاء المحتوى قبل التحويل
             } else {
                 console.log("المستخدم مسجل الدخول:", user.uid);
-                // يمكنك هنا عرض معلومات المستخدم إذا أردت
+                document.body.style.display = 'block'; // إظهار المحتوى بعد التحقق
             }
         });
 
@@ -1006,7 +1026,7 @@
 
     <script>
         // =========================================================================
-        // 🔴🔴🔴 تم إفراغ مصفوفة البيانات التجريبية هنا 🔴🔴🔴
+        // 🔴🔴🔴 بيانات الملاحظات (تبدأ فارغة وجاهزة لاستقبال الإدخال) 🔴🔴🔴
         // =========================================================================
         let observationsData = []; 
         
@@ -1016,11 +1036,13 @@
         let comparisonDivider;
         let afterImageContainer;
 
-        // ... (بقية دوال JavaScript من ملفك الأصلي)
+
+        // =========================================================================
+        // 📊 دوال مؤشرات الأداء الرئيسية (KPIs)
+        // =========================================================================
 
         // دالة تحسب مؤشرات الأداء الرئيسية (KPIs)
         function calculateKPIs() {
-            // تحقق من وجود بيانات قبل الحساب
             if (observationsData.length === 0) {
                 return {
                     totalReports: 0,
@@ -1046,7 +1068,6 @@
             const kpis = calculateKPIs();
             const kpiContainer = document.getElementById('kpiContainer');
             
-            // تحديث رسالة التحميل إذا كانت البيانات فارغة
              if (kpis.totalReports === 0) {
                  kpiContainer.innerHTML = `
                     <div class="lg:col-span-4 text-center p-8 bg-white rounded-2xl shadow-xl">
@@ -1081,7 +1102,7 @@
                     title: "تغطية الصور (%)",
                     value: `${kpis.imageCoverage}%`,
                     icon: "camera",
-                    gradientClass: "kpi-missing-gradient"
+                    gradientClass: "kpi-closed-gradient" // تم تعديل اللون لـ Green/Teal ليتناسب مع النسبة المئوية
                 }
             ];
 
@@ -1095,67 +1116,621 @@
                 </div>
             `).join('');
 
-            lucide.createIcons(); // إعادة إنشاء أيقونات lucide بعد تحديث المحتوى
+            lucide.createIcons();
         }
 
-        // دالة لعرض قائمة الملاحظات (تمت المحافظة عليها)
+        // محاكاة توليد تقرير KPIs
+        function generateKpiInsights() {
+            if (observationsData.length === 0) {
+                return alert("لا يمكن توليد تقرير تنفيذي لعدم وجود بيانات.");
+            }
+            
+            setAILoading('kpi-insight-button', 'جاري توليد التقرير...');
+            
+            const kpis = calculateKPIs();
+            const insightContent = `
+                تظهر البيانات أن هناك <span class="font-bold text-red-600">${kpis.openReports}</span> ملاحظات مفتوحة، من أصل <span class="font-bold text-teal-700">${kpis.totalReports}</span> ملاحظة إجمالاً. معدل الإغلاق هو <span class="font-bold text-green-600">${kpis.closedReports}</span> ملاحظة مغلقة، مع تغطية صور بنسبة <span class="font-bold text-blue-600">${kpis.imageCoverage}%</span>. يجب على الفريق التنفيذي مراجعة خطط العمل الفورية لتقليل متوسط زمن الإغلاق والتركيز على توثيق جميع الملاحظات بالصور لضمان جودة الإغلاق.
+            `;
+
+            setTimeout(() => {
+                document.getElementById('kpi-insight-result').innerHTML = `
+                    <div class="kpi-insight-container p-4 mt-4 bg-white rounded-2xl shadow-md border-t-4 border-teal-500">
+                        <p class="font-bold text-lg" style="color: var(--color-navy);">ملخص تنفيذي مقترح (Gemini AI):</p>
+                        <p class="text-gray-700 mt-2">${insightContent}</p>
+                    </div>
+                `;
+                resetAIButton('kpi-insight-button', 'bar-chart-3', '✨ توليد تقرير تنفيذي لملخص اللوحة (Gemini AI)');
+            }, 3000);
+        }
+
+        // =========================================================================
+        // 🖼️ دوال عرض القائمة والتفاصيل
+        // =========================================================================
+        
+        // دالة لعرض قائمة الملاحظات
         function renderObservationsList(data) {
             const listElement = document.getElementById('observationsList');
             if (data.length === 0) {
                 listElement.innerHTML = `<div class="p-4 text-center text-gray-500 bg-gray-50 rounded-lg">لا توجد ملاحظات حالياً في هذا التصنيف.</div>`;
                 return;
             }
-            // ... (بقية منطق عرض القائمة لم يتغير)
-            // (تم حذف بقية الدوال للعرض لأنها طويلة لكنها موجودة في ملفك الأصلي وهي ضرورية لعمل الواجهة)
 
-            // دالة افتراضية يجب أن تكون في ملفك الأصلي
-            function renderObservationsList(data) {
-                const listElement = document.getElementById('observationsList');
-                if (data.length === 0) {
-                    listElement.innerHTML = `<div class="p-4 text-center text-gray-500 bg-gray-50 rounded-lg">لا توجد ملاحظات حالياً في هذا التصنيف.</div>`;
-                    return;
-                }
+            listElement.innerHTML = data.map(obs => {
+                const statusClass = obs.status === 'تمت المعالجة' ? 'text-green-600' : 
+                                    obs.status === 'قيد التنفيذ' ? 'text-yellow-600' : 'text-red-600';
+                return `
+                    <div class="observation-item p-3 border rounded-xl shadow-sm bg-white" 
+                         data-id="${obs.id}" 
+                         onclick="showObservationDetail(${obs.id})">
+                        <h5 class="text-sm font-bold text-gray-900">${obs.title}</h5>
+                        <p class="text-xs ${statusClass} font-semibold mt-1">${obs.status} - ${obs.type}</p>
+                    </div>
+                `;
+            }).join('');
 
-                listElement.innerHTML = data.map(obs => {
-                    const statusClass = obs.status === 'تمت المعالجة' ? 'text-green-600' : 
-                                        obs.status === 'قيد التنفيذ' ? 'text-yellow-600' : 'text-red-600';
-                    return `
-                        <div class="observation-item p-3 border rounded-xl shadow-sm bg-white" 
-                             data-id="${obs.id}" 
-                             onclick="showObservationDetail(${obs.id})">
-                            <h5 class="text-sm font-bold text-gray-900">${obs.title}</h5>
-                            <p class="text-xs ${statusClass} font-semibold mt-1">${obs.status} - ${obs.type}</p>
-                        </div>
-                    `;
-                }).join('');
-
-                // تفعيل أول عنصر إذا كان موجوداً
-                if (currentSelectedObservation) {
-                    const activeItem = listElement.querySelector(`[data-id="${currentSelectedObservation.id}"]`);
-                    if (activeItem) {
-                        activeItem.classList.add('active');
-                    }
+            if (currentSelectedObservation) {
+                const activeItem = listElement.querySelector(`[data-id="${currentSelectedObservation.id}"]`);
+                if (activeItem) {
+                    activeItem.classList.add('active');
                 }
             }
-            // (نهاية الدالة الافتراضية)
+        }
+        
+        // دالة لعرض التفاصيل (تم تضمينها في الكود السابق)
+        // ... (تم دمج دالة showObservationDetail أدناه)
+
+
+        // =========================================================================
+        // 🧩 الدوال الأساسية لعمل الـ Modals و الإدخال الذكي
+        // =========================================================================
+
+        // دالة التحكم بفتح وإغلاق النوافذ المنبثقة
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
         }
 
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            
+            if (modalId === 'smartInputModal') {
+                backToStep1();
+            }
+        }
+
+        // دالة للعودة إلى الخطوة الأولى في الإدخال الذكي
+        function backToStep1() {
+            document.getElementById('modalStep1').classList.remove('hidden');
+            document.getElementById('modalStep2').classList.add('hidden');
+            document.getElementById('modalLoading').classList.add('hidden');
+        }
+
+        // دالة فحص حالة حقول الإدخال الذكي لتفعيل زر المعالجة
+        function checkSmartInputState() {
+            const rawInput = document.getElementById('rawObservationInput').value.trim();
+            const processBtn = document.getElementById('processSmartInputBtn');
+            
+            if (rawInput.length > 10) { 
+                processBtn.disabled = false;
+                processBtn.innerHTML = `<i data-lucide="zap" class="w-5 h-5 ml-2"></i> تحليل وإدخال ذكي (Gemini AI)`;
+            } else {
+                processBtn.disabled = true;
+                processBtn.innerHTML = `<i data-lucide="zap" class="w-5 h-5 ml-2"></i> تحليل وإدخال ذكي (Gemini AI)`;
+            }
+            lucide.createIcons();
+        }
+
+
+        // =========================================================================
+        // 🌐 وظائف الموقع الجغرافي (Geolocation)
+        // =========================================================================
+
+        function getLocation() {
+            const statusElement = document.getElementById('locationStatus');
+            const latInput = document.getElementById('inputLatitude');
+            const lonInput = document.getElementById('inputLongitude');
+            const btn = document.getElementById('getLocationBtn');
+
+            if (navigator.geolocation) {
+                statusElement.innerText = "جاري تحديد الموقع...";
+                btn.disabled = true;
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        latInput.value = lat;
+                        lonInput.value = lon;
+                        statusElement.innerText = `تم التحديد: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        btn.disabled = false;
+                        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 ml-2"></i> تم التحديد`;
+                        lucide.createIcons();
+                    },
+                    (error) => {
+                        statusElement.innerText = "فشل التحديد (الرجاء تفعيل الموقع)";
+                        latInput.value = "";
+                        lonInput.value = "";
+                        btn.disabled = false;
+                        btn.innerHTML = `<i data-lucide="map-pin" class="w-4 h-4 ml-2"></i> تحديد موقعي الحالي`;
+                        lucide.createIcons();
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                statusElement.innerText = "المتصفح لا يدعم تحديد الموقع الجغرافي.";
+            }
+        }
+
+
+        // =========================================================================
+        // 🧠 محاكاة عملية الإدخال الذكي بالذكاء الاصطناعي (Gemini Mock)
+        // =========================================================================
+
+        async function processSmartInput() {
+            const rawInput = document.getElementById('rawObservationInput').value.trim();
+            const location = document.getElementById('locationStatus').innerText;
+            // const imageFile = document.getElementById('imageInput').files[0]; // لا نحتاجه في هذه الدالة
+
+            // إظهار حالة التحميل وإخفاء حقول الإدخال
+            document.getElementById('modalStep1').classList.add('hidden');
+            document.getElementById('modalLoading').classList.remove('hidden');
+
+            // محاكاة تأخير التحليل (3 ثوانٍ)
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // نتائج محاكاة التحليل الذكي (Gemini AI Response)
+            const mockAnalysis = {
+                draftDescription: `بناءً على ملاحظتكم حول "${rawInput.substring(0, 50)}..."، تم صياغة البلاغ التالي بشكل رسمي: ${rawInput}. الموقع الجغرافي الذي تم تحديده هو (${location}). يوصى بالتدخل السريع لتقليل الأضرار المحتملة.`,
+                type: (rawInput.includes("مياه") || rawInput.includes("صيانة") || rawInput.includes("تصريف")) ? "صيانة" : 
+                      (rawInput.includes("سلامة") || rawInput.includes("خطر") || rawInput.includes("انزلاق")) ? "سلامة" : "جودة"
+            };
+            
+            // عرض نتائج التحليل للمراجعة
+            document.getElementById('draftDescription').innerText = mockAnalysis.draftDescription;
+            document.getElementById('draftType').innerText = mockAnalysis.type;
+
+            // الانتقال للخطوة 2
+            document.getElementById('modalLoading').classList.add('hidden');
+            document.getElementById('modalStep2').classList.remove('hidden');
+        }
+
+        // =========================================================================
+        // 💾 دالة إضافة الملاحظة (Submit)
+        // =========================================================================
+
+        function submitObservation() {
+            const rawInput = document.getElementById('rawObservationInput').value.trim();
+            const lat = document.getElementById('inputLatitude').value;
+            const lon = document.getElementById('inputLongitude').value;
+            const imageFile = document.getElementById('imageInput').files[0];
+            const draftedDescription = document.getElementById('draftDescription').innerText;
+            const draftedType = document.getElementById('draftType').innerText;
+
+            const newId = observationsData.length > 0 ? observationsData[observationsData.length - 1].id + 1 : 1;
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            let imageUrl = 'placeholder.jpg'; 
+            if (imageFile) {
+                // استخدام رابط محلي مؤقت للملف المرفق
+                imageUrl = URL.createObjectURL(imageFile); 
+            }
+
+            const newObservation = {
+                id: newId,
+                title: `بلاغ ميداني جديد - ${draftedType}`,
+                description: draftedDescription,
+                type: draftedType,
+                location: lat && lon ? `الإحداثيات: ${lat}, ${lon}` : "لم يتم تحديد الموقع",
+                date: currentDate,
+                status: 'جديد',
+                imageUrl: imageUrl,
+                resolutionNote: null,
+                afterImageUrl: null,
+                isComparative: false
+            };
+
+            observationsData.push(newObservation);
+
+            // إعادة تحميل واجهة المستخدم لعرض الملاحظة الجديدة
+            calculateAndRenderAll();
+            
+            // إغلاق المودال وتصفير الحقول
+            closeModal('smartInputModal');
+            document.getElementById('rawObservationInput').value = '';
+            document.getElementById('imageInput').value = ''; 
+            document.getElementById('locationStatus').innerText = "لم يتم التحديد بعد";
+            document.getElementById('inputLatitude').value = '';
+            document.getElementById('inputLongitude').value = '';
+            
+            // تحديد الملاحظة الجديدة وعرض تفاصيلها
+            currentSelectedObservation = newObservation;
+            showObservationDetail(newId);
+            
+            // alert(`تمت إضافة الملاحظة رقم ${newId} بنجاح!`);
+        }
+
+
+        // =========================================================================
+        // 🖼️ دالة إغلاق الملاحظة (Closeout)
+        // =========================================================================
+
+        function checkCloseoutState() {
+            const note = document.getElementById('resolutionNoteInput').value.trim();
+            const image = document.getElementById('closeoutImageInput').files[0];
+            const btn = document.getElementById('closeoutProcessBtn');
+
+            if (note.length > 20 && image) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        function submitCloseout() {
+            if (!currentSelectedObservation) {
+                alert("يرجى اختيار ملاحظة أولاً.");
+                closeModal('closeoutModal');
+                return;
+            }
+            if (currentSelectedObservation.status !== 'جديد' && currentSelectedObservation.status !== 'قيد التنفيذ') {
+                 alert("الملاحظة مغلقة مسبقاً.");
+                 closeModal('closeoutModal');
+                 return;
+            }
+
+
+            const resolutionNote = document.getElementById('resolutionNoteInput').value.trim();
+            const closeoutImageFile = document.getElementById('closeoutImageInput').files[0];
+
+            if (!resolutionNote || !closeoutImageFile) {
+                 alert("الرجاء إرفاق الصورة وكتابة المذكرة الختامية.");
+                 return;
+            }
+
+            // محاكاة حفظ الصورة والحالة
+            const afterImageUrl = closeoutImageFile ? URL.createObjectURL(closeoutImageFile) : null;
+            
+            // تحديث بيانات الملاحظة في المصفوفة
+            const obsIndex = observationsData.findIndex(obs => obs.id === currentSelectedObservation.id);
+            if (obsIndex !== -1) {
+                observationsData[obsIndex].status = 'تمت المعالجة';
+                observationsData[obsIndex].resolutionNote = resolutionNote;
+                observationsData[obsIndex].afterImageUrl = afterImageUrl;
+                observationsData[obsIndex].isComparative = true;
+                
+                currentSelectedObservation = observationsData[obsIndex]; // تحديث الكائن الحالي
+            }
+
+            // إعادة عرض لوحة القيادة وتحديث التفاصيل
+            calculateAndRenderAll();
+            showObservationDetail(currentSelectedObservation.id);
+            
+            // إغلاق المودال وتصفير الحقول
+            closeModal('closeoutModal');
+            document.getElementById('resolutionNoteInput').value = '';
+            document.getElementById('closeoutImageInput').value = ''; 
+            
+            // alert(`تم إغلاق الملاحظة رقم ${currentSelectedObservation.id} بنجاح وتوثيقها.`);
+        }
+
+        // =========================================================================
+        // 🖼️ دالة المقارنة بين الصور (Before/After Slider)
+        // =========================================================================
+
+        function setupImageComparison() {
+            comparisonWrapper = document.getElementById('imageComparisonWrapper');
+            comparisonDivider = document.getElementById('comparisonDivider');
+            afterImageContainer = document.getElementById('afterImageContainer');
+
+            if (!comparisonWrapper || !comparisonDivider || !afterImageContainer) return;
+
+            // Resetting initial state
+            afterImageContainer.style.width = '50%';
+            comparisonDivider.style.left = '50%';
+            isComparisonDragging = false; // Reset drag state
+
+            const moveDivider = (e) => {
+                if (!isComparisonDragging) return;
+
+                const rect = comparisonWrapper.getBoundingClientRect();
+                let clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+                let x = clientX - rect.left;
+                
+                // Clamp x to be within the bounds of the wrapper
+                x = Math.max(0, Math.min(x, rect.width));
+
+                const percentage = (x / rect.width) * 100;
+
+                afterImageContainer.style.width = `${percentage}%`;
+                comparisonDivider.style.left = `${percentage}%`;
+            };
+
+            const startDrag = (e) => {
+                isComparisonDragging = true;
+                comparisonWrapper.style.cursor = 'grabbing';
+                e.preventDefault(); // Prevent text selection
+            };
+
+            const endDrag = () => {
+                isComparisonDragging = false;
+                comparisonWrapper.style.cursor = 'ew-resize';
+            };
+
+            // Mouse events
+            comparisonDivider.onmousedown = startDrag;
+            document.onmousemove = moveDivider;
+            document.onmouseup = endDrag;
+
+            // Touch events for mobile
+            comparisonDivider.ontouchstart = startDrag;
+            document.ontouchmove = moveDivider;
+            document.ontouchend = endDrag;
+        }
+
+
+        // =========================================================================
+        // ⚙️ محاكاة دوال التحليل الآلي للذكاء الاصطناعي (Gemini AI Mock)
+        // =========================================================================
+
+        function setAILoading(btnId, loadingText) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<div class="loading-spinner"></div> ${loadingText}`;
+                lucide.createIcons();
+            }
+        }
+
+        function resetAIButton(btnId, originalIcon, originalText) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="${originalIcon}" class="w-4 h-4 ml-2"></i> ${originalText}`;
+                lucide.createIcons();
+            }
+        }
+
+        function displayAIResult(title, content, type = 'text') {
+            const container = document.getElementById('aiResultContainer');
+            document.getElementById('aiResultTitle').innerText = title;
+            const contentElement = document.getElementById('aiResultContent');
+            container.classList.remove('hidden');
+
+            if (type === 'comm') {
+                contentElement.innerHTML = `<div class="communication-draft p-4 rounded-xl shadow-inner">${content}</div>`;
+            } else {
+                contentElement.innerText = content;
+            }
+        }
+
+        // محاكاة تحليل الصور بالرؤية (Vision)
+        function analyzeImage(feature) {
+            if (!currentSelectedObservation) return alert("يرجى اختيار ملاحظة أولاً.");
+            if (!currentSelectedObservation.imageUrl || currentSelectedObservation.imageUrl === 'placeholder.jpg') {
+                return alert("لا توجد صورة مُرفقة لتحليلها بالرؤية في هذه الملاحظة.");
+            }
+            
+            let btnId, originalText, originalIcon, title, mockContent;
+
+            if (feature === 'vision') {
+                btnId = 'vision-btn';
+                originalText = 'تحليل الصور بالرؤية (Vision)';
+                originalIcon = 'eye';
+                title = 'نتائج تحليل الرؤية (Gemini Vision)';
+                mockContent = `
+                    بتحليل الصورة المرفقة، تم تحديد أن المشكلة هي 'تجمع مياه سطحية كبيرة' في منطقة غير مخصصة للتصريف، مما يشير إلى فشل في البنية التحتية. يوصى بمعالجة التصريف فوراً. حالة الإغلاق المثالية: يجب أن تكون المنطقة جافة تماماً.
+                `;
+            } else if (feature === 'root-cause') {
+                btnId = 'root-cause-btn';
+                originalText = 'تحليل السبب الجذري';
+                originalIcon = 'microscope';
+                title = 'تحليل السبب الجذري (Root Cause Analysis)';
+                mockContent = `
+                    السبب الجذري المقترح: عدم كفاية الصرف في تصميم الطريق (Design Flaw) أو انسداد خطوط التصريف بسبب النفايات (Maintenance Failure). 
+                    نصيحة وقائية: فحص دوري لخطوط التصريف كل 60 يوماً وتعديل الميل الطولي للطريق في تلك المنطقة.
+                `;
+            }
+            
+            setAILoading(btnId, 'جاري التحليل...');
+            
+            setTimeout(() => {
+                displayAIResult(title, mockContent);
+                resetAIButton(btnId, originalIcon, originalText);
+            }, 2500);
+        }
+
+        // محاكاة صياغة أمر العمل
+        function generateCommunicationDraft() {
+            if (!currentSelectedObservation) return alert("يرجى اختيار ملاحظة أولاً.");
+            
+            setAILoading('comm-btn', 'جاري الصياغة...');
+
+            const draft = `
+                <h4 style="font-weight: 700; color: #0A1931;">أمر عمل (Work Order)</h4>
+                <p style="margin-bottom: 15px;">إلى فريق ${currentSelectedObservation.type}،</p>
+                <p>يرجى التوجّه فوراً إلى الموقع التالي (${currentSelectedObservation.location}) لمعالجة الملاحظة رقم #${currentSelectedObservation.id} ذات الأولوية العالية.</p>
+                <p style="margin-top: 10px;">وصف المشكلة: ${currentSelectedObservation.description}</p>
+                <p style="margin-top: 15px; font-weight: 700; color: #B91C1C;">المهام المطلوبة (باستخدام الذكاء الاصطناعي):</p>
+                <ul style="list-style-type: '✔️'; padding-right: 20px;">
+                    <li>معالجة السبب الجذري لتجمع المياه.</li>
+                    <li>توثيق الموقع قبل وبعد الإصلاح بصور عالية الدقة.</li>
+                    <li>إغلاق البلاغ بعد التأكد من جفاف المنطقة بالكامل.</li>
+                </ul>
+                <p style="margin-top: 20px; font-style: italic; color: #0A1931;">- نظام Smart HSR الآلي</p>
+            `;
+
+            setTimeout(() => {
+                displayAIResult('مسودة أمر عمل آلي', draft, 'comm');
+                resetAIButton('comm-btn', 'send', 'صياغة أمر العمل');
+            }, 2500);
+        }
+
+        // دالة محاكاة لتوليد تقرير PDF
+        function generatePdfReport() {
+            if (!currentSelectedObservation) return alert("يرجى اختيار ملاحظة أولاً لإنشاء تقرير PDF.");
+
+            document.getElementById('printTitle').innerText = `تقرير الملاحظة رقم #${currentSelectedObservation.id} - ${currentSelectedObservation.title}`;
+            window.print();
+        }
+
+        // =========================================================================
+        // 🔄 دالة اختيار وعرض التفاصيل (Show Observation Detail)
+        // =========================================================================
+
+        function showObservationDetail(id) {
+            const observation = observationsData.find(obs => obs.id === id);
+            if (!observation) return;
+
+            currentSelectedObservation = observation;
+            
+            // تحديث حالة الأزرار
+            const isClosed = observation.status === 'تمت المعالجة';
+            document.getElementById('completeObservationBtn').classList.toggle('hidden', isClosed);
+            document.getElementById('updateStatusBtn').classList.toggle('hidden', isClosed);
+            document.getElementById('alreadyCompletedBtn').classList.toggle('hidden', !isClosed);
+            document.getElementById('actionButtons').classList.toggle('justify-end', !isClosed);
+            
+            // إخفاء الـ Placeholder وإظهار التفاصيل
+            document.getElementById('detailPlaceholder').classList.add('hidden');
+            document.getElementById('observationDetail').classList.remove('hidden');
+
+            // تصفير نتائج الذكاء الاصطناعي عند التبديل
+            document.getElementById('aiResultContainer').classList.add('hidden');
+            document.getElementById('aiResultContent').innerText = '';
+
+            // تحديث التفاصيل الأساسية
+            document.getElementById('detailTitle').innerText = observation.title;
+            document.getElementById('detailType').innerText = observation.type;
+            document.getElementById('detailLocation').innerText = observation.location;
+            document.getElementById('detailDate').innerText = observation.date;
+            document.getElementById('detailDescription').innerText = observation.description;
+            document.getElementById('detailID').innerText = observation.id;
+            
+            // تحديث الحالة
+            const statusEl = document.getElementById('detailStatus');
+            statusEl.innerText = observation.status;
+            statusEl.className = 'inline-block px-3 py-1 text-sm font-semibold rounded-full text-white';
+            if (observation.status === 'تمت المعالجة') {
+                statusEl.classList.add('bg-green-600');
+            } else if (observation.status === 'قيد التنفيذ') {
+                statusEl.classList.add('bg-yellow-600');
+            } else {
+                statusEl.classList.add('bg-red-600');
+            }
+
+            // عرض المرفقات
+            const mediaContainer = document.getElementById('mediaContainer');
+            const mediaContent = document.getElementById('mediaContent');
+            const comparisonWrapper = document.getElementById('imageComparisonWrapper');
+            const noImageMessage = document.getElementById('noImageMessage');
+
+            // إخفاء كل الخيارات أولاً
+            mediaContainer.classList.add('hidden');
+            comparisonWrapper.classList.add('hidden');
+            noImageMessage.classList.add('hidden');
+            
+            // إظهار أو إخفاء مذكرة الإغلاق
+            document.getElementById('resolutionNoteContainer').classList.toggle('hidden', !isClosed);
+            if (isClosed && observation.resolutionNote) {
+                document.getElementById('resolutionNote').innerText = observation.resolutionNote;
+            }
+
+            // إظهار أو إخفاء خطة العمل (افتراضياً غير موجودة الآن)
+            document.getElementById('actionPlanContainer').classList.add('hidden'); 
+
+            // منطق عرض الصور/الفيديو والمقارنة
+            if (observation.imageUrl && observation.imageUrl !== 'placeholder.jpg') {
+                
+                if (observation.isComparative && observation.afterImageUrl) {
+                    // حالة المقارنة (Before/After)
+                    comparisonWrapper.classList.remove('hidden');
+                    document.getElementById('beforeImage').src = observation.imageUrl;
+                    
+                    const afterImageContainer = document.getElementById('afterImageContainer');
+                    afterImageContainer.innerHTML = '';
+                    
+                    // تحقق من نوع الملف (صورة أو فيديو) لـ After Image
+                    if (observation.afterImageUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                        afterImageContainer.innerHTML = `<video id="afterImage" class="w-full h-auto" controls src="${observation.afterImageUrl}"></video>`;
+                    } else {
+                        afterImageContainer.innerHTML = `<img id="afterImage" class="w-full h-auto" alt="صورة بعد الإصلاح" src="${observation.afterImageUrl}">`;
+                    }
+                    
+                    // تفعيل وظيفة المقارنة
+                    setupImageComparison();
+                    
+                } else {
+                    // حالة الصورة أو الفيديو الواحدة (Before only)
+                    mediaContainer.classList.remove('hidden');
+                    mediaContent.innerHTML = '';
+                    
+                    // تحقق من نوع الملف
+                    if (observation.imageUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                        mediaContent.innerHTML = `<video class="w-full h-auto rounded-xl" controls src="${observation.imageUrl}"></video>`;
+                    } else {
+                        mediaContent.innerHTML = `<img class="w-full h-auto rounded-xl" alt="مرفق الملاحظة" src="${observation.imageUrl}">`;
+                    }
+                }
+            } else {
+                // حالة لا يوجد مرفق
+                noImageMessage.classList.remove('hidden');
+            }
+
+            // تحديث حالة العناصر في القائمة
+            document.querySelectorAll('.observation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.querySelector(`.observation-item[data-id="${id}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            lucide.createIcons();
+        }
+
+
+        // =========================================================================
+        // 🔍 دالة التصفية (Filter)
+        // =========================================================================
+
+        function handleFilterChange() {
+            const filterValue = document.getElementById('observationFilter').value;
+            let filteredData;
+
+            if (filterValue === 'الكل') {
+                filteredData = observationsData;
+            } else if (['جديد', 'قيد التنفيذ', 'تمت المعالجة'].includes(filterValue)) {
+                filteredData = observationsData.filter(obs => obs.status === filterValue);
+            } else {
+                filteredData = observationsData.filter(obs => obs.type === filterValue);
+            }
+
+            renderObservationsList(filteredData);
+            
+            if (filteredData.length === 0) {
+                document.getElementById('observationDetail').classList.add('hidden');
+                document.getElementById('detailPlaceholder').classList.remove('hidden');
+                currentSelectedObservation = null;
+            } else {
+                currentSelectedObservation = filteredData[0];
+                showObservationDetail(currentSelectedObservation.id);
+            }
+        }
+        
+        // =========================================================================
         // --- Initialization ---
+        // =========================================================================
 
         function calculateAndRenderAll() {
             calculateKPIs();
             renderKPIs();
             
-            // قم بفرز وعرض القائمة فقط إذا كانت هناك بيانات
             if (observationsData.length > 0) {
                 observationsData.sort((a, b) => b.createdAt - a.createdAt);
                 renderObservationsList(observationsData);
 
-                // تعيين أول ملاحظة كافتراضية للعرض
-                currentSelectedObservation = observationsData[0]; 
+                currentSelectedObservation = currentSelectedObservation || observationsData[0];
                 showObservationDetail(currentSelectedObservation.id);
             } else {
-                // إذا كانت فارغة، اعرض قائمة فارغة واعرض الـ Placeholder
                 renderObservationsList([]);
                 document.getElementById('observationDetail').classList.add('hidden');
                 document.getElementById('detailPlaceholder').classList.remove('hidden');
@@ -1164,11 +1739,11 @@
 
         function initApp() {
             calculateAndRenderAll();
-            // لا نحتاج للتحقق من isComparative هنا، لأن showObservationDetail ستتولى الأمر
-            lucide.createIcons(); // تأكد من إنشاء أيقونات lucide
+            lucide.createIcons();
         }
 
-        initApp();
+        // 🚀 البدء عند تحميل الصفحة بالكامل
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 
