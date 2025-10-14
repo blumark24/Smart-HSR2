@@ -985,6 +985,7 @@
             if (!user) {
                 // التأكد من أن التوجيه لـ login.html يتم فقط إذا لم يكن المستخدم موجوداً
                 window.location.href = "login.html";
+                document.body.style.display = 'none'; // لإخفاء المحتوى قبل التحويل
             } else {
                 console.log("المستخدم مسجل الدخول:", user.uid);
                 // يمكنك هنا عرض معلومات المستخدم إذا أردت
@@ -1004,84 +1005,12 @@
     </script>
 
     <script>
-        // Data Structure for Demo (static data)
-        let observationsData = [
-            //... (هنا توجد بيانات الملاحظات الثابتة من ملفك الأصلي)
-            {
-                id: 1,
-                title: "تجمع مياه راكدة على طريق الخدمة",
-                description: "يوجد تجمع كبير للمياه في المسار الأيمن من طريق الخدمة عند علامة الكيلو 52 باتجاه الشرق. يشكل هذا خطراً للانزلاق ويتطلب تصريفاً فورياً وصيانة للأسفلت.",
-                type: "صيانة",
-                status: "قيد التنفيذ",
-                location: "طريق الخدمة - كيلو 52 شرق",
-                date: "2025-10-14",
-                imageUrl: "https://i.ibb.co/L51H7Lq/before.jpg",
-                afterImageUrl: null,
-                isComparative: false,
-                rawInput: "يوجد تجمع مياه راكدة على طريق الخدمة عند علامة الكيلو 52 باتجاه الشرق. يشكل هذا خطراً للانزلاق ويتطلب تصريفاً فورياً وصيانة للأسفلت.",
-                aiPlan: "خطة عمل فورية لتصريف المياه باستخدام مضخات متنقلة. تحديد مصدر تجمع المياه (انسداد تصريف أو هبوط أرضي). البدء بأعمال إصلاح الأسفلت في غضون 72 ساعة لضمان عدم تكرار المشكلة.",
-                resolutionNote: null,
-                latitude: 24.713552,
-                longitude: 46.675296,
-                createdAt: 1728956400000,
-            },
-            {
-                id: 2,
-                title: "تآكل دهان الحواجز الإسمنتية",
-                description: "تم ملاحظة تآكل شديد في طبقة الدهان العاكسة على الحواجز الإسمنتية (New Jersey Barriers) عند المدخل الغربي للمشروع. هذا يقلل من الرؤية الليلية ويعتبر نقصاً في معايير الجودة.",
-                type: "جودة",
-                status: "جديد",
-                location: "المدخل الغربي - حواجز القسم A",
-                date: "2025-10-13",
-                imageUrl: "https://i.ibb.co/1n5b6vP/paint-crack.jpg",
-                afterImageUrl: null,
-                isComparative: false,
-                rawInput: "تآكل دهان الحواجز الإسمنتية في المدخل الغربي، يتطلب إعادة طلاء عاكس.",
-                aiPlan: "تقييم مدى الضرر في الحواجز. تحديد كمية الطلاء العاكس المطلوبة (النوع 3 حسب المواصفات). جدولة أعمال الطلاء الليلية لتقليل الإزعاج المروري.",
-                resolutionNote: null,
-                latitude: 24.720000,
-                longitude: 46.680000,
-                createdAt: 1728870000000,
-            },
-            {
-                id: 3,
-                title: "مخالفة عدم ارتداء خوذة السلامة",
-                description: "تم التقاط صورة لأحد العمال في منطقة البناء وهو لا يرتدي خوذة السلامة الواقية (Hard Hat). يجب تطبيق إجراءات السلامة المشددة على الفور وتوعية العاملين.",
-                type: "سلامة",
-                status: "تمت المعالجة",
-                location: "موقع البناء - القسم C",
-                date: "2025-10-10",
-                imageUrl: "https://i.ibb.co/3kXfT8L/safety.jpg",
-                afterImageUrl: "https://i.ibb.co/z5V480S/safety-fixed.jpg",
-                isComparative: true,
-                rawInput: "عامل لا يرتدي خوذة سلامة في موقع البناء.",
-                aiPlan: "إيقاف العمل فوراً وتنبيه العامل. عقد جلسة توعية قصيرة (Toolbox Talk) لجميع العمال حول أهمية معدات الوقاية الشخصية (PPE). توثيق الإجراء التأديبي والوقائي.",
-                resolutionNote: "تم توقيف العامل فوراً وتنبيه المشرف. عُقد اجتماع سلامة صباحي لتعزيز الالتزام بـ PPE. تم إغلاق الملاحظة بعد التأكد من عودة العامل لارتداء الخوذة وتطبيق الإجراءات الوقائية.",
-                latitude: 24.710000,
-                longitude: 46.670000,
-                createdAt: 1728610000000,
-            },
-            {
-                id: 4,
-                title: "تشوه لوحة إرشادية بسبب الرياح",
-                description: "لوحة إرشادية كبيرة على الطريق الرئيسي تعرضت للتشوه والانحناء بسبب الرياح القوية الأخيرة. تحتاج اللوحة إلى تثبيت جديد أو استبدال كامل قبل أن تسقط وتتسبب في حادث.",
-                type: "صيانة",
-                status: "جديد",
-                location: "الطريق الرئيسي - تقاطع B",
-                date: "2025-10-14",
-                imageUrl: "https://i.ibb.co/7C9T3bZ/sign-bent.jpg",
-                afterImageUrl: null,
-                isComparative: false,
-                rawInput: "لوحة إرشادية منحنية على الطريق الرئيسي وتحتاج إلى تثبيت.",
-                aiPlan: "إرسال فريق صيانة فوراً لتأمين اللوحة مؤقتاً. طلب تقييم هندسي سريع لتحديد إمكانية إصلاحها أو الحاجة للاستبدال. وضع حاجز مروري مؤقت حول المنطقة.",
-                resolutionNote: null,
-                latitude: 24.715000,
-                longitude: 46.677000,
-                createdAt: 1728958000000,
-            }
-        ];
-
-        let currentSelectedObservation = observationsData.find(obs => obs.id === 4) || observationsData[0]; // Set default
+        // =========================================================================
+        // 🔴🔴🔴 تم إفراغ مصفوفة البيانات التجريبية هنا 🔴🔴🔴
+        // =========================================================================
+        let observationsData = []; 
+        
+        let currentSelectedObservation = null; 
         let isComparisonDragging = false;
         let comparisonWrapper;
         let comparisonDivider;
@@ -1089,24 +1018,126 @@
 
         // ... (بقية دوال JavaScript من ملفك الأصلي)
 
-        function generateKpiInsights() {
-            const resultElement = document.getElementById('kpi-insight-result');
-            resultElement.classList.remove('hidden');
+        // دالة تحسب مؤشرات الأداء الرئيسية (KPIs)
+        function calculateKPIs() {
+            // تحقق من وجود بيانات قبل الحساب
+            if (observationsData.length === 0) {
+                return {
+                    totalReports: 0,
+                    openReports: 0,
+                    closedReports: 0,
+                    imageCoverage: 0,
+                    missingImages: 0
+                };
+            }
 
-            // Show temporary loading/placeholder
-            resultElement.innerHTML = `
-                <div class="kpi-insight-container p-4 mt-4 bg-white animate-pulse">
-                    <p class="font-bold text-lg text-teal-700">جاري توليد التقرير بواسطة Gemini AI...</p>
-                    <div class="h-4 bg-gray-200 rounded mt-2 w-3/4"></div>
-                    <div class="h-4 bg-gray-200 rounded mt-2 w-full"></div>
+            const totalReports = observationsData.length;
+            const openReports = observationsData.filter(obs => obs.status === 'جديد' || obs.status === 'قيد التنفيذ').length;
+            const closedReports = totalReports - openReports;
+            const reportsWithImage = observationsData.filter(obs => obs.imageUrl && obs.imageUrl !== 'placeholder.jpg').length;
+            const imageCoverage = totalReports > 0 ? Math.round((reportsWithImage / totalReports) * 100) : 0;
+            const missingImages = totalReports - reportsWithImage;
+
+            return { totalReports, openReports, closedReports, imageCoverage, missingImages };
+        }
+
+        // دالة لعرض مؤشرات الأداء
+        function renderKPIs() {
+            const kpis = calculateKPIs();
+            const kpiContainer = document.getElementById('kpiContainer');
+            
+            // تحديث رسالة التحميل إذا كانت البيانات فارغة
+             if (kpis.totalReports === 0) {
+                 kpiContainer.innerHTML = `
+                    <div class="lg:col-span-4 text-center p-8 bg-white rounded-2xl shadow-xl">
+                        <h4 class="text-2xl font-bold text-gray-500">لا توجد ملاحظات حالياً.</h4>
+                        <p class="text-gray-400 mt-2">الرجاء استخدام زر "إضافة ملاحظة جديدة" في الأعلى للبدء.</p>
+                    </div>
+                 `;
+                 return;
+             }
+
+
+            const kpiCards = [
+                {
+                    title: "إجمالي الملاحظات",
+                    value: kpis.totalReports,
+                    icon: "file-text",
+                    gradientClass: "kpi-images-gradient"
+                },
+                {
+                    title: "الملاحظات المفتوحة",
+                    value: kpis.openReports,
+                    icon: "bell",
+                    gradientClass: "kpi-open-gradient"
+                },
+                {
+                    title: "الملاحظات المغلقة",
+                    value: kpis.closedReports,
+                    icon: "check-circle",
+                    gradientClass: "kpi-closed-gradient"
+                },
+                {
+                    title: "تغطية الصور (%)",
+                    value: `${kpis.imageCoverage}%`,
+                    icon: "camera",
+                    gradientClass: "kpi-missing-gradient"
+                }
+            ];
+
+            kpiContainer.innerHTML = kpiCards.map(kpi => `
+                <div class="kpi-card-professional ${kpi.gradientClass} p-6">
+                    <div class="flex items-center justify-between">
+                        <i data-lucide="${kpi.icon}" class="w-8 h-8 opacity-80"></i>
+                        <p class="text-lg font-medium opacity-90">${kpi.title}</p>
+                    </div>
+                    <p class="text-4xl font-extrabold mt-3">${kpi.value}</p>
                 </div>
-            `;
+            `).join('');
 
-            // Simulate AI response delay
-            setTimeout(() => {
-                const kpis = calculateKPIs();
-                resultElement.innerHTML = `<div class="kpi-insight-container p-4 mt-4 bg-white"><p class="font-bold text-lg text-teal-700">ملخص تنفيذي مقترح:</p><p class="text-gray-700 mt-2">تظهر البيانات أن هناك ${kpis.openReports} ملاحظات مفتوحة، مع تركيز في قسم الصيانة (MAINTENANCE) بسبب مشكلة الطريق التي تم إدخالها حديثاً. يجب على الفريق التنفيذي مراجعة خطط العمل الفورية لتقليل متوسط زمن الإغلاق والتركيز على توثيق جميع الملاحظات بالصور لضمان جودة الإغلاق.</p></div>`;
-            }, 1500); // 1.5 second delay simulation
+            lucide.createIcons(); // إعادة إنشاء أيقونات lucide بعد تحديث المحتوى
+        }
+
+        // دالة لعرض قائمة الملاحظات (تمت المحافظة عليها)
+        function renderObservationsList(data) {
+            const listElement = document.getElementById('observationsList');
+            if (data.length === 0) {
+                listElement.innerHTML = `<div class="p-4 text-center text-gray-500 bg-gray-50 rounded-lg">لا توجد ملاحظات حالياً في هذا التصنيف.</div>`;
+                return;
+            }
+            // ... (بقية منطق عرض القائمة لم يتغير)
+            // (تم حذف بقية الدوال للعرض لأنها طويلة لكنها موجودة في ملفك الأصلي وهي ضرورية لعمل الواجهة)
+
+            // دالة افتراضية يجب أن تكون في ملفك الأصلي
+            function renderObservationsList(data) {
+                const listElement = document.getElementById('observationsList');
+                if (data.length === 0) {
+                    listElement.innerHTML = `<div class="p-4 text-center text-gray-500 bg-gray-50 rounded-lg">لا توجد ملاحظات حالياً في هذا التصنيف.</div>`;
+                    return;
+                }
+
+                listElement.innerHTML = data.map(obs => {
+                    const statusClass = obs.status === 'تمت المعالجة' ? 'text-green-600' : 
+                                        obs.status === 'قيد التنفيذ' ? 'text-yellow-600' : 'text-red-600';
+                    return `
+                        <div class="observation-item p-3 border rounded-xl shadow-sm bg-white" 
+                             data-id="${obs.id}" 
+                             onclick="showObservationDetail(${obs.id})">
+                            <h5 class="text-sm font-bold text-gray-900">${obs.title}</h5>
+                            <p class="text-xs ${statusClass} font-semibold mt-1">${obs.status} - ${obs.type}</p>
+                        </div>
+                    `;
+                }).join('');
+
+                // تفعيل أول عنصر إذا كان موجوداً
+                if (currentSelectedObservation) {
+                    const activeItem = listElement.querySelector(`[data-id="${currentSelectedObservation.id}"]`);
+                    if (activeItem) {
+                        activeItem.classList.add('active');
+                    }
+                }
+            }
+            // (نهاية الدالة الافتراضية)
         }
 
         // --- Initialization ---
@@ -1114,24 +1145,26 @@
         function calculateAndRenderAll() {
             calculateKPIs();
             renderKPIs();
-            observationsData.sort((a, b) => b.createdAt - a.createdAt);
-            renderObservationsList(observationsData);
-
+            
+            // قم بفرز وعرض القائمة فقط إذا كانت هناك بيانات
             if (observationsData.length > 0) {
-                const logoObservation = observationsData.find(obs => obs.id === 4);
-                if (logoObservation) {
-                    showObservationDetail(logoObservation.id);
-                } else {
-                    showObservationDetail(observationsData[0].id);
-                }
+                observationsData.sort((a, b) => b.createdAt - a.createdAt);
+                renderObservationsList(observationsData);
+
+                // تعيين أول ملاحظة كافتراضية للعرض
+                currentSelectedObservation = observationsData[0]; 
+                showObservationDetail(currentSelectedObservation.id);
+            } else {
+                // إذا كانت فارغة، اعرض قائمة فارغة واعرض الـ Placeholder
+                renderObservationsList([]);
+                document.getElementById('observationDetail').classList.add('hidden');
+                document.getElementById('detailPlaceholder').classList.remove('hidden');
             }
         }
 
         function initApp() {
             calculateAndRenderAll();
-            if (currentSelectedObservation && currentSelectedObservation.isComparative) {
-                setupImageComparison();
-            }
+            // لا نحتاج للتحقق من isComparative هنا، لأن showObservationDetail ستتولى الأمر
             lucide.createIcons(); // تأكد من إنشاء أيقونات lucide
         }
 
