@@ -6,29 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart HSR | لوحة القيادة التنفيذية - نظام المراقبة وإدارة الجودة الرقمي</title>
     
-    <!-- SEO Meta Tags -->
     <meta name="description" content="نظام Smart HSR للمراقبة وإدارة الجودة الرقمي - لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
     <meta name="keywords" content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
     <meta name="author" content="Smart HSR">
     <meta name="robots" content="index, follow">
     
-    <!-- Open Graph Meta Tags for Social Media -->
     <meta property="og:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta property="og:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ar_SA">
     
-    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
     <meta name="twitter:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية">
     
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="alternate icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="favicon.svg">
     
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="output.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -534,6 +529,13 @@
 
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
+        <div class="flex justify-start mb-6 no-print">
+            <button id="logout-btn"
+                class="ai-button-secondary rounded-full px-4 py-2 text-sm font-bold flex items-center shadow-lg transition duration-300 transform hover:scale-105"
+                onclick="smartLogout()" title="تسجيل الخروج الآمن">
+                <i data-lucide="log-out" class="w-4 h-4 ml-2"></i> تسجيل الخروج
+            </button>
+        </div>
         <section id="hero"
             class="text-center py-12 md:py-16 bg-white rounded-3xl shadow-2xl mb-12 border-b-8 border-t-8 border-teal-100 no-print">
             <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight"
@@ -1356,8 +1358,6 @@
             wrapper.addEventListener('touchstart', onTouchStart);
         }
 
-        // ... (بقية دوال AI Mock مثل analyzeImage, generateCommunicationDraft, generateAudioReport تبقى كما هي)
-
         // --- دوال AI Mock (للتكامل الكامل) ---
         function getLocation() {
             document.getElementById('locationStatus').innerHTML = '<span class="text-yellow-600">جاري البحث...</span>';
@@ -1520,6 +1520,33 @@
         function generateKpiInsights() {
             document.getElementById('kpi-insight-result').innerHTML = `<div class="kpi-insight-container p-4 mt-4 bg-white"><p class="font-bold text-lg text-teal-700">ملخص تنفيذي مقترح:</p><p class="text-gray-700 mt-2">تظهر البيانات أن هناك ${calculateKPIs().openReports} ملاحظات مفتوحة، مع تركيز في قسم الصيانة (MAINTENANCE) بسبب مشكلة الطريق التي تم إدخالها حديثاً. يجب على الفريق التنفيذي مراجعة خطط العمل الفورية لتقليل متوسط زمن الإغلاق والتركيز على توثيق جميع الملاحظات بالصور لضمان جودة الإغلاق.</p></div>`;
         }
+        
+        // --- New: Smart Logout Function ---
+        function smartLogout() {
+            const button = document.getElementById('logout-btn');
+            button.disabled = true;
+            // استخدام تصميم التحميل الموجود
+            // قلب ترتيب العناصر ليتناسب مع اتجاه النص أثناء التحميل
+            button.innerHTML = '<div class="loading-spinner" style="border-top: 4px solid var(--color-teal);"></div> جاري تسجيل الخروج...';
+            button.classList.add('flex-row-reverse', 'justify-center');
+            button.style.backgroundColor = 'gray'; 
+
+            // في تطبيق حقيقي متكامل مع Firebase (كما يوحي ملف الدخول):
+            // if (typeof firebase !== 'undefined' && firebase.auth) {
+            //     firebase.auth().signOut().then(() => {
+            //         window.location.href = "login.html"; 
+            //     });
+            //     return;
+            // }
+
+            // محاكاة عملية تسجيل الخروج
+            setTimeout(() => {
+                alert("تم تسجيل الخروج بنجاح. سيتم توجيهك إلى صفحة الدخول.");
+                // التوجيه إلى صفحة الدخول (login.html)
+                window.location.href = "login.html"; 
+            }, 1000); 
+        }
+
 
         // --- Initialization ---
 
