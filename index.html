@@ -1,207 +1,1142 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Smart HSR - تسجيل الدخول</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart HSR | لوحة القيادة التنفيذية - نظام المراقبة وإدارة الجودة الرقمي</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <meta name="description" content="نظام Smart HSR للمراقبة وإدارة الجودة الرقمي - لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
+    <meta name="keywords" content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
+    <meta name="author" content="Smart HSR">
+    <meta name="robots" content="index, follow">
     
+    <meta property="og:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
+    <meta property="og:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ar_SA">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
+    <meta name="twitter:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية">
+    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    
+    <link rel="stylesheet" href="output.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
-        /* الألوان: مستوحاة من هويتك (Teal/Navy) */
-        :root{
-            --primary-teal:#0ea5a1; /* Teal 500 */
-            --secondary-navy:#0b2b3a; /* Dark Navy */
-            --card-bg:#ffffff;
-            --button-shadow: rgba(14, 165, 161, 0.4);
+        :root {
+            /* Professional & Executive Palette */
+            --color-navy: #0A1931;
+            /* Primary Dark Color */
+            --color-teal: #18A5A2;
+            /* Accent/Highlight Color */
+            --color-light-teal: #ACE2E1;
+            /* Light Accent */
+            --color-gray-bg: #F7F9FC;
+            /* Clean Background */
+            --color-shadow-base: rgba(10, 25, 49, 0.4);
+            /* Deep Navy Shadow */
         }
-        *{box-sizing:border-box}
-        body{
-            margin:0;
-            font-family:'Tajawal', sans-serif; /* استخدام خط عربي حديث */
-            background:linear-gradient(180deg,#f7f9fb 0%,#f0f2f5 100%);
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:30px;
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--color-gray-bg);
+            color: var(--color-navy);
         }
-        .card{
-            width:380px;
-            background:var(--card-bg);
-            border-radius:24px; /* زوايا أكثر استدارة وفخامة */
-            box-shadow:0 15px 40px rgba(10,20,50,0.15); /* ظل احترافي */
-            padding:40px 30px;
-            border: 1px solid #e9ecef; /* خط خفيف حول البطاقة */
-            position:relative;
-            overflow:hidden;
+
+        /* Gradient for Open Reports (Urgency - Red/Orange) */
+        .kpi-open-gradient {
+            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+            /* Red to Deep Red */
+            color: white;
+            box-shadow: 0 10px 20px rgba(185, 28, 28, 0.4);
+        }
+
+        /* Gradient for Closed Reports (Success - Teal/Green) */
+        .kpi-closed-gradient {
+            background: linear-gradient(135deg, #10B981 0%, #18A5A2 100%);
+            /* Green to Teal */
+            color: white;
+            box-shadow: 0 10px 20px rgba(24, 165, 162, 0.4);
+        }
+
+        /* Gradient for Total Images (Information - Blue/Navy) */
+        .kpi-images-gradient {
+            background: linear-gradient(135deg, #3B82F6 0%, #0A1931 100%);
+            /* Blue to Navy */
+            color: white;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Gradient for Missing Images (Warning - Yellow/Orange) */
+        .kpi-missing-gradient {
+            background: linear-gradient(135deg, #FCD34D 0%, #F97316 100%);
+            /* Yellow to Orange */
+            color: var(--color-navy);
+            /* Dark text for contrast on light gradient */
+            box-shadow: 0 10px 20px rgba(253, 211, 77, 0.4);
+        }
+
+        /* Common KPI Card Styles */
+        .kpi-card-professional {
             transition: all 0.3s ease;
+            border-radius: 1.5rem;
+            /* Rounded corners */
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1px) translateZ(0);
+            /* For hardware acceleration */
         }
-        .card:hover{
-             box-shadow:0 18px 45px rgba(14, 165, 161, 0.2);
-        }
-        
-        h1{margin:0 0 4px 0;text-align:center;font-size:32px;color:var(--secondary-navy);font-weight:900;}
-        p.lead{margin:0 0 25px 0;text-align:center;color:#6c757d;font-weight:500;font-size:16px;}
-        
-        /* شريط التمييز العلوي (هوية الشركات الكبرى) */
-        .card-header-line{
+
+        .kpi-card-professional::before {
+            content: "";
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary-teal), var(--secondary-navy));
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: height 0.3s ease;
         }
 
-        .field{margin-bottom:18px}.field label{display:block;margin-bottom:8px;color:var(--secondary-navy);font-size:14px;font-weight:600;}
-        input[type="email"],input[type="password"]{
-            width:100%;
-            padding:14px 18px;
-            border-radius:12px;
-            border:1px solid #d4dce4;
-            background:#f8f9fa;
-            font-size:16px;
-            outline:none;
-            transition: border-color 0.3s, box-shadow 0.3s;
+        .kpi-card-professional:hover {
+            transform: translateY(-8px) scale(1.02);
+            z-index: 10;
         }
-        input:focus{
-            border-color:var(--primary-teal);
-            box-shadow:0 0 0 3px rgba(14, 165, 161, 0.1);
-            background:white;
+
+        .kpi-card-professional:hover::before {
+            height: 100%;
+            opacity: 0.1;
         }
-        .btn{
-            width:100%;
-            padding:14px;
-            border-radius:12px;
-            border:none;
-            cursor:pointer;
-            font-weight:700;
-            font-size:17px;
+
+        /* General UI Elements */
+        .ai-button-primary {
+            background-color: var(--color-teal);
+            color: white;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            box-shadow: 0 6px 15px rgba(24, 165, 162, 0.5);
         }
-        .btn-primary{
-            background:linear-gradient(90deg, var(--primary-teal), #0b7285);
-            color:white;
-            box-shadow:0 10px 20px var(--button-shadow);
-        }
-        .btn-primary:hover:not(:disabled){
+
+        .ai-button-primary:hover:not(:disabled) {
+            background-color: #148f8c;
             transform: translateY(-2px);
-            box-shadow:0 12px 25px var(--button-shadow);
-            background:linear-gradient(90deg, #0b7285, var(--primary-teal));
+            box-shadow: 0 8px 20px rgba(24, 165, 162, 0.8);
         }
-        .message{text-align:center;margin-top:15px;font-weight:600;font-size:15px;}
-        .error{color:#dc3545;} /* أحمر قوي للأخطاء */
-        .success{color:#198754;}
-        .muted{font-size:13px;color:#7b8a90;text-align:center;margin-top:15px;}
-        
+
+        .ai-button-secondary {
+            background-color: var(--color-navy);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(10, 25, 49, 0.6);
+        }
+
+        .ai-button-secondary:hover:not(:disabled) {
+            background-color: #1a3053;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(10, 25, 49, 0.8);
+        }
+
+        /* Vision Button Style (Purple) */
+        .ai-button-vision {
+            background-color: #9333ea;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(147, 51, 234, 0.5);
+        }
+
+        .ai-button-vision:hover:not(:disabled) {
+            background-color: #7e22ce;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(147, 51, 234, 0.8);
+        }
+
+        /* Root Cause Button Style (Dark Red/Maroon) */
+        .ai-button-root-cause {
+            background-color: #881337;
+            /* Maroon 900 */
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(136, 19, 55, 0.5);
+        }
+
+        .ai-button-root-cause:hover:not(:disabled) {
+            background-color: #9f1239;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(136, 19, 55, 0.8);
+        }
+
+        /* Communication Button Style (Orange) */
+        .ai-button-comm {
+            background-color: #F97316;
+            /* Orange */
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.5);
+        }
+
+        .ai-button-comm:hover:not(:disabled) {
+            background-color: #ea580c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.8);
+        }
+
+        /* Grounding Button Style (Green) */
+        .ai-button-grounding {
+            background-color: #10B981;
+            /* Green */
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .ai-button-grounding:hover:not(:disabled) {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.8);
+        }
+
         .loading-spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--color-light-teal);
+            /* Use light teal on dark buttons */
             border-radius: 50%;
             width: 20px;
             height: 20px;
             animation: spin 1s linear infinite;
-            margin-left: 10px;
+            margin-left: 8px;
+        }
+
+        .ai-button-primary .loading-spinner,
+        .ai-button-vision .loading-spinner,
+        .ai-button-comm .loading-spinner,
+        .ai-button-grounding .loading-spinner,
+        .ai-button-secondary .loading-spinner,
+        .ai-button-root-cause .loading-spinner {
+            border-top: 4px solid #0A1931;
+            /* Darker spinner on lighter buttons */
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        @media (max-width:420px){.card{width:95%;padding:30px 20px;}}
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px var(--color-shadow-base);
+        }
+
+        .image-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-navy);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border-top-left-radius: 0.75rem;
+        }
+
+        .observation-item {
+            transition: all 0.2s;
+            border-right: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .observation-item:hover {
+            background-color: #E6F3F3;
+            /* Light teal hover effect */
+            border-right-color: var(--color-teal);
+        }
+
+        .observation-item.active {
+            background-color: #E6F3F3;
+            /* Active state */
+            border-right-color: var(--color-navy);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image Comparison Slider Styles */
+        .comparison-wrapper {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            user-select: none;
+            cursor: ew-resize;
+            /* East-West resize cursor */
+            border-radius: 0.75rem;
+        }
+
+        .comparison-wrapper img,
+        .comparison-wrapper video {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .comparison-wrapper .after-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            /* Initial mask width */
+            overflow: hidden;
+        }
+
+        .comparison-wrapper .after-image img,
+        .comparison-wrapper .after-image video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /* Ensure the image fills the container */
+            height: auto;
+        }
+
+        .comparison-wrapper .comparison-divider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            /* Initial position */
+            width: 4px;
+            height: 100%;
+            background-color: var(--color-teal);
+            transform: translateX(-50%);
+            cursor: grab;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(24, 165, 162, 0.8);
+            border-radius: 2px;
+            transition: width 0.1s ease;
+        }
+
+        .comparison-wrapper .comparison-divider:active {
+            cursor: grabbing;
+        }
+
+        .comparison-wrapper .comparison-divider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 3px solid var(--color-teal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .comparison-label {
+            position: absolute;
+            z-index: 5;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+            border-radius: 0.5rem;
+            opacity: 0.9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .label-before {
+            top: 10px;
+            right: 10px;
+            background-color: #B91C1C;
+            /* Red */
+        }
+
+        .label-after {
+            top: 10px;
+            left: 10px;
+            background-color: #10B981;
+            /* Green */
+        }
+
+        .communication-draft {
+            white-space: pre-wrap;
+            text-align: right;
+            direction: rtl;
+            font-family: 'Tajawal', sans-serif;
+            border-right: 4px solid var(--color-teal);
+            padding-right: 1rem;
+            line-height: 1.8;
+            background-color: #f8fafc;
+        }
+
+        .kpi-insight-container {
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--color-navy);
+        }
+
+        .source-link {
+            color: #0d9488;
+            /* Teal 600 */
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .source-link:hover {
+            color: var(--color-navy);
+            text-decoration: underline;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            /* Center the modal content vertically */
+            justify-content: center;
+            /* Center the modal content horizontally */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slide-up 0.3s ease-out;
+            position: relative;
+        }
+
+        /* Custom Location/Image Wrapper */
+        .input-group-wrapper {
+            display: flex;
+            gap: 1rem;
+            /* Space between inputs */
+        }
+
+        .input-group {
+            flex-grow: 1;
+            /* Make inputs fill available space */
+            text-align: center;
+        }
+
+        /* PDF Print Styles (Hiding unnecessary elements when printing) */
+        @media print {
+            body {
+                background-color: white !important;
+                color: black !important;
+                /* تحديد عرض الصفحة للـ PDF */
+                width: 210mm;
+                /* A4 width */
+                min-height: 297mm;
+                /* A4 height */
+                margin: 0;
+            }
+
+            .no-print,
+            #observationsList,
+            #hero,
+            #operational-dashboard,
+            #ai-features,
+            footer,
+            .modal {
+                display: none !important;
+            }
+
+            #observationDetail {
+                display: block !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            .kpi-insight-container,
+            .bg-white {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .comparison-wrapper {
+                /* Display only the "After" image in comparison view for PDF */
+                cursor: default;
+            }
+
+            .comparison-divider,
+            .comparison-label {
+                display: none !important;
+            }
+
+            .comparison-wrapper .after-image {
+                width: 100% !important;
+                overflow: visible !important;
+            }
+
+            .comparison-wrapper .after-image img {
+                position: static !important;
+            }
+
+            /* Adjusting details layout for print */
+            .grid.grid-cols-1.md\3a grid-cols-3 {
+                display: block !important;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+
+            .grid.grid-cols-1.md\3a grid-cols-3>div {
+                border: none !important;
+                padding: 5px;
+            }
+
+            .print-logo {
+                display: block !important;
+            }
+        }
     </style>
 </head>
-<body>
 
-<div class="card" role="main">
-  <div class="card-header-line"></div>
-  <h1>Smart HSR</h1>
-  <p class="lead">تسجيل الدخول إلى لوحة القيادة التنفيذية</p>
+<body class="text-gray-800">
 
-  <form id="loginForm" onsubmit="event.preventDefault(); signInWithEmail();">
-    <div class="field">
-      <label for="email">البريد الإلكتروني (المعتمد):</label>
-      <input id="email" type="email" placeholder="example@smart-hsr.com" required />
+    <div class="w-full flex justify-start p-6 no-print" style="position: absolute; top: 0; right: 0; z-index: 50;">
+        <button onclick="logout()" style="
+            background-color: #f44336; /* لون أحمر لتسجيل الخروج */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* يدفع الزر إلى الزاوية اليمنى في نمط RTL */
+        " id="logout-button" class="hover:bg-red-700 hover:shadow-lg transform hover:scale-[1.03]">
+            <i data-lucide="log-out" class="w-5 h-5 ml-2"></i> تسجيل الخروج
+        </button>
     </div>
-    <div class="field">
-      <label for="password">كلمة المرور:</label>
-      <input id="password" type="password" placeholder="كلمة المرور السرية" required />
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section id="hero"
+            class="text-center py-12 md:py-16 bg-white rounded-3xl shadow-2xl mb-12 border-b-8 border-t-8 border-teal-100 no-print">
+            <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight"
+                style="color: var(--color-navy);">Smart HSR <span style="color: var(--color-teal);">Dashboard</span>
+            </h1>
+            <h2 class="text-xl md:text-3xl font-extrabold text-gray-600 mt-4">نظام المراقبة وإدارة الجودة الرقمي
+            </h2>
+            <p class="mt-4 text-lg max-w-4xl mx-auto text-gray-500 font-medium">"منصة تنفيذية ذكية لإدارة الجودة
+                والمراقبة الرقمية، توفر رؤية دقيقة للأداء وتدعم اتخاذ القرار المبني على البيانات."</p>
+        </section>
+
+        <section id="observations-log" class="my-20">
+            <div class="text-center mb-12 no-print">
+                <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">سجل
+                    الملاحظات التفاعلي: دقة الصورة والنص</h3>
+                <p class="mt-3 text-lg text-gray-600">عرض تفصيلي للملاحظات الميدانية مع أدوات التحليل الآلي.</p>
+                <button id="add-observation-btn"
+                    class="ai-button-primary rounded-full px-6 py-2 text-md font-bold mt-4 flex items-center justify-center mx-auto"
+                    onclick="openModal('smartInputModal')">
+                    <i data-lucide="plus-circle" class="w-5 h-5 ml-2"></i> إضافة ملاحظة جديدة (الإدخال الذكي)
+                </button>
+            </div>
+
+            <div
+                class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-8 border border-gray-200">
+
+                <div
+                    class="lg:col-span-1 border-b lg:border-b-0 lg:border-l border-gray-300 lg:pr-6 pb-6 lg:pb-0 no-print">
+                    <h4 class="text-2xl font-bold mb-4" style="color: var(--color-teal);">تصفية الملاحظات</h4>
+                    <select id="observationFilter"
+                        class="w-full p-3 border border-gray-300 rounded-xl focus:ring-[--color-teal] focus:border-[--color-teal] text-gray-700 shadow-sm transition-all duration-300"
+                        onchange="handleFilterChange()">
+                        <option value="الكل">عرض كل الملاحظات</option>
+                        <option value="جديد">جديد</option>
+                        <option value="قيد التنفيذ">قيد التنفيذ</option>
+                        <option value="تمت المعالجة">تمت المعالجة</option>
+                        <option value="جودة">جودة</option>
+                        <option value="صيانة">صيانة</option>
+                        <option value="سلامة">سلامة</option>
+                        <option value="بيئة">بيئة</option>
+                    </select>
+                    <h4 class="text-2xl font-bold mt-8 mb-3" style="color: var(--color-navy);">المـلاحظــات</h4>
+                    <div id="observationsList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                        <div class="text-center text-gray-500 mt-10">... جاري تحميل البيانات الثابتة...</div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-inner">
+
+                    <div class="print-logo hidden mb-6 p-4 border-b border-gray-300">
+                        <h2 class="text-3xl font-extrabold text-gray-900" style="color: var(--color-navy);">تقرير Smart
+                            HSR التنفيذي</h2>
+                        <p id="printTitle" class="text-xl font-bold text-teal-600 mt-2"></p>
+                    </div>
+
+                    <h4 class="text-2xl font-extrabold mb-4 border-b-2 border-gray-300 pb-2"
+                        style="color: var(--color-teal);">عرض التفاصيل والتحليل (AI Insights)</h4>
+
+                    <div id="observationDetail" class="hidden">
+
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-medium mb-6 p-4 bg-white rounded-xl shadow-sm border">
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">العنوان:</span>
+                                <span id="detailTitle" class="block font-bold text-gray-800"></span>
+                            </div>
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">التصنيف:</span>
+                                <span id="detailType" class="block font-bold text-teal-600"></span>
+                            </div>
+                            <div class="p-2">
+                                <span class="block text-gray-500">الموقع:</span>
+                                <span id="detailLocation" class="block font-bold text-gray-800"></span>
+                            </div>
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">تاريخ البلاغ:</span>
+                                <span id="detailDate" class="block font-bold text-gray-800"></span>
+                            </div>
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">حالة المعالجة:</span>
+                                <span id="detailStatus"
+                                    class="inline-block px-3 py-1 text-sm font-semibold rounded-full text-white"></span>
+                            </div>
+                            <div class="p-2">
+                                <span class="block text-gray-500">معرف البلاغ:</span>
+                                <span id="detailID" class="block font-bold text-gray-800"></span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border-l-4 border-teal-500">
+                            <h5 class="text-xl font-bold mb-3" style="color: var(--color-navy);">وصف الملاحظة</h5>
+                            <p id="detailDescription" class="text-gray-700 leading-relaxed"></p>
+                            <div id="actionPlanContainer" class="mt-4 p-3 bg-teal-50 rounded-lg hidden">
+                                <h6 class="font-bold text-teal-700">خطة العمل المقترحة (Gemini AI)</h6>
+                                <p id="actionPlan" class="text-sm text-teal-900 mt-1"></p>
+                            </div>
+                        </div>
+
+                        <div id="resolutionNoteContainer"
+                            class="bg-green-50 p-5 rounded-2xl shadow-md mb-6 border-l-4 border-green-500 hidden">
+                            <h5 class="text-xl font-bold mb-3 text-green-700">📝 المذكرة الختامية للإغلاق</h5>
+                            <p id="resolutionNote" class="text-gray-700 leading-relaxed"></p>
+                        </div>
+
+                        <div id="imageComparisonWrapper" class="comparison-wrapper mb-6 hidden">
+                            <img id="beforeImage" class="before-image w-full h-auto" alt="صورة قبل الإصلاح"
+                                src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                            <div id="afterImageContainer" class="after-image">
+                                <img id="afterImage" class="w-full h-auto" alt="صورة بعد الإصلاح"
+                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                            </div>
+                            <div id="comparisonDivider" class="comparison-divider no-print">
+                                <div class="comparison-divider-handle">
+                                    <i data-lucide="arrow-left-right" class="w-4 h-4 text-teal-600"></i>
+                                </div>
+                            </div>
+                            <span class="comparison-label label-before no-print">قبل</span>
+                            <span class="comparison-label label-after no-print">بعد</span>
+                        </div>
+
+                        <div id="mediaContainer" class="image-container mb-6 hidden">
+                            <div id="mediaContent" class="w-full h-auto rounded-xl">
+                            </div>
+                            <span class="image-label">مرفق الملاحظة</span>
+                        </div>
+
+                        <div id="noImageMessage"
+                            class="bg-yellow-100 p-4 rounded-xl text-center text-yellow-800 font-medium mb-6 hidden">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 inline-block ml-2"></i> لا تتوفر صورة أو
+                            فيديو لهذه الملاحظة.
+                        </div>
+
+
+                        <div id="aiAnalysisSection"
+                            class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-gray-200">
+                            <h5 class="text-xl font-bold mb-4" style="color: var(--color-navy);">أدوات التحليل الذكي
+                                (Gemini AI)</h5>
+                            <div class="flex flex-wrap gap-3 no-print">
+                                <button id="vision-btn"
+                                    class="ai-button-vision rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="analyzeImage('vision')">
+                                    <i data-lucide="eye" class="w-4 h-4 ml-2"></i> تحليل الصور بالرؤية (Vision)
+                                </button>
+                                <button id="root-cause-btn"
+                                    class="ai-button-root-cause rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="analyzeImage('root-cause')">
+                                    <i data-lucide="microscope" class="w-4 h-4 ml-2"></i> تحليل السبب الجذري
+                                </button>
+                                <button id="comm-btn"
+                                    class="ai-button-comm rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="generateCommunicationDraft()">
+                                    <i data-lucide="send" class="w-4 h-4 ml-2"></i> صياغة أمر العمل
+                                </button>
+                                <button id="pdf-report-btn"
+                                    class="ai-button-grounding rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="generatePdfReport()">
+                                    <i data-lucide="file-text" class="w-4 h-4 ml-2"></i> توليد تقرير PDF
+                                </button>
+                            </div>
+
+                            <div id="aiResultContainer"
+                                class="mt-5 p-4 bg-gray-50 rounded-xl border border-gray-200 hidden">
+                                <h6 id="aiResultTitle" class="font-bold text-lg mb-2" style="color: var(--color-teal);">
+                                </h6>
+                                <div id="aiResultContent" class="text-gray-700"></div>
+                            </div>
+                        </div>
+
+                        <div id="actionButtons"
+                            class="mt-6 pt-4 border-t border-gray-300 flex justify-end gap-3 no-print">
+                            <button id="updateStatusBtn"
+                                class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                                onclick="alert('تم تحويل الحالة إلى قيد التنفيذ (تجريبي)')">
+                                تحديث الحالة إلى "قيد التنفيذ"
+                            </button>
+                            <button id="completeObservationBtn"
+                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                                onclick="openModal('closeoutModal')">
+                                <i data-lucide="lock" class="w-4 h-4 ml-2"></i> الإغلاق التنفيذي (صورة بعد)
+                            </button>
+                            <button id="alreadyCompletedBtn"
+                                class="bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150 hidden"
+                                disabled>
+                                <i data-lucide="check" class="w-4 h-4 ml-2"></i> الملاحظة مغلقة وموثقة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="detailPlaceholder" class="text-center space-y-4">
+                        <p class="text-gray-500 mt-16 text-lg">الرجاء اختيار ملاحظة من القائمة لعرض الصورة والمذكرة
+                            التفصيلية.</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M17 10h.01" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="operational-dashboard" class="my-20 no-print">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">📊
+                    مؤشرات الأداء الحيوية (Vital Metrics)</h3>
+                <p class="mt-3 text-lg text-gray-600">تتبع البلاغات وحالة التوثيق بالصور لضمان كفاءة الإغلاق.</p>
+            </div>
+            <div id="kpiContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="p-6 bg-white rounded-2xl shadow-xl border-t-4 border-gray-200">
+                    <p class="text-xl font-medium text-gray-500">جاري التحميل...</p>
+                    <p class="text-5xl font-extrabold text-gray-700 mt-2">--</p>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <button id="kpi-insight-button"
+                    class="ai-button-secondary rounded-full px-8 py-3 text-lg font-bold flex items-center justify-center mx-auto"
+                    onclick="generateKpiInsights()">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 ml-2"></i> ✨ توليد تقرير تنفيذي لملخص اللوحة (Gemini AI)
+                </button>
+                <div id="kpi-insight-result" class="mt-6 text-sm">
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-features"
+            class="my-20 bg-white p-8 md:p-12 rounded-3xl shadow-2xl border-t-8 border-[--color-teal] no-print">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">🧠
+                    الذكاء الاصطناعي في صميم العملية</h3>
+                <p class="mt-3 text-lg text-gray-600">استفد من نماذج Gemini لتحويل البيانات إلى قرارات قابلة للتنفيذ.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-7 gap-8 text-center">
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #9333ea;">👁️</span>
+                    <h4 class="font-extrabold text-lg mb-1" style="color: var(--color-navy);">تحليل الرؤية</h4>
+                    <p class="text-xs text-gray-600">وصف المشكلة وتحديد حالة الإغلاق المثالية.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: var(--color-teal);">⚙️</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">خطة عمل آلية</h4>
+                    <p class="text-xs text-gray-600">توليد خطوات تنفيذية لمعالجة الملاحظة.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: var(--color-teal);">🚨</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">تقييم المخاطر</h4>
+                    <p class="text-xs text-gray-600">تحديد الأولوية والإطار الزمني في هيكل JSON.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #881337;">🔬</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">تحليل السبب الجذري</h4>
+                    <p class="text-xs text-gray-600">اقتراح سبب جذري ونصيحة وقائية.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #F97316;">✉️</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">صياغة الاتصال</h4>
+                    <p class="text-xs text-gray-600">توليد مسودة أمر عمل أو بريد إلكتروني.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: var(--color-navy);">🔊</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">تقرير الإغلاق الصوتي</h4>
+                    <p class="text-xs text-gray-600">تلخيص التقرير وتحويله إلى ملف صوتي.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #10B981;">🌐</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">البحث عن المعايير</h4>
+                    <p class="text-xs text-gray-600">استخدام البحث المدعوم لاستحضار المعايير العالمية.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-20 py-12 border-t-4 border-teal-200 bg-white rounded-t-3xl shadow-2xl no-print">
+            <div class="max-w-6xl mx-auto px-4">
+                <h3 class="text-3xl md:text-4xl font-extrabold mb-4" style="color: var(--color-navy);"> ابدأ رحلة التحول
+                    الرقمي مع Smart HSR </h3>
+                <p class="mt-3 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto"> نظام ذكي يُحول بيانات الميدان إلى
+                    قرارات استراتيجية تنفيذيّة </p>
+                <a href="http://wa.me/966507006849" target="_blank"
+                    class="mt-8 inline-block bg-[--color-teal] text-white font-bold py-4 px-12 rounded-full text-xl hover:bg-[--color-navy] transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    اطلب عرضًا تجريبيًا الآن </a>
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600 mb-6">
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2">حول النظام</h4>
+                            <p>نظام Smart HSR للمراقبة وإدارة الجودة الرقمي</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2">الدعم الفني</h4>
+                            <p>Blumark24@gmail.com</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2">المبيعات والاستفسارات</h4>
+                            <p>0507006849</p>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <p class="mb-2">&copy; 2025 Smart HSR. جميع الحقوق محفوظة.</p>
+                        <p id="userInfo">تم تحميل البيانات بنجاح (وضع ثابت)</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <div id="smartInputModal" class="modal no-print">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('smartInputModal')">&times;</span>
+            <h2 class="text-3xl font-extrabold mb-6 pb-2 border-b" style="color: var(--color-navy);">وحدة الإدخال الذكي
+                للملاحظات (Smart HSR)</h2>
+            <div id="modalStep1">
+                <p class="text-lg text-gray-600 mb-4">الخطوة 1: أدخل تفاصيل الملاحظة (النص، الموقع، الصورة/الفيديو)</p>
+                <textarea id="rawObservationInput" rows="5"
+                    class="w-full p-4 border border-gray-300 rounded-xl focus:ring-[--color-teal] focus:border-[--color-teal] text-gray-700 shadow-sm"
+                    placeholder="مثال: يوجد تجمع للمياه على طريق الخدمة عند الكيلو 52 باتجاه الشرق، يتسبب في انزلاق السيارات. نحتاج إلى تصريف فوري."
+                    oninput="checkSmartInputState()"></textarea>
+                <div class="mt-4 input-group-wrapper">
+                    <div
+                        class="input-group p-4 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-teal-500 transition-colors">
+                        <label for="locationStatus" class="block text-sm font-medium text-gray-700 mb-2">الموقع
+                            الجغرافي (GPS):</label>
+                        <p id="locationStatus" class="text-sm font-semibold text-gray-500">لم يتم التحديد بعد</p>
+                        <input type="hidden" id="inputLatitude">
+                        <input type="hidden" id="inputLongitude">
+                        <button id="getLocationBtn"
+                            class="ai-button-primary rounded-full px-4 py-2 text-sm font-bold mt-2 flex items-center justify-center mx-auto"
+                            onclick="getLocation()" type="button">
+                            <i data-lucide="map-pin" class="w-4 h-4 ml-2"></i> تحديد موقعي الحالي
+                        </button>
+                    </div>
+                    <div
+                        class="input-group p-4 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-teal-500 transition-colors">
+                        <label for="imageInput" class="block text-sm font-medium text-gray-700 mb-2">صورة/فيديو
+                            (اختياري):</label>
+                        <input type="file" id="imageInput" accept="image/*,video/*"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"
+                            onchange="checkSmartInputState()">
+                    </div>
+                </div>
+                <button id="processSmartInputBtn" disabled
+                    class="ai-button-secondary rounded-full px-8 py-3 text-lg font-bold mt-8 flex items-center justify-center mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                    onclick="processSmartInput()">
+                    <i data-lucide="zap" class="w-5 h-5 ml-2"></i> تحليل وإدخال ذكي (Gemini AI)
+                </button>
+            </div>
+
+            <div id="modalStep2" class="hidden">
+                <p class="text-lg text-gray-600 mb-4">الخطوة 2: مراجعة الملاحظة المصاغة بواسطة Gemini AI</p>
+                <div id="aiDraft" class="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-6">
+                    <h4 class="font-bold text-lg mb-2" style="color: var(--color-navy);">الملاحظة المصاغة:</h4>
+                    <p id="draftDescription" class="text-gray-700 leading-relaxed"></p>
+                    <div class="mt-4 p-3 bg-teal-50 rounded-lg">
+                        <h6 class="font-bold text-teal-700">التصنيف المقترح:</h6>
+                        <span id="draftType" class="text-sm text-teal-900 mt-1 font-semibold"></span>
+                    </div>
+                </div>
+                <button
+                    class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                    onclick="backToStep1()">
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i> تعديل المدخلات
+                </button>
+                <button
+                    class="ai-button-primary float-left font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                    onclick="submitObservation()">
+                    <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i> اعتماد وإضافة الملاحظة
+                </button>
+            </div>
+
+            <div id="modalLoading" class="hidden text-center py-10">
+                <div class="loading-spinner mx-auto border-teal-500 border-t-teal-100 w-10 h-10"></div>
+                <p class="text-lg text-gray-600 mt-4">جاري تحليل الملاحظة بواسطة Gemini AI...</p>
+            </div>
+        </div>
     </div>
-    
-    <button type="submit" id="loginButton" class="btn btn-primary" style="margin-top:10px;">
-        تسجيل الدخول
-    </button>
-  </form>
 
-  <div id="msg" class="message"></div>
-  <div class="muted">هذا النظام مخصص للموظفين التنفيذيين والمراقبين المعتمدين فقط.</div>
-</div>
+    <div id="closeoutModal" class="modal no-print">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('closeoutModal')">&times;</span>
+            <h2 class="text-3xl font-extrabold mb-6 pb-2 border-b text-red-600">الإغلاق التنفيذي والمقارنة</h2>
+            <p class="text-lg text-gray-600 mb-4">لإغلاق الملاحظة، يرجى إرفاق صورة "بعد الإصلاح" وكتابة مذكرة ختامية.</p>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+            <div class="mt-4 input-group-wrapper">
+                <div
+                    class="input-group p-4 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-green-500 transition-colors">
+                    <label for="closeoutImageInput" class="block text-sm font-medium text-gray-700 mb-2">صورة بعد
+                        الإصلاح (مطلوب):</label>
+                    <input type="file" id="closeoutImageInput" accept="image/*" required
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
+                        onchange="checkCloseoutState()">
+                </div>
+            </div>
 
-// هذا هو نفس إعداد مشروعك Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyC5HTAq-LeJn4GObn08REwKdqIeokKmwds",
-  authDomain: "smart-hsr.firebaseapp.com",
-  projectId: "smart-hsr",
-  storageBucket: "smart-hsr.firebasestorage.app",
-  messagingSenderId: "885545362431",
-  appId: "1:885545362431:web:2487096393f0fcbf29bdca",
-  measurementId: "G-NH7J83MWT9" // يمكن إزالته إذا لم تستخدم إحصائيات جوجل
-};
+            <h4 class="text-xl font-bold mt-6 mb-3 text-gray-800">المذكرة الختامية (Resolution Note)</h4>
+            <textarea id="resolutionNoteInput" rows="4" required
+                class="w-full p-4 border border-gray-300 rounded-xl focus:ring-green-600 focus:border-green-600 text-gray-700 shadow-sm"
+                placeholder="مثال: تم تنفيذ خطة عمل فورية لتصريف المياه وإصلاح الشق في الطريق باستخدام مواد سريعة الجفاف. تم التأكد من فعالية التصريف بعد هطول أمطار خفيفة. يرجى إغلاق البلاغ."
+                oninput="checkCloseoutState()"></textarea>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const loginButton = document.getElementById('loginButton');
+            <button id="closeoutProcessBtn" disabled
+                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 mt-6 float-left disabled:opacity-50 disabled:cursor-not-allowed"
+                onclick="submitCloseout()">
+                <i data-lucide="check-square" class="w-5 h-5 ml-2"></i> تأكيد إغلاق الملاحظة
+            </button>
+            <div class="clearfix"></div>
+        </div>
+    </div>
 
-function msg(t, type) {
-    const el = document.getElementById('msg');
-    el.innerText = t || '';
-    el.className = 'message ' + (type || '');
-}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-window.signInWithEmail = async function () {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    
-    if (!email || !password) {
-        msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error');
-        return;
-    }
-    
-    // وضع زر التحميل
-    loginButton.disabled = true;
-    loginButton.innerHTML = `<div class="loading-spinner"></div> جاري الدخول...`;
+        // 🔴 لا تقم بتعديل هذا الكود - هذا هو كود ربط مشروعك بـ Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5HTAq-LeJn4GObn08REwKdqIeokKmwds",
+            authDomain: "smart-hsr.firebaseapp.com",
+            projectId: "smart-hsr",
+            storageBucket: "smart-hsr.firebasestorage.app",
+            messagingSenderId: "885545362431",
+            appId: "1:885545362431:web:2487096393f0fcbf29bdca"
+        };
 
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-        msg('تم تسجيل الدخول بنجاح. جاري التوجيه...','success');
-        
-        // التوجيه إلى صفحة لوحة القيادة
-        window.location.href="index.html"; 
-    } catch(e) {
-        let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') {
-             errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-        } else if (e.code === 'auth/too-many-requests') {
-             errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة فاشلة.';
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // ✅ هذا الجزء يحمي لوحة التحكم من الدخول المباشر بدون تسجيل
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // التأكد من أن التوجيه لـ login.html يتم فقط إذا لم يكن المستخدم موجوداً
+                window.location.href = "login.html";
+            } else {
+                console.log("المستخدم مسجل الدخول:", user.uid);
+                // يمكنك هنا عرض معلومات المستخدم إذا أردت
+            }
+        });
+
+        // ✅ هذه الدالة يتم استدعاؤها بالنقر على زر تسجيل الخروج (onclick="logout()")
+        window.logout = function() {
+            signOut(auth).then(() => {
+                // بعد تسجيل الخروج بنجاح، يتم التوجيه لصفحة الدخول
+                window.location.href = "login.html";
+            }).catch((error) => {
+                console.error("خطأ في تسجيل الخروج:", error);
+                alert("حدث خطأ أثناء تسجيل الخروج. يرجى المحاولة مرة أخرى.");
+            });
         }
-        
-        msg(errorMessage, 'error');
-        
-        // إعادة تفعيل الزر
-        loginButton.disabled = false;
-        loginButton.innerHTML = `تسجيل الدخول`;
-    }
-}
-</script>
+    </script>
+
+    <script>
+        // Data Structure for Demo (static data)
+        let observationsData = [
+            //... (هنا توجد بيانات الملاحظات الثابتة من ملفك الأصلي)
+            {
+                id: 1,
+                title: "تجمع مياه راكدة على طريق الخدمة",
+                description: "يوجد تجمع كبير للمياه في المسار الأيمن من طريق الخدمة عند علامة الكيلو 52 باتجاه الشرق. يشكل هذا خطراً للانزلاق ويتطلب تصريفاً فورياً وصيانة للأسفلت.",
+                type: "صيانة",
+                status: "قيد التنفيذ",
+                location: "طريق الخدمة - كيلو 52 شرق",
+                date: "2025-10-14",
+                imageUrl: "https://i.ibb.co/L51H7Lq/before.jpg",
+                afterImageUrl: null,
+                isComparative: false,
+                rawInput: "يوجد تجمع مياه راكدة على طريق الخدمة عند علامة الكيلو 52 باتجاه الشرق. يشكل هذا خطراً للانزلاق ويتطلب تصريفاً فورياً وصيانة للأسفلت.",
+                aiPlan: "خطة عمل فورية لتصريف المياه باستخدام مضخات متنقلة. تحديد مصدر تجمع المياه (انسداد تصريف أو هبوط أرضي). البدء بأعمال إصلاح الأسفلت في غضون 72 ساعة لضمان عدم تكرار المشكلة.",
+                resolutionNote: null,
+                latitude: 24.713552,
+                longitude: 46.675296,
+                createdAt: 1728956400000,
+            },
+            {
+                id: 2,
+                title: "تآكل دهان الحواجز الإسمنتية",
+                description: "تم ملاحظة تآكل شديد في طبقة الدهان العاكسة على الحواجز الإسمنتية (New Jersey Barriers) عند المدخل الغربي للمشروع. هذا يقلل من الرؤية الليلية ويعتبر نقصاً في معايير الجودة.",
+                type: "جودة",
+                status: "جديد",
+                location: "المدخل الغربي - حواجز القسم A",
+                date: "2025-10-13",
+                imageUrl: "https://i.ibb.co/1n5b6vP/paint-crack.jpg",
+                afterImageUrl: null,
+                isComparative: false,
+                rawInput: "تآكل دهان الحواجز الإسمنتية في المدخل الغربي، يتطلب إعادة طلاء عاكس.",
+                aiPlan: "تقييم مدى الضرر في الحواجز. تحديد كمية الطلاء العاكس المطلوبة (النوع 3 حسب المواصفات). جدولة أعمال الطلاء الليلية لتقليل الإزعاج المروري.",
+                resolutionNote: null,
+                latitude: 24.720000,
+                longitude: 46.680000,
+                createdAt: 1728870000000,
+            },
+            {
+                id: 3,
+                title: "مخالفة عدم ارتداء خوذة السلامة",
+                description: "تم التقاط صورة لأحد العمال في منطقة البناء وهو لا يرتدي خوذة السلامة الواقية (Hard Hat). يجب تطبيق إجراءات السلامة المشددة على الفور وتوعية العاملين.",
+                type: "سلامة",
+                status: "تمت المعالجة",
+                location: "موقع البناء - القسم C",
+                date: "2025-10-10",
+                imageUrl: "https://i.ibb.co/3kXfT8L/safety.jpg",
+                afterImageUrl: "https://i.ibb.co/z5V480S/safety-fixed.jpg",
+                isComparative: true,
+                rawInput: "عامل لا يرتدي خوذة سلامة في موقع البناء.",
+                aiPlan: "إيقاف العمل فوراً وتنبيه العامل. عقد جلسة توعية قصيرة (Toolbox Talk) لجميع العمال حول أهمية معدات الوقاية الشخصية (PPE). توثيق الإجراء التأديبي والوقائي.",
+                resolutionNote: "تم توقيف العامل فوراً وتنبيه المشرف. عُقد اجتماع سلامة صباحي لتعزيز الالتزام بـ PPE. تم إغلاق الملاحظة بعد التأكد من عودة العامل لارتداء الخوذة وتطبيق الإجراءات الوقائية.",
+                latitude: 24.710000,
+                longitude: 46.670000,
+                createdAt: 1728610000000,
+            },
+            {
+                id: 4,
+                title: "تشوه لوحة إرشادية بسبب الرياح",
+                description: "لوحة إرشادية كبيرة على الطريق الرئيسي تعرضت للتشوه والانحناء بسبب الرياح القوية الأخيرة. تحتاج اللوحة إلى تثبيت جديد أو استبدال كامل قبل أن تسقط وتتسبب في حادث.",
+                type: "صيانة",
+                status: "جديد",
+                location: "الطريق الرئيسي - تقاطع B",
+                date: "2025-10-14",
+                imageUrl: "https://i.ibb.co/7C9T3bZ/sign-bent.jpg",
+                afterImageUrl: null,
+                isComparative: false,
+                rawInput: "لوحة إرشادية منحنية على الطريق الرئيسي وتحتاج إلى تثبيت.",
+                aiPlan: "إرسال فريق صيانة فوراً لتأمين اللوحة مؤقتاً. طلب تقييم هندسي سريع لتحديد إمكانية إصلاحها أو الحاجة للاستبدال. وضع حاجز مروري مؤقت حول المنطقة.",
+                resolutionNote: null,
+                latitude: 24.715000,
+                longitude: 46.677000,
+                createdAt: 1728958000000,
+            }
+        ];
+
+        let currentSelectedObservation = observationsData.find(obs => obs.id === 4) || observationsData[0]; // Set default
+        let isComparisonDragging = false;
+        let comparisonWrapper;
+        let comparisonDivider;
+        let afterImageContainer;
+
+        // ... (بقية دوال JavaScript من ملفك الأصلي)
+
+        function generateKpiInsights() {
+            const resultElement = document.getElementById('kpi-insight-result');
+            resultElement.classList.remove('hidden');
+
+            // Show temporary loading/placeholder
+            resultElement.innerHTML = `
+                <div class="kpi-insight-container p-4 mt-4 bg-white animate-pulse">
+                    <p class="font-bold text-lg text-teal-700">جاري توليد التقرير بواسطة Gemini AI...</p>
+                    <div class="h-4 bg-gray-200 rounded mt-2 w-3/4"></div>
+                    <div class="h-4 bg-gray-200 rounded mt-2 w-full"></div>
+                </div>
+            `;
+
+            // Simulate AI response delay
+            setTimeout(() => {
+                const kpis = calculateKPIs();
+                resultElement.innerHTML = `<div class="kpi-insight-container p-4 mt-4 bg-white"><p class="font-bold text-lg text-teal-700">ملخص تنفيذي مقترح:</p><p class="text-gray-700 mt-2">تظهر البيانات أن هناك ${kpis.openReports} ملاحظات مفتوحة، مع تركيز في قسم الصيانة (MAINTENANCE) بسبب مشكلة الطريق التي تم إدخالها حديثاً. يجب على الفريق التنفيذي مراجعة خطط العمل الفورية لتقليل متوسط زمن الإغلاق والتركيز على توثيق جميع الملاحظات بالصور لضمان جودة الإغلاق.</p></div>`;
+            }, 1500); // 1.5 second delay simulation
+        }
+
+        // --- Initialization ---
+
+        function calculateAndRenderAll() {
+            calculateKPIs();
+            renderKPIs();
+            observationsData.sort((a, b) => b.createdAt - a.createdAt);
+            renderObservationsList(observationsData);
+
+            if (observationsData.length > 0) {
+                const logoObservation = observationsData.find(obs => obs.id === 4);
+                if (logoObservation) {
+                    showObservationDetail(logoObservation.id);
+                } else {
+                    showObservationDetail(observationsData[0].id);
+                }
+            }
+        }
+
+        function initApp() {
+            calculateAndRenderAll();
+            if (currentSelectedObservation && currentSelectedObservation.isComparative) {
+                setupImageComparison();
+            }
+            lucide.createIcons(); // تأكد من إنشاء أيقونات lucide
+        }
+
+        initApp();
+    </script>
 </body>
+
 </html>
