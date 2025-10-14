@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart HSR | لوحة القيادة التنفيذية - نظام المراقبة وإدارة الجودة الرقمي</title>
+
+    <meta name="description"
+        content="نظام Smart HSR للمراقبة وإدارة الجودة الرقمي - لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
+    <meta name="keywords"
+        content="Smart HSR, إدارة الجودة, نظام المراقبة, لوحة تحكم, الذكاء الاصطناعي, تحليل البيانات">
+    <meta name="author" content="Smart HSR">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
+    <meta property="og:description"
+        content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية وتحليل البيانات بتقنية الذكاء الاصطناعي">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ar_SA">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Smart HSR | نظام المراقبة وإدارة الجودة الرقمي">
+    <meta name="twitter:description" content="لوحة تحكم تنفيذية متقدمة لإدارة الملاحظات الميدانية">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.svg">
+
+    <link rel="stylesheet" href="output.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Professional & Executive Palette */
+            --color-navy: #0A1931;
+            /* Primary Dark Color */
+            --color-teal: #18A5A2;
+            /* Accent/Highlight Color */
+            --color-light-teal: #ACE2E1;
+            /* Light Accent */
+            --color-gray-bg: #F7F9FC;
+            /* Clean Background */
+            --color-shadow-base: rgba(10, 25, 49, 0.4);
+            /* Deep Navy Shadow */
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--color-gray-bg);
+            color: var(--color-navy);
+        }
+
+        /* Gradient for Open Reports (Urgency - Red/Orange) */
+        .kpi-open-gradient {
+            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+            /* Red to Deep Red */
+            color: white;
+            box-shadow: 0 10px 20px rgba(185, 28, 28, 0.4);
+        }
+
+        /* Gradient for Closed Reports (Success - Teal/Green) */
+        .kpi-closed-gradient {
+            background: linear-gradient(135deg, #10B981 0%, #18A5A2 100%);
+            /* Green to Teal */
+            color: white;
+            box-shadow: 0 10px 20px rgba(24, 165, 162, 0.4);
+        }
+
+        /* Gradient for Total Images (Information - Blue/Navy) */
+        .kpi-images-gradient {
+            background: linear-gradient(135deg, #3B82F6 0%, #0A1931 100%);
+            /* Blue to Navy */
+            color: white;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Gradient for Missing Images (Warning - Yellow/Orange) */
+        .kpi-missing-gradient {
+            background: linear-gradient(135deg, #FCD34D 0%, #F97316 100%);
+            /* Yellow to Orange */
+            color: var(--color-navy);
+            /* Dark text for contrast on light gradient */
+            box-shadow: 0 10px 20px rgba(253, 211, 77, 0.4);
+        }
+
+        /* Common KPI Card Styles */
+        .kpi-card-professional {
+            transition: all 0.3s ease;
+            border-radius: 1.5rem;
+            /* Rounded corners */
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1px) translateZ(0);
+            /* For hardware acceleration */
+        }
+
+        .kpi-card-professional::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: height 0.3s ease;
+        }
+
+        .kpi-card-professional:hover {
+            transform: translateY(-8px) scale(1.02);
+            z-index: 10;
+        }
+
+        .kpi-card-professional:hover::before {
+            height: 100%;
+            opacity: 0.1;
+        }
+
+        /* General UI Elements */
+        .ai-button-primary {
+            background-color: var(--color-teal);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(24, 165, 162, 0.5);
+        }
+
+        .ai-button-primary:hover:not(:disabled) {
+            background-color: #148f8c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(24, 165, 162, 0.8);
+        }
+
+        .ai-button-secondary {
+            background-color: var(--color-navy);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(10, 25, 49, 0.6);
+        }
+
+        .ai-button-secondary:hover:not(:disabled) {
+            background-color: #1a3053;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(10, 25, 49, 0.8);
+        }
+
+        /* Vision Button Style (Purple) */
+        .ai-button-vision {
+            background-color: #9333ea;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(147, 51, 234, 0.5);
+        }
+
+        .ai-button-vision:hover:not(:disabled) {
+            background-color: #7e22ce;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(147, 51, 234, 0.8);
+        }
+
+        /* Root Cause Button Style (Dark Red/Maroon) */
+        .ai-button-root-cause {
+            background-color: #881337;
+            /* Maroon 900 */
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(136, 19, 55, 0.5);
+        }
+
+        .ai-button-root-cause:hover:not(:disabled) {
+            background-color: #9f1239;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(136, 19, 55, 0.8);
+        }
+
+        /* Communication Button Style (Orange) */
+        .ai-button-comm {
+            background-color: #F97316;
+            /* Orange */
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.5);
+        }
+
+        .ai-button-comm:hover:not(:disabled) {
+            background-color: #ea580c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.8);
+        }
+
+        /* Grounding Button Style (Green) */
+        .ai-button-grounding {
+            background-color: #10B981;
+            /* Green */
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .ai-button-grounding:hover:not(:disabled) {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.8);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--color-light-teal);
+            /* Use light teal on dark buttons */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        .ai-button-primary .loading-spinner,
+        .ai-button-vision .loading-spinner,
+        .ai-button-comm .loading-spinner,
+        .ai-button-grounding .loading-spinner,
+        .ai-button-secondary .loading-spinner,
+        .ai-button-root-cause .loading-spinner {
+            border-top: 4px solid #0A1931;
+            /* Darker spinner on lighter buttons */
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px var(--color-shadow-base);
+        }
+
+        .image-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--color-navy);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border-top-left-radius: 0.75rem;
+        }
+
+        .observation-item {
+            transition: all 0.2s;
+            border-right: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .observation-item:hover {
+            background-color: #E6F3F3;
+            /* Light teal hover effect */
+            border-right-color: var(--color-teal);
+        }
+
+        .observation-item.active {
+            background-color: #E6F3F3;
+            /* Active state */
+            border-right-color: var(--color-navy);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image Comparison Slider Styles */
+        .comparison-wrapper {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            user-select: none;
+            cursor: ew-resize;
+            /* East-West resize cursor */
+            border-radius: 0.75rem;
+        }
+
+        .comparison-wrapper img,
+        .comparison-wrapper video {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .comparison-wrapper .after-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            /* Initial mask width */
+            overflow: hidden;
+        }
+
+        .comparison-wrapper .after-image img,
+        .comparison-wrapper .after-image video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /* Ensure the image fills the container */
+            height: auto;
+        }
+
+        .comparison-wrapper .comparison-divider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            /* Initial position */
+            width: 4px;
+            height: 100%;
+            background-color: var(--color-teal);
+            transform: translateX(-50%);
+            cursor: grab;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(24, 165, 162, 0.8);
+            border-radius: 2px;
+            transition: width 0.1s ease;
+        }
+
+        .comparison-wrapper .comparison-divider:active {
+            cursor: grabbing;
+        }
+
+        .comparison-wrapper .comparison-divider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 3px solid var(--color-teal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .comparison-label {
+            position: absolute;
+            z-index: 5;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+            border-radius: 0.5rem;
+            opacity: 0.9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .label-before {
+            top: 10px;
+            right: 10px;
+            background-color: #B91C1C;
+            /* Red */
+        }
+
+        .label-after {
+            top: 10px;
+            left: 10px;
+            background-color: #10B981;
+            /* Green */
+        }
+
+        .communication-draft {
+            white-space: pre-wrap;
+            text-align: right;
+            direction: rtl;
+            font-family: 'Tajawal', sans-serif;
+            border-right: 4px solid var(--color-teal);
+            padding-right: 1rem;
+            line-height: 1.8;
+            background-color: #f8fafc;
+        }
+
+        .kpi-insight-container {
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--color-navy);
+        }
+
+        .source-link {
+            color: #0d9488;
+            /* Teal 600 */
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .source-link:hover {
+            color: var(--color-navy);
+            text-decoration: underline;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            /* Center the modal content vertically */
+            justify-content: center;
+            /* Center the modal content horizontally */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slide-up 0.3s ease-out;
+            position: relative;
+        }
+        
+        /* Close button styling */
+        .close-btn {
+            color: #aaa;
+            float: left; /* Pushes to the left in RTL */
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #0A1931;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Custom Location/Image Wrapper */
+        .input-group-wrapper {
+            display: flex;
+            gap: 1rem;
+            /* Space between inputs */
+        }
+
+        .input-group {
+            flex-grow: 1;
+            /* Make inputs fill available space */
+            text-align: center;
+        }
+
+        /* PDF Print Styles (Hiding unnecessary elements when printing) */
+        @media print {
+            body {
+                background-color: white !important;
+                color: black !important;
+                /* تحديد عرض الصفحة للـ PDF */
+                width: 210mm;
+                /* A4 width */
+                min-height: 297mm;
+                /* A4 height */
+                margin: 0;
+            }
+
+            .no-print,
+            #observationsList,
+            #hero,
+            #operational-dashboard,
+            #ai-features,
+            footer,
+            .modal {
+                display: none !important;
+            }
+
+            #observationDetail {
+                display: block !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            .kpi-insight-container,
+            .bg-white {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .comparison-wrapper {
+                /* Display only the "After" image in comparison view for PDF */
+                cursor: default;
+            }
+
+            .comparison-divider,
+            .comparison-label {
+                display: none !important;
+            }
+
+            .comparison-wrapper .after-image {
+                width: 100% !important;
+                overflow: visible !important;
+            }
+
+            .comparison-wrapper .after-image img {
+                position: static !important;
+            }
+
+            /* Adjusting details layout for print */
+            .grid.grid-cols-1.md\3a grid-cols-3 {
+                display: block !important;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+
+            .grid.grid-cols-1.md\3a grid-cols-3>div {
+                border: none !important;
+                padding: 5px;
+            }
+
+            .print-logo {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    <div class="w-full flex justify-start p-6 no-print" style="position: absolute; top: 0; right: 0; z-index: 50;">
+        <button onclick="logout()" style="
+            background-color: #f44336; /* لون أحمر لتسجيل الخروج */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* يدفع الزر إلى الزاوية اليمنى في نمط RTL */
+        " id="logout-button" class="hover:bg-red-700 hover:shadow-lg transform hover:scale-[1.03]">
+            <i data-lucide="log-out" class="w-5 h-5 ml-2"></i> تسجيل الخروج
+        </button>
+    </div>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section id="hero"
+            class="text-center py-12 md:py-16 bg-white rounded-3xl shadow-2xl mb-12 border-b-8 border-t-8 border-teal-100 no-print">
+            <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight"
+                style="color: var(--color-navy);">Smart HSR <span style="color: var(--color-teal);">Dashboard</span>
+            </h1>
+            <h2 class="text-xl md:text-3xl font-extrabold text-gray-600 mt-4">نظام المراقبة وإدارة الجودة الرقمي
+            </h2>
+            <p class="mt-4 text-lg max-w-4xl mx-auto text-gray-500 font-medium">"منصة تنفيذية ذكية لإدارة الجودة
+                والمراقبة الرقمية، توفر رؤية دقيقة للأداء وتدعم اتخاذ القرار المبني على البيانات."</p>
+        </section>
+
+        <section id="observations-log" class="my-20">
+            <div class="text-center mb-12 no-print">
+                <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">سجل
+                    الملاحظات التفاعلي: دقة الصورة والنص</h3>
+                <p class="mt-3 text-lg text-gray-600">عرض تفصيلي للملاحظات الميدانية مع أدوات التحليل الآلي.</p>
+                <button id="add-observation-btn"
+                    class="ai-button-primary rounded-full px-6 py-2 text-md font-bold mt-4 flex items-center justify-center mx-auto"
+                    onclick="openModal('smartInputModal')">
+                    <i data-lucide="plus-circle" class="w-5 h-5 ml-2"></i> إضافة ملاحظة جديدة (الإدخال الذكي)
+                </button>
+            </div>
+
+            <div
+                class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl grid grid-cols-1 lg:grid-cols-3 gap-8 border border-gray-200">
+
+                <div
+                    class="lg:col-span-1 border-b lg:border-b-0 lg:border-l border-gray-300 lg:pr-6 pb-6 lg:pb-0 no-print">
+                    <h4 class="text-2xl font-bold mb-4" style="color: var(--color-teal);">تصفية الملاحظات</h4>
+                    <select id="observationFilter"
+                        class="w-full p-3 border border-gray-300 rounded-xl focus:ring-[--color-teal] focus:border-[--color-teal] text-gray-700 shadow-sm transition-all duration-300"
+                        onchange="handleFilterChange()">
+                        <option value="الكل">عرض كل الملاحظات</option>
+                        <option value="جديد">جديد</option>
+                        <option value="قيد التنفيذ">قيد التنفيذ</option>
+                        <option value="تمت المعالجة">تمت المعالجة</option>
+                        <option value="جودة">جودة</option>
+                        <option value="صيانة">صيانة</option>
+                        <option value="سلامة">سلامة</option>
+                        <option value="بيئة">بيئة</option>
+                    </select>
+                    <h4 class="text-2xl font-bold mt-8 mb-3" style="color: var(--color-navy);">المـلاحظــات</h4>
+                    <div id="observationsList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                        <div class="text-center text-gray-500 mt-10">... جاري تحميل البيانات الثابتة...</div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-inner">
+
+                    <div class="print-logo hidden mb-6 p-4 border-b border-gray-300">
+                        <h2 class="text-3xl font-extrabold text-gray-900" style="color: var(--color-navy);">تقرير Smart
+                            HSR التنفيذي</h2>
+                        <p id="printTitle" class="text-xl font-bold text-teal-600 mt-2"></p>
+                    </div>
+
+                    <h4 class="text-2xl font-extrabold mb-4 border-b-2 border-gray-300 pb-2"
+                        style="color: var(--color-teal);">عرض التفاصيل والتحليل (AI Insights)</h4>
+
+                    <div id="observationDetail" class="hidden">
+
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-medium mb-6 p-4 bg-white rounded-xl shadow-sm border">
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">العنوان:</span>
+                                <span id="detailTitle" class="block font-bold text-gray-800"></span>
+                            </div>
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">التصنيف:</span>
+                                <span id="detailType" class="block font-bold text-teal-600"></span>
+                            </div>
+                            <div class="p-2">
+                                <span class="block text-gray-500">الموقع:</span>
+                                <span id="detailLocation" class="block font-bold text-gray-800"></span>
+                            </div>
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">تاريخ البلاغ:</span>
+                                <span id="detailDate" class="block font-bold text-gray-800"></span>
+                            </div>
+                            <div class="border-b md:border-b-0 md:border-l p-2">
+                                <span class="block text-gray-500">حالة المعالجة:</span>
+                                <span id="detailStatus"
+                                    class="inline-block px-3 py-1 text-sm font-semibold rounded-full text-white"></span>
+                            </div>
+                            <div class="p-2">
+                                <span class="block text-gray-500">معرف البلاغ:</span>
+                                <span id="detailID" class="block font-bold text-gray-800"></span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border-l-4 border-teal-500">
+                            <h5 class="text-xl font-bold mb-3" style="color: var(--color-navy);">وصف الملاحظة</h5>
+                            <p id="detailDescription" class="text-gray-700 leading-relaxed"></p>
+                            <div id="actionPlanContainer" class="mt-4 p-3 bg-teal-50 rounded-lg hidden">
+                                <h6 class="font-bold text-teal-700">خطة العمل المقترحة (Gemini AI)</h6>
+                                <p id="actionPlan" class="text-sm text-teal-900 mt-1"></p>
+                            </div>
+                        </div>
+
+                        <div id="resolutionNoteContainer"
+                            class="bg-green-50 p-5 rounded-2xl shadow-md mb-6 border-l-4 border-green-500 hidden">
+                            <h5 class="text-xl font-bold mb-3 text-green-700">📝 المذكرة الختامية للإغلاق</h5>
+                            <p id="resolutionNote" class="text-gray-700 leading-relaxed"></p>
+                        </div>
+
+                        <div id="imageComparisonWrapper" class="comparison-wrapper mb-6 hidden">
+                            <img id="beforeImage" class="before-image w-full h-auto" alt="صورة قبل الإصلاح"
+                                src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                            <div id="afterImageContainer" class="after-image">
+                                <img id="afterImage" class="w-full h-auto" alt="صورة بعد الإصلاح"
+                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                            </div>
+                            <div id="comparisonDivider" class="comparison-divider no-print">
+                                <div class="comparison-divider-handle">
+                                    <i data-lucide="arrow-left-right" class="w-4 h-4 text-teal-600"></i>
+                                </div>
+                            </div>
+                            <span class="comparison-label label-before no-print">قبل</span>
+                            <span class="comparison-label label-after no-print">بعد</span>
+                        </div>
+
+                        <div id="mediaContainer" class="image-container mb-6 hidden">
+                            <div id="mediaContent" class="w-full h-auto rounded-xl">
+                            </div>
+                            <span class="image-label">مرفق الملاحظة</span>
+                        </div>
+
+                        <div id="noImageMessage"
+                            class="bg-yellow-100 p-4 rounded-xl text-center text-yellow-800 font-medium mb-6 hidden">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 inline-block ml-2"></i> لا تتوفر صورة أو
+                            فيديو لهذه الملاحظة.
+                        </div>
+
+
+                        <div id="aiAnalysisSection"
+                            class="bg-white p-5 rounded-2xl shadow-md border-t-4 border-gray-200">
+                            <h5 class="text-xl font-bold mb-4" style="color: var(--color-navy);">أدوات التحليل الذكي
+                                (Gemini AI)</h5>
+                            <div class="flex flex-wrap gap-3 no-print">
+                                <button id="vision-btn"
+                                    class="ai-button-vision rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="analyzeImage('vision')">
+                                    <i data-lucide="eye" class="w-4 h-4 ml-2"></i> تحليل الصور بالرؤية (Vision)
+                                </button>
+                                <button id="root-cause-btn"
+                                    class="ai-button-root-cause rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="analyzeImage('root-cause')">
+                                    <i data-lucide="microscope" class="w-4 h-4 ml-2"></i> تحليل السبب الجذري
+                                </button>
+                                <button id="comm-btn"
+                                    class="ai-button-comm rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="generateCommunicationDraft()">
+                                    <i data-lucide="send" class="w-4 h-4 ml-2"></i> صياغة أمر العمل
+                                </button>
+                                <button id="pdf-report-btn"
+                                    class="ai-button-grounding rounded-full px-4 py-2 text-sm font-bold flex items-center"
+                                    onclick="generatePdfReport()">
+                                    <i data-lucide="file-text" class="w-4 h-4 ml-2"></i> توليد تقرير PDF
+                                </button>
+                            </div>
+
+                            <div id="aiResultContainer"
+                                class="mt-5 p-4 bg-gray-50 rounded-xl border border-gray-200 hidden">
+                                <h6 id="aiResultTitle" class="font-bold text-lg mb-2" style="color: var(--color-teal);">
+                                </h6>
+                                <div id="aiResultContent" class="text-gray-700"></div>
+                            </div>
+                        </div>
+
+                        <div id="actionButtons"
+                            class="mt-6 pt-4 border-t border-gray-300 flex justify-end gap-3 no-print">
+                            <button id="updateStatusBtn"
+                                class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                                onclick="alert('تم تحويل الحالة إلى قيد التنفيذ (تجريبي)')">
+                                تحديث الحالة إلى "قيد التنفيذ"
+                            </button>
+                            <button id="completeObservationBtn"
+                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                                onclick="openModal('closeoutModal')">
+                                <i data-lucide="lock" class="w-4 h-4 ml-2"></i> الإغلاق التنفيذي (صورة بعد)
+                            </button>
+                            <button id="alreadyCompletedBtn"
+                                class="bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150 hidden"
+                                disabled>
+                                <i data-lucide="check" class="w-4 h-4 ml-2"></i> الملاحظة مغلقة وموثقة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="detailPlaceholder" class="text-center space-y-4">
+                        <p class="text-gray-500 mt-16 text-lg">الرجاء اختيار ملاحظة من القائمة لعرض الصورة والمذكرة
+                            التفصيلية.</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M17 10h.01" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="operational-dashboard" class="my-20 no-print">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">📊
+                    مؤشرات الأداء الحيوية (Vital Metrics)</h3>
+                <p class="mt-3 text-lg text-gray-600">تتبع البلاغات وحالة التوثيق بالصور لضمان كفاءة الإغلاق.</p>
+            </div>
+            <div id="kpiContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="lg:col-span-4 text-center p-8 bg-white rounded-2xl shadow-xl">
+                    <h4 class="text-2xl font-bold text-gray-500">لا توجد ملاحظات حالياً.</h4>
+                    <p class="text-gray-400 mt-2">الرجاء استخدام زر "إضافة ملاحظة جديدة" في الأعلى للبدء.</p>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <button id="kpi-insight-button"
+                    class="ai-button-secondary rounded-full px-8 py-3 text-lg font-bold flex items-center justify-center mx-auto"
+                    onclick="generateKpiInsights()">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 ml-2"></i> ✨ توليد تقرير تنفيذي لملخص اللوحة (Gemini AI)
+                </button>
+                <div id="kpi-insight-result" class="mt-6 text-sm">
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-features"
+            class="my-20 bg-white p-8 md:p-12 rounded-3xl shadow-2xl border-t-8 border-[--color-teal] no-print">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3" style="color: var(--color-navy);">🧠
+                    الذكاء الاصطناعي في صميم العملية</h3>
+                <p class="mt-3 text-lg text-gray-600">استفد من نماذج Gemini لتحويل البيانات إلى قرارات قابلة للتنفيذ.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-7 gap-8 text-center">
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #9333ea;">👁️</span>
+                    <h4 class="font-extrabold text-lg mb-1" style="color: var(--color-navy);">تحليل الرؤية</h4>
+                    <p class="text-xs text-gray-600">وصف المشكلة وتحديد حالة الإغلاق المثالية.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: var(--color-teal);">⚙️</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">خطة عمل آلية</h4>
+                    <p class="text-xs text-gray-600">توليد خطوات تنفيذية لمعالجة الملاحظة.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: var(--color-teal);">🚨</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">تقييم المخاطر</h4>
+                    <p class="text-xs text-gray-600">تحديد الأولوية والإطار الزمني في هيكل JSON.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #881337;">🔬</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">تحليل السبب الجذري</h4>
+                    <p class="text-xs text-gray-600">اقتراح سبب جذري ونصيحة وقائية.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #F97316;">✉️</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">صياغة الاتصال</h4>
+                    <p class="text-xs text-gray-600">توليد مسودة أمر عمل أو بريد إلكتروني.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: var(--color-navy);">🔊</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">تقرير الإغلاق الصوتي</h4>
+                    <p class="text-xs text-gray-600">تلخيص التقرير وتحويله إلى ملف صوتي.</p>
+                </div>
+                <div
+                    class="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+                    <span class="text-4xl block mb-2" style="color: #10B981;">🌐</span>
+                    <h4 class="font-bold text-lg mb-1" style="color: var(--color-navy);">البحث عن المعايير</h4>
+                    <p class="text-xs text-gray-600">استخدام البحث المدعوم لاستحضار المعايير العالمية.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-20 py-12 border-t-4 border-teal-200 bg-white rounded-t-3xl shadow-2xl no-print">
+            <div class="max-w-6xl mx-auto px-4">
+                <h3 class="text-3xl md:text-4xl font-extrabold mb-4" style="color: var(--color-navy);"> ابدأ رحلة التحول
+                    الرقمي مع Smart HSR </h3>
+                <p class="mt-3 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto"> نظام ذكي يُحول بيانات الميدان إلى
+                    قرارات استراتيجية تنفيذيّة </p>
+                <a href="http://wa.me/966507006849" target="_blank"
+                    class="mt-8 inline-block bg-[--color-teal] text-white font-bold py-4 px-12 rounded-full text-xl hover:bg-[--color-navy] transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    اطلب عرضًا تجريبيًا الآن </a>
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600 mb-6">
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2">حول النظام</h4>
+                            <p>نظام Smart HSR للمراقبة وإدارة الجودة الرقمي</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2">الدعم الفني</h4>
+                            <p>Blumark24@gmail.com</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2">المبيعات والاستفسارات</h4>
+                            <p>0507006849</p>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <p class="mb-2">&copy; 2025 Smart HSR. جميع الحقوق محفوظة.</p>
+                        <p id="userInfo">تم تحميل البيانات بنجاح (وضع ثابت)</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <div id="smartInputModal" class="modal no-print">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('smartInputModal')">&times;</span>
+            <h2 class="text-3xl font-extrabold mb-6 pb-2 border-b" style="color: var(--color-navy);">وحدة الإدخال الذكي
+                للملاحظات (Smart HSR)</h2>
+            <div id="modalStep1">
+                <p class="text-lg text-gray-600 mb-4">الخطوة 1: أدخل تفاصيل الملاحظة (النص، الموقع، الصورة/الفيديو)</p>
+                <textarea id="rawObservationInput" rows="5"
+                    class="w-full p-4 border border-gray-300 rounded-xl focus:ring-[--color-teal] focus:border-[--color-teal] text-gray-700 shadow-sm"
+                    placeholder="مثال: يوجد تجمع للمياه على طريق الخدمة عند الكيلو 52 باتجاه الشرق، يتسبب في انزلاق السيارات. نحتاج إلى تصريف فوري."
+                    oninput="checkSmartInputState()"></textarea>
+                <div class="mt-4 input-group-wrapper">
+                    <div
+                        class="input-group p-4 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-teal-500 transition-colors">
+                        <label for="locationStatus" class="block text-sm font-medium text-gray-700 mb-2">الموقع
+                            الجغرافي (GPS):</label>
+                        <p id="locationStatus" class="text-sm font-semibold text-gray-500">لم يتم التحديد بعد</p>
+                        <input type="hidden" id="inputLatitude">
+                        <input type="hidden" id="inputLongitude">
+                        <button id="getLocationBtn"
+                            class="ai-button-primary rounded-full px-4 py-2 text-sm font-bold mt-2 flex items-center justify-center mx-auto"
+                            onclick="getLocation()" type="button">
+                            <i data-lucide="map-pin" class="w-4 h-4 ml-2"></i> تحديد موقعي الحالي
+                        </button>
+                    </div>
+                    <div
+                        class="input-group p-4 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-teal-500 transition-colors">
+                        <label for="imageInput" class="block text-sm font-medium text-gray-700 mb-2">صورة/فيديو
+                            (اختياري):</label>
+                        <input type="file" id="imageInput" accept="image/*,video/*"
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"
+                            onchange="checkSmartInputState()">
+                    </div>
+                </div>
+                <button id="processSmartInputBtn" disabled
+                    class="ai-button-secondary rounded-full px-8 py-3 text-lg font-bold mt-8 flex items-center justify-center mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                    onclick="processSmartInput()">
+                    <i data-lucide="zap" class="w-5 h-5 ml-2"></i> تحليل وإدخال ذكي (Gemini AI)
+                </button>
+            </div>
+
+            <div id="modalStep2" class="hidden">
+                <p class="text-lg text-gray-600 mb-4">الخطوة 2: مراجعة الملاحظة المصاغة بواسطة Gemini AI</p>
+                <div id="aiDraft" class="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-6">
+                    <h4 class="font-bold text-lg mb-2" style="color: var(--color-navy);">الملاحظة المصاغة:</h4>
+                    <p id="draftDescription" class="text-gray-700 leading-relaxed"></p>
+                    <div class="mt-4 p-3 bg-teal-50 rounded-lg">
+                        <h6 class="font-bold text-teal-700">التصنيف المقترح:</h6>
+                        <span id="draftType" class="text-sm text-teal-900 mt-1 font-semibold"></span>
+                    </div>
+                </div>
+                <button
+                    class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                    onclick="backToStep1()">
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i> تعديل المدخلات
+                </button>
+                <button
+                    class="ai-button-primary float-left font-bold py-2 px-4 rounded-full shadow-lg transition duration-150"
+                    onclick="submitObservation()">
+                    <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i> اعتماد وإضافة الملاحظة
+                </button>
+            </div>
+
+            <div id="modalLoading" class="hidden text-center py-10">
+                <div class="loading-spinner mx-auto border-teal-500 border-t-teal-100 w-10 h-10"></div>
+                <p class="text-lg text-gray-600 mt-4">جاري تحليل الملاحظة بواسطة Gemini AI...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="closeoutModal" class="modal no-print">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('closeoutModal')">&times;</span>
+            <h2 class="text-3xl font-extrabold mb-6 pb-2 border-b text-red-600">الإغلاق التنفيذي والمقارنة</h2>
+            <p class="text-lg text-gray-600 mb-4">لإغلاق الملاحظة، يرجى إرفاق صورة "بعد الإصلاح" وكتابة مذكرة ختامية.</p>
+
+            <div class="mt-4 input-group-wrapper">
+                <div
+                    class="input-group p-4 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-green-500 transition-colors">
+                    <label for="closeoutImageInput" class="block text-sm font-medium text-gray-700 mb-2">صورة بعد
+                        الإصلاح (مطلوب):</label>
+                    <input type="file" id="closeoutImageInput" accept="image/*" required
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
+                        onchange="checkCloseoutState()">
+                </div>
+            </div>
+
+            <h4 class="text-xl font-bold mt-6 mb-3 text-gray-800">المذكرة الختامية (Resolution Note)</h4>
+            <textarea id="resolutionNoteInput" rows="4" required
+                class="w-full p-4 border border-gray-300 rounded-xl focus:ring-green-600 focus:border-green-600 text-gray-700 shadow-sm"
+                placeholder="مثال: تم تنفيذ خطة عمل فورية لتصريف المياه وإصلاح الشق في الطريق باستخدام مواد سريعة الجفاف. تم التأكد من فعالية التصريف بعد هطول أمطار خفيفة. يرجى إغلاق البلاغ."
+                oninput="checkCloseoutState()"></textarea>
+
+            <button id="closeoutProcessBtn" disabled
+                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 mt-6 float-left disabled:opacity-50 disabled:cursor-not-allowed"
+                onclick="submitCloseout()">
+                <i data-lucide="check-square" class="w-5 h-5 ml-2"></i> تأكيد إغلاق الملاحظة
+            </button>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+        // 🔴 لا تقم بتعديل هذا الكود - هذا هو كود ربط مشروعك بـ Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5HTAq-LeJn4GObn08REwKdqIeokKmwds",
+            authDomain: "smart-hsr.firebaseapp.com",
+            projectId: "smart-hsr",
+            storageBucket: "smart-hsr.firebasestorage.app",
+            messagingSenderId: "885545362431",
+            appId: "1:885545362431:web:2487096393f0fcbf29bdca"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // ✅ هذا الجزء يحمي لوحة التحكم من الدخول المباشر بدون تسجيل
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // التأكد من أن التوجيه لـ login.html يتم فقط إذا لم يكن المستخدم موجوداً
+                window.location.href = "login.html";
+                document.body.style.display = 'none'; // لإخفاء المحتوى قبل التحويل
+            } else {
+                console.log("المستخدم مسجل الدخول:", user.uid);
+                document.body.style.display = 'block'; // إظهار المحتوى بعد التحقق
+            }
+        });
+
+        // ✅ هذه الدالة يتم استدعاؤها بالنقر على زر تسجيل الخروج (onclick="logout()")
+        window.logout = function() {
+            signOut(auth).then(() => {
+                // بعد تسجيل الخروج بنجاح، يتم التوجيه لصفحة الدخول
+                window.location.href = "login.html";
+            }).catch((error) => {
+                console.error("خطأ في تسجيل الخروج:", error);
+                alert("حدث خطأ أثناء تسجيل الخروج. يرجى المحاولة مرة أخرى.");
+            });
+        }
+    </script>
+
+    <script>
+        // =========================================================================
+        // 🔴🔴🔴 بيانات الملاحظات (تبدأ فارغة وجاهزة لاستقبال الإدخال) 🔴🔴🔴
+        // =========================================================================
+        let observationsData = []; 
+        
+        let currentSelectedObservation = null; 
+        let isComparisonDragging = false;
+        let comparisonWrapper;
+        let comparisonDivider;
+        let afterImageContainer;
+
+
+        // =========================================================================
+        // 📊 دوال مؤشرات الأداء الرئيسية (KPIs)
+        // =========================================================================
+
+        // دالة تحسب مؤشرات الأداء الرئيسية (KPIs)
+        function calculateKPIs() {
+            if (observationsData.length === 0) {
+                return {
+                    totalReports: 0,
+                    openReports: 0,
+                    closedReports: 0,
+                    imageCoverage: 0,
+                    missingImages: 0
+                };
+            }
+
+            const totalReports = observationsData.length;
+            const openReports = observationsData.filter(obs => obs.status === 'جديد' || obs.status === 'قيد التنفيذ').length;
+            const closedReports = totalReports - openReports;
+            const reportsWithImage = observationsData.filter(obs => obs.imageUrl && obs.imageUrl !== 'placeholder.jpg').length;
+            const imageCoverage = totalReports > 0 ? Math.round((reportsWithImage / totalReports) * 100) : 0;
+            const missingImages = totalReports - reportsWithImage;
+
+            return { totalReports, openReports, closedReports, imageCoverage, missingImages };
+        }
+
+        // دالة لعرض مؤشرات الأداء
+        function renderKPIs() {
+            const kpis = calculateKPIs();
+            const kpiContainer = document.getElementById('kpiContainer');
+            
+             if (kpis.totalReports === 0) {
+                 kpiContainer.innerHTML = `
+                    <div class="lg:col-span-4 text-center p-8 bg-white rounded-2xl shadow-xl">
+                        <h4 class="text-2xl font-bold text-gray-500">لا توجد ملاحظات حالياً.</h4>
+                        <p class="text-gray-400 mt-2">الرجاء استخدام زر "إضافة ملاحظة جديدة" في الأعلى للبدء.</p>
+                    </div>
+                 `;
+                 return;
+             }
+
+
+            const kpiCards = [
+                {
+                    title: "إجمالي الملاحظات",
+                    value: kpis.totalReports,
+                    icon: "file-text",
+                    gradientClass: "kpi-images-gradient"
+                },
+                {
+                    title: "الملاحظات المفتوحة",
+                    value: kpis.openReports,
+                    icon: "bell",
+                    gradientClass: "kpi-open-gradient"
+                },
+                {
+                    title: "الملاحظات المغلقة",
+                    value: kpis.closedReports,
+                    icon: "check-circle",
+                    gradientClass: "kpi-closed-gradient"
+                },
+                {
+                    title: "تغطية الصور (%)",
+                    value: `${kpis.imageCoverage}%`,
+                    icon: "camera",
+                    gradientClass: "kpi-closed-gradient" // تم تعديل اللون لـ Green/Teal ليتناسب مع النسبة المئوية
+                }
+            ];
+
+            kpiContainer.innerHTML = kpiCards.map(kpi => `
+                <div class="kpi-card-professional ${kpi.gradientClass} p-6">
+                    <div class="flex items-center justify-between">
+                        <i data-lucide="${kpi.icon}" class="w-8 h-8 opacity-80"></i>
+                        <p class="text-lg font-medium opacity-90">${kpi.title}</p>
+                    </div>
+                    <p class="text-4xl font-extrabold mt-3">${kpi.value}</p>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // محاكاة توليد تقرير KPIs
+        function generateKpiInsights() {
+            if (observationsData.length === 0) {
+                return alert("لا يمكن توليد تقرير تنفيذي لعدم وجود بيانات.");
+            }
+            
+            setAILoading('kpi-insight-button', 'جاري توليد التقرير...');
+            
+            const kpis = calculateKPIs();
+            const insightContent = `
+                تظهر البيانات أن هناك <span class="font-bold text-red-600">${kpis.openReports}</span> ملاحظات مفتوحة، من أصل <span class="font-bold text-teal-700">${kpis.totalReports}</span> ملاحظة إجمالاً. معدل الإغلاق هو <span class="font-bold text-green-600">${kpis.closedReports}</span> ملاحظة مغلقة، مع تغطية صور بنسبة <span class="font-bold text-blue-600">${kpis.imageCoverage}%</span>. يجب على الفريق التنفيذي مراجعة خطط العمل الفورية لتقليل متوسط زمن الإغلاق والتركيز على توثيق جميع الملاحظات بالصور لضمان جودة الإغلاق.
+            `;
+
+            setTimeout(() => {
+                document.getElementById('kpi-insight-result').innerHTML = `
+                    <div class="kpi-insight-container p-4 mt-4 bg-white rounded-2xl shadow-md border-t-4 border-teal-500">
+                        <p class="font-bold text-lg" style="color: var(--color-navy);">ملخص تنفيذي مقترح (Gemini AI):</p>
+                        <p class="text-gray-700 mt-2">${insightContent}</p>
+                    </div>
+                `;
+                resetAIButton('kpi-insight-button', 'bar-chart-3', '✨ توليد تقرير تنفيذي لملخص اللوحة (Gemini AI)');
+            }, 3000);
+        }
+
+        // =========================================================================
+        // 🖼️ دوال عرض القائمة والتفاصيل
+        // =========================================================================
+        
+        // دالة لعرض قائمة الملاحظات
+        function renderObservationsList(data) {
+            const listElement = document.getElementById('observationsList');
+            if (data.length === 0) {
+                listElement.innerHTML = `<div class="p-4 text-center text-gray-500 bg-gray-50 rounded-lg">لا توجد ملاحظات حالياً في هذا التصنيف.</div>`;
+                return;
+            }
+
+            listElement.innerHTML = data.map(obs => {
+                const statusClass = obs.status === 'تمت المعالجة' ? 'text-green-600' : 
+                                    obs.status === 'قيد التنفيذ' ? 'text-yellow-600' : 'text-red-600';
+                return `
+                    <div class="observation-item p-3 border rounded-xl shadow-sm bg-white" 
+                         data-id="${obs.id}" 
+                         onclick="showObservationDetail(${obs.id})">
+                        <h5 class="text-sm font-bold text-gray-900">${obs.title}</h5>
+                        <p class="text-xs ${statusClass} font-semibold mt-1">${obs.status} - ${obs.type}</p>
+                    </div>
+                `;
+            }).join('');
+
+            if (currentSelectedObservation) {
+                const activeItem = listElement.querySelector(`[data-id="${currentSelectedObservation.id}"]`);
+                if (activeItem) {
+                    activeItem.classList.add('active');
+                }
+            }
+        }
+        
+        // دالة لعرض التفاصيل (تم تضمينها في الكود السابق)
+        // ... (تم دمج دالة showObservationDetail أدناه)
+
+
+        // =========================================================================
+        // 🧩 الدوال الأساسية لعمل الـ Modals و الإدخال الذكي
+        // =========================================================================
+
+        // دالة التحكم بفتح وإغلاق النوافذ المنبثقة
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            
+            if (modalId === 'smartInputModal') {
+                backToStep1();
+            }
+        }
+
+        // دالة للعودة إلى الخطوة الأولى في الإدخال الذكي
+        function backToStep1() {
+            document.getElementById('modalStep1').classList.remove('hidden');
+            document.getElementById('modalStep2').classList.add('hidden');
+            document.getElementById('modalLoading').classList.add('hidden');
+        }
+
+        // دالة فحص حالة حقول الإدخال الذكي لتفعيل زر المعالجة
+        function checkSmartInputState() {
+            const rawInput = document.getElementById('rawObservationInput').value.trim();
+            const processBtn = document.getElementById('processSmartInputBtn');
+            
+            if (rawInput.length > 10) { 
+                processBtn.disabled = false;
+                processBtn.innerHTML = `<i data-lucide="zap" class="w-5 h-5 ml-2"></i> تحليل وإدخال ذكي (Gemini AI)`;
+            } else {
+                processBtn.disabled = true;
+                processBtn.innerHTML = `<i data-lucide="zap" class="w-5 h-5 ml-2"></i> تحليل وإدخال ذكي (Gemini AI)`;
+            }
+            lucide.createIcons();
+        }
+
+
+        // =========================================================================
+        // 🌐 وظائف الموقع الجغرافي (Geolocation)
+        // =========================================================================
+
+        function getLocation() {
+            const statusElement = document.getElementById('locationStatus');
+            const latInput = document.getElementById('inputLatitude');
+            const lonInput = document.getElementById('inputLongitude');
+            const btn = document.getElementById('getLocationBtn');
+
+            if (navigator.geolocation) {
+                statusElement.innerText = "جاري تحديد الموقع...";
+                btn.disabled = true;
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        latInput.value = lat;
+                        lonInput.value = lon;
+                        statusElement.innerText = `تم التحديد: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        btn.disabled = false;
+                        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 ml-2"></i> تم التحديد`;
+                        lucide.createIcons();
+                    },
+                    (error) => {
+                        statusElement.innerText = "فشل التحديد (الرجاء تفعيل الموقع)";
+                        latInput.value = "";
+                        lonInput.value = "";
+                        btn.disabled = false;
+                        btn.innerHTML = `<i data-lucide="map-pin" class="w-4 h-4 ml-2"></i> تحديد موقعي الحالي`;
+                        lucide.createIcons();
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                statusElement.innerText = "المتصفح لا يدعم تحديد الموقع الجغرافي.";
+            }
+        }
+
+
+        // =========================================================================
+        // 🧠 محاكاة عملية الإدخال الذكي بالذكاء الاصطناعي (Gemini Mock)
+        // =========================================================================
+
+        async function processSmartInput() {
+            const rawInput = document.getElementById('rawObservationInput').value.trim();
+            const location = document.getElementById('locationStatus').innerText;
+            // const imageFile = document.getElementById('imageInput').files[0]; // لا نحتاجه في هذه الدالة
+
+            // إظهار حالة التحميل وإخفاء حقول الإدخال
+            document.getElementById('modalStep1').classList.add('hidden');
+            document.getElementById('modalLoading').classList.remove('hidden');
+
+            // محاكاة تأخير التحليل (3 ثوانٍ)
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // نتائج محاكاة التحليل الذكي (Gemini AI Response)
+            const mockAnalysis = {
+                draftDescription: `بناءً على ملاحظتكم حول "${rawInput.substring(0, 50)}..."، تم صياغة البلاغ التالي بشكل رسمي: ${rawInput}. الموقع الجغرافي الذي تم تحديده هو (${location}). يوصى بالتدخل السريع لتقليل الأضرار المحتملة.`,
+                type: (rawInput.includes("مياه") || rawInput.includes("صيانة") || rawInput.includes("تصريف")) ? "صيانة" : 
+                      (rawInput.includes("سلامة") || rawInput.includes("خطر") || rawInput.includes("انزلاق")) ? "سلامة" : "جودة"
+            };
+            
+            // عرض نتائج التحليل للمراجعة
+            document.getElementById('draftDescription').innerText = mockAnalysis.draftDescription;
+            document.getElementById('draftType').innerText = mockAnalysis.type;
+
+            // الانتقال للخطوة 2
+            document.getElementById('modalLoading').classList.add('hidden');
+            document.getElementById('modalStep2').classList.remove('hidden');
+        }
+
+        // =========================================================================
+        // 💾 دالة إضافة الملاحظة (Submit)
+        // =========================================================================
+
+        function submitObservation() {
+            const rawInput = document.getElementById('rawObservationInput').value.trim();
+            const lat = document.getElementById('inputLatitude').value;
+            const lon = document.getElementById('inputLongitude').value;
+            const imageFile = document.getElementById('imageInput').files[0];
+            const draftedDescription = document.getElementById('draftDescription').innerText;
+            const draftedType = document.getElementById('draftType').innerText;
+
+            const newId = observationsData.length > 0 ? observationsData[observationsData.length - 1].id + 1 : 1;
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            let imageUrl = 'placeholder.jpg'; 
+            if (imageFile) {
+                // استخدام رابط محلي مؤقت للملف المرفق
+                imageUrl = URL.createObjectURL(imageFile); 
+            }
+
+            const newObservation = {
+                id: newId,
+                title: `بلاغ ميداني جديد - ${draftedType}`,
+                description: draftedDescription,
+                type: draftedType,
+                location: lat && lon ? `الإحداثيات: ${lat}, ${lon}` : "لم يتم تحديد الموقع",
+                date: currentDate,
+                status: 'جديد',
+                imageUrl: imageUrl,
+                resolutionNote: null,
+                afterImageUrl: null,
+                isComparative: false
+            };
+
+            observationsData.push(newObservation);
+
+            // إعادة تحميل واجهة المستخدم لعرض الملاحظة الجديدة
+            calculateAndRenderAll();
+            
+            // إغلاق المودال وتصفير الحقول
+            closeModal('smartInputModal');
+            document.getElementById('rawObservationInput').value = '';
+            document.getElementById('imageInput').value = ''; 
+            document.getElementById('locationStatus').innerText = "لم يتم التحديد بعد";
+            document.getElementById('inputLatitude').value = '';
+            document.getElementById('inputLongitude').value = '';
+            
+            // تحديد الملاحظة الجديدة وعرض تفاصيلها
+            currentSelectedObservation = newObservation;
+            showObservationDetail(newId);
+            
+            // alert(`تمت إضافة الملاحظة رقم ${newId} بنجاح!`);
+        }
+
+
+        // =========================================================================
+        // 🖼️ دالة إغلاق الملاحظة (Closeout)
+        // =========================================================================
+
+        function checkCloseoutState() {
+            const note = document.getElementById('resolutionNoteInput').value.trim();
+            const image = document.getElementById('closeoutImageInput').files[0];
+            const btn = document.getElementById('closeoutProcessBtn');
+
+            if (note.length > 20 && image) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        function submitCloseout() {
+            if (!currentSelectedObservation) {
+                alert("يرجى اختيار ملاحظة أولاً.");
+                closeModal('closeoutModal');
+                return;
+            }
+            if (currentSelectedObservation.status !== 'جديد' && currentSelectedObservation.status !== 'قيد التنفيذ') {
+                 alert("الملاحظة مغلقة مسبقاً.");
+                 closeModal('closeoutModal');
+                 return;
+            }
+
+
+            const resolutionNote = document.getElementById('resolutionNoteInput').value.trim();
+            const closeoutImageFile = document.getElementById('closeoutImageInput').files[0];
+
+            if (!resolutionNote || !closeoutImageFile) {
+                 alert("الرجاء إرفاق الصورة وكتابة المذكرة الختامية.");
+                 return;
+            }
+
+            // محاكاة حفظ الصورة والحالة
+            const afterImageUrl = closeoutImageFile ? URL.createObjectURL(closeoutImageFile) : null;
+            
+            // تحديث بيانات الملاحظة في المصفوفة
+            const obsIndex = observationsData.findIndex(obs => obs.id === currentSelectedObservation.id);
+            if (obsIndex !== -1) {
+                observationsData[obsIndex].status = 'تمت المعالجة';
+                observationsData[obsIndex].resolutionNote = resolutionNote;
+                observationsData[obsIndex].afterImageUrl = afterImageUrl;
+                observationsData[obsIndex].isComparative = true;
+                
+                currentSelectedObservation = observationsData[obsIndex]; // تحديث الكائن الحالي
+            }
+
+            // إعادة عرض لوحة القيادة وتحديث التفاصيل
+            calculateAndRenderAll();
+            showObservationDetail(currentSelectedObservation.id);
+            
+            // إغلاق المودال وتصفير الحقول
+            closeModal('closeoutModal');
+            document.getElementById('resolutionNoteInput').value = '';
+            document.getElementById('closeoutImageInput').value = ''; 
+            
+            // alert(`تم إغلاق الملاحظة رقم ${currentSelectedObservation.id} بنجاح وتوثيقها.`);
+        }
+
+        // =========================================================================
+        // 🖼️ دالة المقارنة بين الصور (Before/After Slider)
+        // =========================================================================
+
+        function setupImageComparison() {
+            comparisonWrapper = document.getElementById('imageComparisonWrapper');
+            comparisonDivider = document.getElementById('comparisonDivider');
+            afterImageContainer = document.getElementById('afterImageContainer');
+
+            if (!comparisonWrapper || !comparisonDivider || !afterImageContainer) return;
+
+            // Resetting initial state
+            afterImageContainer.style.width = '50%';
+            comparisonDivider.style.left = '50%';
+            isComparisonDragging = false; // Reset drag state
+
+            const moveDivider = (e) => {
+                if (!isComparisonDragging) return;
+
+                const rect = comparisonWrapper.getBoundingClientRect();
+                let clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+                let x = clientX - rect.left;
+                
+                // Clamp x to be within the bounds of the wrapper
+                x = Math.max(0, Math.min(x, rect.width));
+
+                const percentage = (x / rect.width) * 100;
+
+                afterImageContainer.style.width = `${percentage}%`;
+                comparisonDivider.style.left = `${percentage}%`;
+            };
+
+            const startDrag = (e) => {
+                isComparisonDragging = true;
+                comparisonWrapper.style.cursor = 'grabbing';
+                e.preventDefault(); // Prevent text selection
+            };
+
+            const endDrag = () => {
+                isComparisonDragging = false;
+                comparisonWrapper.style.cursor = 'ew-resize';
+            };
+
+            // Mouse events
+            comparisonDivider.onmousedown = startDrag;
+            document.onmousemove = moveDivider;
+            document.onmouseup = endDrag;
+
+            // Touch events for mobile
+            comparisonDivider.ontouchstart = startDrag;
+            document.ontouchmove = moveDivider;
+            document.ontouchend = endDrag;
+        }
+
+
+        // =========================================================================
+        // ⚙️ محاكاة دوال التحليل الآلي للذكاء الاصطناعي (Gemini AI Mock)
+        // =========================================================================
+
+        function setAILoading(btnId, loadingText) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<div class="loading-spinner"></div> ${loadingText}`;
+                lucide.createIcons();
+            }
+        }
+
+        function resetAIButton(btnId, originalIcon, originalText) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="${originalIcon}" class="w-4 h-4 ml-2"></i> ${originalText}`;
+                lucide.createIcons();
+            }
+        }
+
+        function displayAIResult(title, content, type = 'text') {
+            const container = document.getElementById('aiResultContainer');
+            document.getElementById('aiResultTitle').innerText = title;
+            const contentElement = document.getElementById('aiResultContent');
+            container.classList.remove('hidden');
+
+            if (type === 'comm') {
+                contentElement.innerHTML = `<div class="communication-draft p-4 rounded-xl shadow-inner">${content}</div>`;
+            } else {
+                contentElement.innerText = content;
+            }
+        }
+
+        // محاكاة تحليل الصور بالرؤية (Vision)
+        function analyzeImage(feature) {
+            if (!currentSelectedObservation) return alert("يرجى اختيار ملاحظة أولاً.");
+            if (!currentSelectedObservation.imageUrl || currentSelectedObservation.imageUrl === 'placeholder.jpg') {
+                return alert("لا توجد صورة مُرفقة لتحليلها بالرؤية في هذه الملاحظة.");
+            }
+            
+            let btnId, originalText, originalIcon, title, mockContent;
+
+            if (feature === 'vision') {
+                btnId = 'vision-btn';
+                originalText = 'تحليل الصور بالرؤية (Vision)';
+                originalIcon = 'eye';
+                title = 'نتائج تحليل الرؤية (Gemini Vision)';
+                mockContent = `
+                    بتحليل الصورة المرفقة، تم تحديد أن المشكلة هي 'تجمع مياه سطحية كبيرة' في منطقة غير مخصصة للتصريف، مما يشير إلى فشل في البنية التحتية. يوصى بمعالجة التصريف فوراً. حالة الإغلاق المثالية: يجب أن تكون المنطقة جافة تماماً.
+                `;
+            } else if (feature === 'root-cause') {
+                btnId = 'root-cause-btn';
+                originalText = 'تحليل السبب الجذري';
+                originalIcon = 'microscope';
+                title = 'تحليل السبب الجذري (Root Cause Analysis)';
+                mockContent = `
+                    السبب الجذري المقترح: عدم كفاية الصرف في تصميم الطريق (Design Flaw) أو انسداد خطوط التصريف بسبب النفايات (Maintenance Failure). 
+                    نصيحة وقائية: فحص دوري لخطوط التصريف كل 60 يوماً وتعديل الميل الطولي للطريق في تلك المنطقة.
+                `;
+            }
+            
+            setAILoading(btnId, 'جاري التحليل...');
+            
+            setTimeout(() => {
+                displayAIResult(title, mockContent);
+                resetAIButton(btnId, originalIcon, originalText);
+            }, 2500);
+        }
+
+        // محاكاة صياغة أمر العمل
+        function generateCommunicationDraft() {
+            if (!currentSelectedObservation) return alert("يرجى اختيار ملاحظة أولاً.");
+            
+            setAILoading('comm-btn', 'جاري الصياغة...');
+
+            const draft = `
+                <h4 style="font-weight: 700; color: #0A1931;">أمر عمل (Work Order)</h4>
+                <p style="margin-bottom: 15px;">إلى فريق ${currentSelectedObservation.type}،</p>
+                <p>يرجى التوجّه فوراً إلى الموقع التالي (${currentSelectedObservation.location}) لمعالجة الملاحظة رقم #${currentSelectedObservation.id} ذات الأولوية العالية.</p>
+                <p style="margin-top: 10px;">وصف المشكلة: ${currentSelectedObservation.description}</p>
+                <p style="margin-top: 15px; font-weight: 700; color: #B91C1C;">المهام المطلوبة (باستخدام الذكاء الاصطناعي):</p>
+                <ul style="list-style-type: '✔️'; padding-right: 20px;">
+                    <li>معالجة السبب الجذري لتجمع المياه.</li>
+                    <li>توثيق الموقع قبل وبعد الإصلاح بصور عالية الدقة.</li>
+                    <li>إغلاق البلاغ بعد التأكد من جفاف المنطقة بالكامل.</li>
+                </ul>
+                <p style="margin-top: 20px; font-style: italic; color: #0A1931;">- نظام Smart HSR الآلي</p>
+            `;
+
+            setTimeout(() => {
+                displayAIResult('مسودة أمر عمل آلي', draft, 'comm');
+                resetAIButton('comm-btn', 'send', 'صياغة أمر العمل');
+            }, 2500);
+        }
+
+        // دالة محاكاة لتوليد تقرير PDF
+        function generatePdfReport() {
+            if (!currentSelectedObservation) return alert("يرجى اختيار ملاحظة أولاً لإنشاء تقرير PDF.");
+
+            document.getElementById('printTitle').innerText = `تقرير الملاحظة رقم #${currentSelectedObservation.id} - ${currentSelectedObservation.title}`;
+            window.print();
+        }
+
+        // =========================================================================
+        // 🔄 دالة اختيار وعرض التفاصيل (Show Observation Detail)
+        // =========================================================================
+
+        function showObservationDetail(id) {
+            const observation = observationsData.find(obs => obs.id === id);
+            if (!observation) return;
+
+            currentSelectedObservation = observation;
+            
+            // تحديث حالة الأزرار
+            const isClosed = observation.status === 'تمت المعالجة';
+            document.getElementById('completeObservationBtn').classList.toggle('hidden', isClosed);
+            document.getElementById('updateStatusBtn').classList.toggle('hidden', isClosed);
+            document.getElementById('alreadyCompletedBtn').classList.toggle('hidden', !isClosed);
+            document.getElementById('actionButtons').classList.toggle('justify-end', !isClosed);
+            
+            // إخفاء الـ Placeholder وإظهار التفاصيل
+            document.getElementById('detailPlaceholder').classList.add('hidden');
+            document.getElementById('observationDetail').classList.remove('hidden');
+
+            // تصفير نتائج الذكاء الاصطناعي عند التبديل
+            document.getElementById('aiResultContainer').classList.add('hidden');
+            document.getElementById('aiResultContent').innerText = '';
+
+            // تحديث التفاصيل الأساسية
+            document.getElementById('detailTitle').innerText = observation.title;
+            document.getElementById('detailType').innerText = observation.type;
+            document.getElementById('detailLocation').innerText = observation.location;
+            document.getElementById('detailDate').innerText = observation.date;
+            document.getElementById('detailDescription').innerText = observation.description;
+            document.getElementById('detailID').innerText = observation.id;
+            
+            // تحديث الحالة
+            const statusEl = document.getElementById('detailStatus');
+            statusEl.innerText = observation.status;
+            statusEl.className = 'inline-block px-3 py-1 text-sm font-semibold rounded-full text-white';
+            if (observation.status === 'تمت المعالجة') {
+                statusEl.classList.add('bg-green-600');
+            } else if (observation.status === 'قيد التنفيذ') {
+                statusEl.classList.add('bg-yellow-600');
+            } else {
+                statusEl.classList.add('bg-red-600');
+            }
+
+            // عرض المرفقات
+            const mediaContainer = document.getElementById('mediaContainer');
+            const mediaContent = document.getElementById('mediaContent');
+            const comparisonWrapper = document.getElementById('imageComparisonWrapper');
+            const noImageMessage = document.getElementById('noImageMessage');
+
+            // إخفاء كل الخيارات أولاً
+            mediaContainer.classList.add('hidden');
+            comparisonWrapper.classList.add('hidden');
+            noImageMessage.classList.add('hidden');
+            
+            // إظهار أو إخفاء مذكرة الإغلاق
+            document.getElementById('resolutionNoteContainer').classList.toggle('hidden', !isClosed);
+            if (isClosed && observation.resolutionNote) {
+                document.getElementById('resolutionNote').innerText = observation.resolutionNote;
+            }
+
+            // إظهار أو إخفاء خطة العمل (افتراضياً غير موجودة الآن)
+            document.getElementById('actionPlanContainer').classList.add('hidden'); 
+
+            // منطق عرض الصور/الفيديو والمقارنة
+            if (observation.imageUrl && observation.imageUrl !== 'placeholder.jpg') {
+                
+                if (observation.isComparative && observation.afterImageUrl) {
+                    // حالة المقارنة (Before/After)
+                    comparisonWrapper.classList.remove('hidden');
+                    document.getElementById('beforeImage').src = observation.imageUrl;
+                    
+                    const afterImageContainer = document.getElementById('afterImageContainer');
+                    afterImageContainer.innerHTML = '';
+                    
+                    // تحقق من نوع الملف (صورة أو فيديو) لـ After Image
+                    if (observation.afterImageUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                        afterImageContainer.innerHTML = `<video id="afterImage" class="w-full h-auto" controls src="${observation.afterImageUrl}"></video>`;
+                    } else {
+                        afterImageContainer.innerHTML = `<img id="afterImage" class="w-full h-auto" alt="صورة بعد الإصلاح" src="${observation.afterImageUrl}">`;
+                    }
+                    
+                    // تفعيل وظيفة المقارنة
+                    setupImageComparison();
+                    
+                } else {
+                    // حالة الصورة أو الفيديو الواحدة (Before only)
+                    mediaContainer.classList.remove('hidden');
+                    mediaContent.innerHTML = '';
+                    
+                    // تحقق من نوع الملف
+                    if (observation.imageUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                        mediaContent.innerHTML = `<video class="w-full h-auto rounded-xl" controls src="${observation.imageUrl}"></video>`;
+                    } else {
+                        mediaContent.innerHTML = `<img class="w-full h-auto rounded-xl" alt="مرفق الملاحظة" src="${observation.imageUrl}">`;
+                    }
+                }
+            } else {
+                // حالة لا يوجد مرفق
+                noImageMessage.classList.remove('hidden');
+            }
+
+            // تحديث حالة العناصر في القائمة
+            document.querySelectorAll('.observation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.querySelector(`.observation-item[data-id="${id}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            lucide.createIcons();
+        }
+
+
+        // =========================================================================
+        // 🔍 دالة التصفية (Filter)
+        // =========================================================================
+
+        function handleFilterChange() {
+            const filterValue = document.getElementById('observationFilter').value;
+            let filteredData;
+
+            if (filterValue === 'الكل') {
+                filteredData = observationsData;
+            } else if (['جديد', 'قيد التنفيذ', 'تمت المعالجة'].includes(filterValue)) {
+                filteredData = observationsData.filter(obs => obs.status === filterValue);
+            } else {
+                filteredData = observationsData.filter(obs => obs.type === filterValue);
+            }
+
+            renderObservationsList(filteredData);
+            
+            if (filteredData.length === 0) {
+                document.getElementById('observationDetail').classList.add('hidden');
+                document.getElementById('detailPlaceholder').classList.remove('hidden');
+                currentSelectedObservation = null;
+            } else {
+                currentSelectedObservation = filteredData[0];
+                showObservationDetail(currentSelectedObservation.id);
+            }
+        }
+        
+        // =========================================================================
+        // --- Initialization ---
+        // =========================================================================
+
+        function calculateAndRenderAll() {
+            calculateKPIs();
+            renderKPIs();
+            
+            if (observationsData.length > 0) {
+                observationsData.sort((a, b) => b.createdAt - a.createdAt);
+                renderObservationsList(observationsData);
+
+                currentSelectedObservation = currentSelectedObservation || observationsData[0];
+                showObservationDetail(currentSelectedObservation.id);
+            } else {
+                renderObservationsList([]);
+                document.getElementById('observationDetail').classList.add('hidden');
+                document.getElementById('detailPlaceholder').classList.remove('hidden');
+            }
+        }
+
+        function initApp() {
+            calculateAndRenderAll();
+            lucide.createIcons();
+        }
+
+        // 🚀 البدء عند تحميل الصفحة بالكامل
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+
+</html>
