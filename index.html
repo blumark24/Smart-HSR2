@@ -1708,6 +1708,29 @@
     }, 400); // تأخير بسيط لتفادي مشاكل اللمس في iOS
   }
 </script>
+    <script>
+  // 🔹 دالة فتح وإغلاق النوافذ المنبثقة (تعمل على جميع الأجهزة)
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // يمنع التمرير بالخلفية
+    } else {
+      alert('لم يتم العثور على النافذة المطلوبة.');
+    }
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'none';
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+  }
+</script>
 </body>
 
 </html>
+
