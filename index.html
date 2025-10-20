@@ -523,8 +523,54 @@
             }
         }
     </style>
-</head>
 
+    <!-- 🔹 أضف الكود هنا -->
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .modal.show {
+    display: flex !important;
+    animation: slideUp 0.4s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .modal-content {
+    width: 90%;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 20px;
+    overflow-y: auto;
+    max-height: 90vh;
+    pointer-events: auto; /* 🔥 أهم شيء */
+  }
+
+  body.modal-open {
+    overflow: hidden; /* يمنع التمرير بالخلفية */
+    touch-action: none; /* 🔥 يمنع مشاكل لمس الآيفون */
+  }
+</style>
+</head>
+    
 <body class="text-gray-800">
 
     <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -1761,5 +1807,6 @@
 </body>
 
 </html>
+
 
 
