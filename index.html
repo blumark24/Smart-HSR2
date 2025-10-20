@@ -1802,10 +1802,30 @@
     }
   }, { passive: false });
 </script>
+
+    <script>
+  // تحسين فتح النافذة على الآيفون
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.add('show');
+      document.body.classList.add('modal-open');
+    }
+  }
+
+  // تحسين إغلاق النافذة على الآيفون
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.remove('show');
+      document.body.classList.remove('modal-open');
+    }
+  }
+</script>
     
 </body>
-
 </html>
+
 
 
 
