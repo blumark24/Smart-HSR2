@@ -1827,9 +1827,53 @@
     }
   }
 </script>
-    
+ <script>
+async function handleAddObservationTap() {
+  try {
+    // ✅ عرض نافذة الإدخال الذكي
+    openModal('smartInputModal');
+
+    // ✅ إظهار حالة المعالجة
+    document.getElementById('modalResultContent').innerHTML = `
+      <div class="text-center py-10">
+        <div class="loading-spinner" style="border-top-color: var(--color-teal); border: 4px solid rgba(24, 165, 162, 0.3); margin: 0 auto; width: 40px; height: 40px;"></div>
+        <p class="mt-4 text-xl font-extrabold text-teal-700">جاري تحليل البيانات بواسطة Gemini AI...</p>
+      </div>
+    `;
+
+    // ✅ محاكاة التحليل الذكي
+    setTimeout(() => {
+      const newId = Date.now();
+      const newObservation = {
+        id: newId,
+        title: "ملاحظة جديدة",
+        status: "PENDING",
+        date: new Date().toISOString().slice(0, 10),
+        details: "تم إنشاء الملاحظة مبدئيًا للتحليل."
+      };
+
+      if (typeof observationsData !== 'undefined') {
+        observationsData.unshift(newObservation);
+        renderObservationsList(observationsData);
+        showObservationDetail(newId);
+      }
+
+      document.getElementById('modalResultContent').innerHTML = `
+        <div class="p-6 bg-green-50 rounded-xl border-4 border-green-200 text-center">
+          <i data-lucide="check-circle" class="w-10 h-10 mx-auto text-green-600 mb-3"></i>
+          <h4 class="text-2xl font-extrabold text-green-700">تمت إضافة الملاحظة بنجاح!</h4>
+        </div>
+      `;
+      lucide.createIcons();
+    }, 2000);
+  } catch (err) {
+    alert("حدث خطأ أثناء إضافة الملاحظة: " + err.message);
+  }
+}
+</script>   
 </body>
 </html>
+
 
 
 
