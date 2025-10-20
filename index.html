@@ -1103,6 +1103,9 @@
             document.getElementById('detailStatus').textContent = statusInfo.text;
             document.getElementById('detailStatus').className = `inline-block px-3 py-1 text-sm font-semibold rounded-full text-white ${statusInfo.color}`;
             document.getElementById('detailDescription').innerHTML = currentSelectedObservation.details.replace(/\n/g, '<br>');
+            if (currentSelectedObservation.aiAnalysis) {
+  document.getElementById('detailDescription').innerHTML += `<br><br><strong style="color:#0ea5a1;">🤖 تحليل Gemini AI:</strong><br>${currentSelectedObservation.aiAnalysis}`;
+}
             document.getElementById('actionPlan').textContent = `الأولوية: ${currentSelectedObservation.riskAssessment.priority} | الإطار الزمني: ${currentSelectedObservation.riskAssessment.timeframe}. الخطة: ${currentSelectedObservation.actionPlan}`;
             document.getElementById('actionPlanContainer').classList.remove('hidden');
 
@@ -1434,11 +1437,12 @@
                     date: newDate,
                     title: rawText.substring(0, 50) + (rawText.length > 50 ? '...' : '') || (fileSource ? `ملاحظة ميدانية (${fileSource})` : "تقرير آلي عن ملاحظة"),
                     status: "PENDING",
-                    details: `**تم توليد هذا التقرير آلياً.**\nالوصف الأولي: "${rawText || 'لم يتم إدخال وصف نصي.'}"\nالموقع: (${lat}, ${lon})\nالملف المرفق: ${fileSource || 'لا يوجد ملف'}`,
+                    details: `**تقرير ذكي من Gemini AI:**\n${await analyzeImageWithAI(currentFileUrl)}\n\nالوصف الأولي: "${rawText || 'لم يتم إدخال وصف نصي.'}"\nالموقع: (${lat}, ${lon})\nالملف المرفق: ${fileSource || 'لا يوجد ملف'}`,
                     hasImage: !!currentFile,
                     imagePath: currentFileUrl,
                     fileMimeType: fileMimeType,
                     isComparative: false,
+                    aiAnalysis: await analyzeImageWithAI(currentFileUrl),
                     isVideo: isVideoFile,
                     actionPlan: "إصلاح فوري لأضرار الطريق عبر رقعة الإسفلت (Patching).",
                     riskAssessment: {
@@ -1577,6 +1581,117 @@
         window.onload = initApp;
 
     </script>
+    
+    <!-- 🔹 Supabase Integration (بديل Firebase) -->
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+  const SUPABASE_URL = 'https://csjszilvxusophnwqhaw.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzanN6aWx2eHVzb3BobndxaGF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4Nzg0MDcsImV4cCI6MjA3NjQ1NDQwN30.Xm38yITzprUY3PkaMJMJUTRjo-2cuYBWPMjVRkle7Qc';
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  console.log("✅ تم الاتصال بـ Supabase بنجاح");
+
+  // 🟢 تحميل الملاحظات من الجدول
+  async function loadObservations() {
+    const { data, error } = await supabase
+      .from('observations')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error("❌ خطأ في جلب البيانات:", error);
+    } else {
+      console.log("📋 الملاحظات المحفوظة:", data);
+    }
+  }
+
+  // 🟢 حفظ ملاحظة جديدة
+  async function saveObservation(observation) {
+    const { error } = await supabase
+      .from('observations')
+      .insert([observation]);
+    if (error) {
+      console.error("❌ فشل الحفظ:", error);
+      alert("حدث خطأ أثناء الحفظ");
+    } else {
+      alert("✅ تم حفظ الملاحظة بنجاح");
+      loadObservations();
+    }
+  }
+
+  // 🧩 مثال: استدعاء حفظ ملاحظة جديدة
+  window.testSave = () => {
+    saveObservation({
+      title: "اختبار Smart HSR",
+      details: "ملاحظة تجريبية من Supabase",
+      status: "NEW",
+      location: "الدمام"
+    });
+  };
+
+  // تشغيل عند فتح الصفحة
+  loadObservations();
+</script>
+
+<!-- 🔹 Gemini Vision AI Integration (تحليل الصور الذكي) -->
+<script type="module">
+  async function analyzeImageWithAI(imageUrl) {
+    try {
+      const API_KEY = "AIzaSyCstRnAY_9TO9f4l49TTHEjVaoqjtZriJk"; // ✅ مفتاحك
+      const body = {
+        contents: [
+          {
+            parts: [
+              {
+                text: "حلل هذه الصورة الميدانية وقدم وصفًا دقيقًا للمشكلة مع اقتراح عملي لمعالجتها من منظور الجودة والصيانة."
+              },
+              {
+                inline_data: {
+                  mime_type: "image/jpeg",
+                  data: await getBase64(imageUrl)
+                }
+              }
+            ]
+          }
+        ]
+      };
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }
+      );
+
+      const data = await res.json();
+      const aiText =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "❌ لم يتمكن الذكاء الاصطناعي من تحليل الصورة حالياً.";
+
+      console.log("🤖 تحليل Gemini:", aiText);
+      return aiText;
+    } catch (err) {
+      console.error("⚠️ خطأ في تحليل الصورة:", err);
+      return "❌ حدث خطأ أثناء الاتصال بخدمة Gemini AI.";
+    }
+  }
+
+  async function getBase64(url) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(",")[1]);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  window.analyzeImageWithAI = analyzeImageWithAI;
+</script>
+
 </body>
 
 </html>
