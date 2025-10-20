@@ -1730,7 +1730,36 @@
     }
   }
 </script>
+
+<script>
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.add("show");
+    modal.style.display = "flex";
+    document.body.classList.add("modal-open");
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.remove("show");
+    setTimeout(() => {
+      modal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }, 300);
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    const modal = document.querySelector('.modal.show');
+    if (modal && !modal.contains(e.target)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
+    
 </body>
 
 </html>
+
 
