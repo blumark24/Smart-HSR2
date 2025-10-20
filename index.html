@@ -1777,24 +1777,29 @@
 </script>
 
 <script>
-  function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    modal.classList.add("show");
-    modal.style.display = "flex";
-    document.body.classList.add("modal-open");
+  // ✅ كود فتح النافذة المنبثقة بشكل صحيح
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.add('show');
+      modal.style.display = 'flex';
+      document.body.classList.add('modal-open'); // يمنع تمرير الخلفية
+    }
   }
 
-  function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    modal.classList.remove("show");
-    setTimeout(() => {
-      modal.style.display = "none";
-      document.body.classList.remove("modal-open");
-    }, 300);
+  // ✅ كود إغلاق النافذة المنبثقة بدون تجمّد
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+      }, 300); // مهلة قصيرة حتى تكتمل حركة الإغلاق
+    }
   }
 
+  // ✅ حماية إضافية للآيفون من لمس الخلفية
   document.addEventListener('touchstart', (e) => {
     const modal = document.querySelector('.modal.show');
     if (modal && !modal.contains(e.target)) {
@@ -1825,6 +1830,7 @@
     
 </body>
 </html>
+
 
 
 
