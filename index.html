@@ -1883,27 +1883,39 @@ async function handleAddObservationTap() {
     }
   }
 
-  function closeModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-      modal.classList.remove('show');
-      setTimeout(() => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        document.body.classList.remove('modal-open');
-      }, 300);
-    }
+  <script>
+// ✅ كود موحد يعمل على جميع الأجهزة (iPhone / Android / Desktop)
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
   }
+}
 
-  // 🔒 منع لمس الخلفية على iPhone أثناء فتح النافذة
-  document.addEventListener('touchmove', (e) => {
-    const modal = document.querySelector('.modal.show');
-    if (modal && !modal.contains(e.target)) {
-      e.preventDefault();
-    }
-  }, { passive: false });
-</script>
-    <script>
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('show');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      document.body.classList.remove('modal-open');
+    }, 300);
+  }
+}
+
+// 🔒 منع لمس الخلفية أثناء فتح النافذة
+document.addEventListener('touchmove', (e) => {
+  const modal = document.querySelector('.modal.show');
+  if (modal && !modal.contains(e.target)) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// ✅ زر إضافة الملاحظة الجديدة (آمن وسريع)
 async function handleAddObservationTap() {
   try {
     openModal('smartInputModal');
@@ -1913,8 +1925,10 @@ async function handleAddObservationTap() {
   }
 }
 </script>
+
 </body>
 </html>
+
 
 
 
