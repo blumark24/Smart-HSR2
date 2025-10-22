@@ -746,7 +746,7 @@ async function analyzeWithGemini(imageUrl, prompt) {
       ? "قم بتحليل الصورة تحليلًا هندسيًا ميدانيًا احترافيًا. حدد نوع الملاحظة الظاهرة بدقة (مثل ميل عمود، كسر، صدأ، حفرة، مياه راكدة). اشرح الخطر أو الضرر المحتمل، وقدّم توصية فنية بالإجراء التصحيحي المناسب."
       : "استخدم منهجية 5 Why لتحديد السبب الجذري للخلل الظاهر في الصورة (مثل ضعف التثبيت، اصطدام مركبة، خلل في الأساس، أو قصور في التصميم)، وقدّم الحل الوقائي المقترح.";
 
-    const result = await analyzeWithOpenAI(obs.imagePath, prompt);
+   const result = await analyzeWithGemini(obs.imagePath, prompt);
     setText('aiResultTitle', `✅ نتائج ${title} — بواسطة HSR Vision AI 🤖✨`);
     setHTML('aiResultContent', `
       <div class='communication-draft'>${escapeHTML(result)}</div>
@@ -894,3 +894,4 @@ async function analyzeWithGemini(imageUrl, prompt) {
   </script>
 </body>
 </html>
+
