@@ -412,7 +412,7 @@
   let currentFile = null, currentAfterFile = null;
 
  // ===== ذكاء اصطناعي (Gemini المجاني) — بديل OpenAI =====
-const GEMINI_API_KEY = "AIzaSyCstRnAY_9TO9f4l49TTHEjVaoqjtZriJk"; // مفتاحك من Google AI Studio
+const GEMINI_API_KEY = "AIzaSyBpHlI28zxCTRd6SVGCqfhQusLPwPw9jMY"; // مفتاحك من Google AI Studio
 
 async function analyzeWithGemini(imageUrl, prompt) {
   try {
@@ -644,7 +644,7 @@ async function analyzeWithGemini(imageUrl, prompt) {
       let description = rawText || '';
       if (!description && uploadedUrl) {
         const aiPrompt = "قم بتحليل الصورة بصفتك مهندس جودة ميداني واصفًا نوع الضرر أو المشكلة الظاهرة والتوصية بالإجراء التصحيحي.";
-        description = await analyzeWithOpenAI(uploadedUrl, aiPrompt);
+        description = await analyzeWithGemini(uploadedUrl, aiPrompt);
       }
 
       const payload = {
@@ -894,4 +894,5 @@ async function analyzeWithGemini(imageUrl, prompt) {
   </script>
 </body>
 </html>
+
 
