@@ -60,5 +60,34 @@
 
   <footer>© 2025 Smart HSR – وكالة المشاريع، أمانة العاصمة المقدسة</footer>
 
+  <!-- 🔐 التحقق من تسجيل الدخول التلقائي -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return; // المستخدم غير مسجّل دخول
+  try {
+    const uDoc = await getDoc(doc(db, "users", user.uid));
+    if (!uDoc.exists()) return;
+    const role = uDoc.data().role;
+    if (role === "admin") {
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "index.html";
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
+</script>
+
 </body>
 </html>
+
