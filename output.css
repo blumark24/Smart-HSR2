@@ -1,0 +1,14 @@
+/* Smart HSR output.css placeholder (Tailwind build recommended). */
+:root{--color-navy:#0A1931;--color-teal:#18A5A2;--color-gray-bg:#F7F9FC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-gray-bg);color:var(--color-navy);font-family:'Tajawal',sans-serif}
+.container{max-width:1200px;margin:0 auto}
+button{cursor:pointer}
+.hidden{display:none}
+/* Utility (very small subset just in case) */
+.mx-auto{margin-left:auto;margin-right:auto}
+.p-4{padding:1rem}
+.rounded-xl{border-radius:0.75rem}
+.shadow{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.text-center{text-align:center}
+/* End placeholder */
