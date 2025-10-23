@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart HSR | لوحة المدير</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family:'Tajawal',sans-serif; background:#F7F9FC; margin:0; }
+    .navbar { display:flex; justify-content:space-between; align-items:center; padding:10px 20px; background:#fff; border-bottom:1px solid #e5e7eb; }
+    .navbar img { height:40px; width:auto; }
+    .navbar span { font-weight:700; color:#0A1931; }
+    .container { padding:20px; }
+    table { width:100%; border-collapse:collapse; margin-top:20px; background:#fff; }
+    th,td { border:1px solid #ddd; padding:10px; text-align:center; font-size:0.95rem; }
+    th { background:#18A5A2; color:#fff; }
+    button { background:#18A5A2; color:white; border:none; padding:8px 18px; border-radius:8px; cursor:pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="logo-hmm.png" alt="شعار أمانة العاصمة المقدسة">
+      <span>Smart HSR — وكالة المشاريع</span>
+    </div>
+    <button onclick="logout()">🚪 خروج</button>
+  </div>
+
+  <div class="container">
+    <h2>لوحة المدير - إدارة النظام والمستخدمين</h2>
+    <table>
+      <thead><tr><th>المستخدم</th><th>الدور</th><th>البريد الإلكتروني</th><th>الإجراء</th></tr></thead>
+      <tbody id="userTable"><tr><td colspan="4">جارٍ التحميل...</td></tr></tbody>
+    </table>
+  </div>
+
+  <script>
+    const users = [
+      {name:'المراقب', role:'inspector', email:'inspector@example.com'},
+      {name:'المقاول', role:'contractor', email:'contractor@example.com'},
+      {name:'المدير', role:'admin', email:'admin@example.com'}
+    ];
+    const table = document.getElementById('userTable');
+    table.innerHTML = users.map(u => 
+      `<tr><td>${u.name}</td><td>${u.role}</td><td>${u.email}</td><td><button>تعديل</button></td></tr>`
+    ).join('');
+    function logout(){ window.location.href='login.html'; }
+  </script>
+
+</body>
+</html>
