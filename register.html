@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart HSR | تسجيل مستخدم جديد</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="output.css" />
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #0A1931, #18A5A2);
+      color: white;
+      height: 100vh; display: flex; justify-content: center; align-items: center;
+    }
+    .card { background:#fff; color:#0A1931; padding:2rem; border-radius:1.5rem;
+            box-shadow:0 10px 30px rgba(0,0,0,.25); width:90%; max-width:420px; text-align:center; }
+    input { width:100%; padding:10px; margin-top:10px; border-radius:10px; border:1px solid #ccc; }
+    button { background:#18A5A2; color:#fff; font-weight:800; border:none; border-radius:50px;
+             padding:12px; width:100%; margin-top:20px; cursor:pointer; transition:.3s; }
+    button:hover { background:#148c8a; }
+    .muted { color:#6b7280; font-size:.9rem; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="logo-hmm.png" alt="شعار الأمانة" width="90">
+    <h2 class="text-2xl font-extrabold mb-2">تسجيل مستخدم جديد</h2>
+    <p class="muted">أكمل النموذج لتفعيل حسابك في Smart HSR</p>
+
+    <input id="name" placeholder="الاسم الكامل" />
+    <input id="email" placeholder="البريد الإلكتروني" />
+    <input id="password" type="password" placeholder="كلمة المرور" />
+    <button onclick="registerUser()">تسجيل</button>
+    <p id="msg" class="muted mt-2"></p>
+  </div>
+
+  <script type="module">
+    import { firebaseConfig } from './firebase-config.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    async function registerUser(){
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const pass = document.getElementById("password").value.trim();
+      const msg = document.getElementById("msg");
+      if(!name || !email || !pass){ msg.textContent="⚠️ الرجاء إدخال جميع البيانات"; return; }
+
+      msg.textContent="⏳ جاري التحقق من الدعوة...";
+      try{
+        const ref = doc(db, "invites", token);
+        const snap = await getDoc(ref);
+        if(!snap.exists()){ msg.textContent="❌ الرابط غير صالح أو منتهي"; return; }
+
+        const invite = snap.data();
+        if(invite.status === "used"){ msg.textContent="⚠️ هذا الرابط استُخدم سابقًا."; return; }
+
+        // إنشاء حساب المستخدم
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "users", cred.user.uid), {
+          name, email, role: invite.role, createdAt: serverTimestamp(), status: "active"
+        });
+
+        // تعليم الدعوة كـ مستخدمة
+        await updateDoc(ref, { status: "used", usedAt: serverTimestamp() });
+
+        msg.textContent="✅ تم التسجيل بنجاح. يمكنك الآن تسجيل الدخول.";
+        await signOut(auth);
+      }catch(e){ console.error(e); msg.textContent="❌ حدث خطأ أثناء التسجيل."; }
+    }
+  </script>
+</body>
+</html>

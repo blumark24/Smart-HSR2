@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Create Admin - One-time</title></head>
+<body>
+  <h2>إنشاء حساب المدير (مرة واحدة)</h2>
+  <p>عند الضغط سيُنشأ حساب المدير ويُضاف لسجل المستخدمين في Firestore.</p>
+  <button id="create">إنشاء المدير الآن</button>
+  <pre id="log"></pre>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const adminEmail = "Blumark24@gmail.com";
+const adminPassword = "Xx1234567";
+const adminName = "مدير Smart HSR";
+
+const log = (m) => document.getElementById('log').textContent += m + "\n";
+
+document.getElementById('create').addEventListener('click', async () => {
+  try {
+    log('⏳ جاري إنشاء المستخدم...');
+    const cred = await createUserWithEmailAndPassword(auth, adminEmail, adminPassword);
+    const uid = cred.user.uid;
+    await setDoc(doc(db, "users", uid), {
+      name: adminName,
+      email: adminEmail,
+      role: "admin",
+      status: "active",
+      createdAt: serverTimestamp()
+    });
+    log('✅ تم إنشاء المدير: UID=' + uid);
+    alert('تم الإنشاء. احذف هذه الصفحة create_admin.html الآن لأمانك.');
+  } catch (e) {
+    log('❌ خطأ: ' + (e.message || e.code));
+  }
+});
+</script>
+</body>
+</html>
