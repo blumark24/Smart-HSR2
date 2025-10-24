@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Smart HSR | لوحة المدير التنفيذية</title>
 
-  <!-- التصميم -->
+  <!-- التصميم الأصلي -->
   <link rel="stylesheet" href="output.css" />
-  <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root {
@@ -40,9 +40,10 @@
       box-shadow: 0 18px 40px rgba(0,0,0,.12);
     }
     .kpi-teal { background: linear-gradient(135deg,#10B981 0%,#18A5A2 100%); }
-    .kpi-red { background: linear-gradient(135deg,#EF4444 0%,#B91C1C 100%); }
+    .kpi-red  { background: linear-gradient(135deg,#EF4444 0%,#B91C1C 100%); }
     .kpi-blue { background: linear-gradient(135deg,#3B82F6 0%,#0A1931 100%); }
     .kpi-navy { background: linear-gradient(135deg,#0A1931 0%,#1f375e 100%); }
+
     .btn {
       border-radius: 999px;
       font-weight: 800;
@@ -55,7 +56,12 @@
       border: none;
     }
     .btn:hover { background: #148f8c; transform: translateY(-1px); }
+    .btn-dark { background:#0A1931; }
+    .btn-red  { background:#EF4444; }
+    .btn-navy { background:#0A1931; }
+
     .muted { color: #6b7280; }
+
     .modal {
       display: none;
       position: fixed;
@@ -68,7 +74,7 @@
     .modal .content {
       background: #fff;
       width: 95%;
-      max-width: 560px;
+      max-width: 620px;
       border-radius: 1.5rem;
       padding: 24px;
       box-shadow: 0 25px 60px rgba(0,0,0,.35);
@@ -86,29 +92,28 @@
       background: #E6F3F3;
       color: #0A1931;
     }
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 .6rem;
+    table { width: 100%; border-collapse: separate; border-spacing: 0 .6rem; }
+    th, td { text-align: right; padding: .75rem 1rem; }
+    tr { background: #fff; box-shadow: 0 6px 16px rgba(0,0,0,.06); border-radius: 12px; }
+
+    .field { display:flex; flex-direction:column; gap:6px; }
+    .field input, .field select {
+      border:1px solid #e5e7eb; border-radius:12px; padding:.8rem 1rem; font-size:15px;
     }
-    th, td {
-      text-align: right;
-      padding: .75rem 1rem;
-    }
-    tr {
-      background: #fff;
-      box-shadow: 0 6px 16px rgba(0,0,0,.06);
-      border-radius: 12px;
-    }
+    .row-actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+    .tag { font-size:12px; padding:.2rem .6rem; border-radius:999px; background:#eef2ff; color:#1f2937; }
   </style>
 </head>
 <body>
+
   <!-- رأس الصفحة -->
   <header>
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="font-extrabold text-lg">Smart HSR — <span style="color:var(--color-teal)">لوحة المدير</span></div>
+      <div class="font-extrabold text-lg">
+        Smart HSR — <span style="color:var(--color-teal)">لوحة المدير</span>
+      </div>
       <div class="flex items-center gap-2">
-        <a href="index.html" class="btn" style="background:#0A1931">🏠 العودة للنظام</a>
+        <a href="index.html" class="btn btn-dark">🏠 العودة للنظام</a>
         <button id="logoutBtn" class="btn">🚪 تسجيل الخروج</button>
       </div>
     </div>
@@ -139,16 +144,22 @@
     <section class="card p-6 mb-10">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-2xl font-extrabold">إدارة المستخدمين</h2>
-        <button class="btn" id="openInvite">➕ إضافة مستخدم</button>
+        <div class="flex gap-2">
+          <button class="btn" id="openInvite">➕ إنشاء دعوة</button>
+          <button class="btn btn-navy" id="openAddUser">💾 إضافة مباشر</button>
+        </div>
       </div>
-      <p class="muted text-sm mb-4">يمكن للمدير إنشاء دعوة تسجيل لمرة واحدة وتحديد الدور (مراقب / مقاول).</p>
+      <p class="muted text-sm mb-4">
+        يمكن للمدير إنشاء دعوة تسجيل لمرة واحدة أو إضافة مستخدم مباشرًا وتحديد الدور (مراقب / مقاول / مدير).
+      </p>
+
       <div class="overflow-x-auto">
         <table>
           <thead>
-            <tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>آخر دخول</th><th>الحالة</th></tr>
+            <tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>آخر دخول</th><th>الحالة</th><th>إجراءات</th></tr>
           </thead>
           <tbody id="usersTbody">
-            <tr><td colspan="5" class="muted text-center">جاري التحميل...</td></tr>
+            <tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr>
           </tbody>
         </table>
       </div>
@@ -170,19 +181,20 @@
   <div id="inviteModal" class="modal">
     <div class="content">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-xl font-extrabold">إضافة مستخدم جديد</h3>
+        <h3 class="text-xl font-extrabold">إنشاء دعوة تسجيل</h3>
         <button onclick="closeModal('inviteModal')" class="pill">إغلاق</button>
       </div>
       <div class="grid gap-3">
-        <div>
+        <div class="field">
           <label class="text-sm font-bold">البريد الإلكتروني</label>
-          <input id="inviteEmail" class="w-full p-3 border rounded-xl" placeholder="user@example.com" />
+          <input id="inviteEmail" placeholder="user@example.com" />
         </div>
-        <div>
+        <div class="field">
           <label class="text-sm font-bold">الدور</label>
           <div class="flex gap-2 mt-1">
             <div class="pill" data-role="inspector" data-active="true" onclick="pickRole(this)">👷‍♂️ مراقب</div>
             <div class="pill" data-role="contractor" onclick="pickRole(this)">🏗️ مقاول</div>
+            <div class="pill" data-role="admin" onclick="pickRole(this)">👑 مدير</div>
           </div>
         </div>
         <button class="btn" onclick="createInvite()">إنشاء دعوة</button>
@@ -192,42 +204,125 @@
     </div>
   </div>
 
+  <!-- نافذة إضافة مباشر -->
+  <div id="addUserModal" class="modal">
+    <div class="content">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-extrabold">إضافة مستخدم مباشر</h3>
+        <button onclick="closeModal('addUserModal')" class="pill">إغلاق</button>
+      </div>
+      <div class="grid gap-3">
+        <div class="field">
+          <label class="text-sm font-bold">الاسم</label>
+          <input id="addName" placeholder="الاسم الكامل"/>
+        </div>
+        <div class="field">
+          <label class="text-sm font-bold">البريد الإلكتروني</label>
+          <input id="addEmail" placeholder="user@example.com"/>
+        </div>
+        <div class="field">
+          <label class="text-sm font-bold">الدور</label>
+          <select id="addRole">
+            <option value="inspector">مراقب</option>
+            <option value="contractor">مقاول</option>
+            <option value="admin">مدير</option>
+          </select>
+        </div>
+        <button class="btn btn-navy" onclick="addUserDirect()">💾 حفظ المستخدم</button>
+        <p class="muted text-xs">إضافة مباشر لجدول users (ينشأ حسابه لاحقًا عبر Auth).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة تعديل مستخدم -->
+  <div id="editUserModal" class="modal">
+    <div class="content">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-extrabold">تعديل بيانات المستخدم</h3>
+        <button onclick="closeModal('editUserModal')" class="pill">إغلاق</button>
+      </div>
+      <div class="grid gap-3">
+        <input type="hidden" id="editId"/>
+        <div class="field">
+          <label class="text-sm font-bold">الاسم</label>
+          <input id="editName" />
+        </div>
+        <div class="field">
+          <label class="text-sm font-bold">الدور</label>
+          <select id="editRole">
+            <option value="inspector">مراقب</option>
+            <option value="contractor">مقاول</option>
+            <option value="admin">مدير</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="text-sm font-bold">الحالة</label>
+          <select id="editStatus">
+            <option value="active">نشط</option>
+            <option value="suspended">موقوف</option>
+          </select>
+        </div>
+        <button class="btn btn-navy" onclick="applyUserEdit()">✏️ حفظ التعديل</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase -->
   <script type="module">
     import { firebaseConfig } from './firebase-config.js';
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import {
+      getFirestore, collection, getDocs, addDoc, query, orderBy, serverTimestamp,
+      doc, getDoc, updateDoc, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+    // تهيئة
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db   = getFirestore(app);
+
+    // 🔐 بريد المدير المصرّح له (بدّل هذا لاحقًا متى شئت)
     const ADMIN_EMAIL = "blumark180@gmail.com";
 
-    // أدوات
-    const $ = s => document.querySelector(s);
+    // أدوات واجهة
+    const $  = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
-    const openModal = id => document.getElementById(id).style.display = 'flex';
+    const openModal  = id => document.getElementById(id).style.display = 'flex';
     const closeModal = id => document.getElementById(id).style.display = 'none';
     window.closeModal = closeModal;
 
-    // تسجيل خروج
-    $('#logoutBtn').onclick = () => signOut(auth).then(() => window.location.href = 'login.html');
+    // أزرار أعلى الصفحة
+    $('#logoutBtn').onclick = () => signOut(auth).then(()=>window.location.href='login.html');
 
-    // تحقق من المستخدم
+    // ✅ تحقق من صلاحية الدخول (المدير فقط)
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = 'login.html'; return; }
-      if (user.email !== ADMIN_EMAIL) {
+
+      // خياران: إما عبر بريد المدير الثابت، أو عبر users/{uid}.role === 'admin'
+      let isAdmin = (user.email || '').toLowerCase() === ADMIN_EMAIL.toLowerCase();
+
+      try {
+        const udoc = await getDoc(doc(db, "users", user.uid));
+        if (udoc.exists()) {
+          const role = (udoc.data().role || '').toLowerCase();
+          if (role === 'admin') isAdmin = true; // يعطي صلاحية أيضًا لو محددة من الجدول
+        }
+      } catch(e){ console.warn(e); }
+
+      if (!isAdmin) {
         alert("🚫 هذه الصفحة مخصصة للمدير فقط");
         window.location.href = 'index.html';
         return;
       }
+
+      // تحميل البيانات
       loadKPIs();
       loadUsers();
       loadObservations();
     });
 
-    // اختيار الدور
+    // اختيار الدور في نافذة الدعوة
     let inviteRole = 'inspector';
     window.pickRole = (el) => {
       $$('.pill[data-role]').forEach(p => p.dataset.active = 'false');
@@ -235,48 +330,96 @@
       inviteRole = el.dataset.role;
     };
 
+    // فتح النوافذ
+    $('#openInvite').onclick  = () => { $('#inviteEmail').value = ''; $('#inviteResult').innerHTML=''; openModal('inviteModal'); };
+    $('#openAddUser').onclick = () => { $('#addName').value=''; $('#addEmail').value=''; $('#addRole').value='inspector'; openModal('addUserModal'); };
+
     // إنشاء دعوة
     window.createInvite = async () => {
       const email = ($('#inviteEmail').value || '').trim().toLowerCase();
-      if (!email) { alert('📧 أدخل البريد الإلكتروني'); return; }
+      if (!email) return alert('📧 أدخل البريد الإلكتروني');
       const ref = await addDoc(collection(db, 'invites'), {
-        email,
-        role: inviteRole,
-        status: 'pending',
-        createdAt: serverTimestamp()
+        email, role: inviteRole, status: 'pending', createdAt: serverTimestamp()
       });
-      const link = `${location.origin}${location.pathname.replace('admin.html', '')}register.html?token=${ref.id}`;
+      const link = `${location.origin}${location.pathname.replace('admin.html','')}register.html?token=${ref.id}`;
       $('#inviteResult').innerHTML = `
-        <div class="p-3 border rounded-xl bg-gray-50">
+        <div class="p-3 border rounded-xl" style="background:#F7F9FC">
           <b>رابط التسجيل:</b><br>
           <a style="color:var(--color-teal)" href="${link}" target="_blank">${link}</a>
           <p class="muted text-xs mt-1">🔒 يستخدم مرة واحدة فقط</p>
         </div>`;
     };
-    $('#openInvite').onclick = () => { $('#inviteEmail').value = ''; $('#inviteResult').innerHTML = ''; openModal('inviteModal'); };
+
+    // إضافة مستخدم مباشر (سجل users فقط)
+    window.addUserDirect = async () => {
+      const name  = ($('#addName').value  || '').trim();
+      const email = ($('#addEmail').value || '').trim().toLowerCase();
+      const role  = $('#addRole').value || 'inspector';
+      if (!email) return alert('📧 أدخل البريد الإلكتروني');
+      await addDoc(collection(db, 'users'), {
+        name: name || 'مستخدم جديد', email, role, status:'active', createdAt: serverTimestamp()
+      });
+      closeModal('addUserModal');
+      alert('✅ تم إضافة المستخدم إلى الجدول (users)');
+      loadUsers();
+    };
 
     // تحميل المستخدمين
     async function loadUsers() {
       const t = $('#usersTbody');
-      t.innerHTML = '<tr><td colspan="5" class="muted text-center">جاري التحميل...</td></tr>';
-      const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt', 'desc')));
+      t.innerHTML = '<tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr>';
+      const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt','desc')));
       let html = '';
       snap.forEach(d => {
         const u = d.data();
+        const id = d.id;
         html += `
           <tr>
             <td>${u.name || '-'}</td>
             <td>${u.email || '-'}</td>
-            <td><span class="pill">${u.role || '-'}</span></td>
+            <td><span class="tag">${u.role || '-'}</span></td>
             <td>${u.lastLogin || '-'}</td>
             <td>${u.status || 'active'}</td>
+            <td class="row-actions">
+              <button class="btn btn-navy" onclick="openEdit('${id}','${u.name||''}','${u.role||''}','${u.status||'active'}')">✏️ تعديل</button>
+              <button class="btn btn-red"  onclick="deleteUser('${id}')">🗑️ حذف</button>
+            </td>
           </tr>`;
       });
-      t.innerHTML = html || '<tr><td colspan="5" class="muted text-center">لا يوجد مستخدمون بعد.</td></tr>';
+      t.innerHTML = html || '<tr><td colspan="6" class="muted text-center">لا يوجد مستخدمون بعد.</td></tr>';
       lucide.createIcons();
     }
 
-    // تحميل مؤشرات الأداء
+    // فتح نافذة التعديل
+    window.openEdit = (id, name, role, status) => {
+      $('#editId').value = id;
+      $('#editName').value = name || '';
+      $('#editRole').value = (role || 'inspector');
+      $('#editStatus').value = (status || 'active');
+      openModal('editUserModal');
+    };
+
+    // حفظ التعديل
+    window.applyUserEdit = async () => {
+      const id     = $('#editId').value;
+      const name   = ($('#editName').value || '').trim();
+      const role   = $('#editRole').value || 'inspector';
+      const status = $('#editStatus').value || 'active';
+      await updateDoc(doc(db,'users',id), { name, role, status });
+      closeModal('editUserModal');
+      alert('✅ تم تعديل بيانات المستخدم');
+      loadUsers();
+    };
+
+    // حذف مستخدم
+    window.deleteUser = async (id) => {
+      if (!confirm('هل تريد حذف هذا المستخدم؟')) return;
+      await deleteDoc(doc(db,'users',id));
+      alert('🗑️ تم حذف المستخدم بنجاح');
+      loadUsers();
+    };
+
+    // مؤشرات الأداء
     async function loadKPIs() {
       const usersSnap = await getDocs(collection(db, 'users'));
       $('#kpiUsers').textContent = usersSnap.size;
@@ -287,16 +430,16 @@
         const s = (o.data().status || '').toUpperCase();
         if (s === 'COMPLETED') closed++; else open++;
       });
-      $('#kpiTotal').textContent = total;
-      $('#kpiOpen').textContent = open;
+      $('#kpiTotal').textContent  = total;
+      $('#kpiOpen').textContent   = open;
       $('#kpiClosed').textContent = closed;
     }
 
-    // تحميل الملاحظات
+    // الملاحظات
     async function loadObservations() {
       const box = $('#obsList');
       box.innerHTML = '<div class="muted text-center p-6">جاري التحميل...</div>';
-      const snap = await getDocs(query(collection(db, 'observations'), orderBy('createdAt', 'desc')));
+      const snap = await getDocs(query(collection(db, 'observations'), orderBy('createdAt','desc')));
       let html = '';
       snap.forEach(d => {
         const o = d.data();
@@ -314,44 +457,38 @@
       });
       box.innerHTML = html || '<div class="muted text-center p-6">لا توجد ملاحظات بعد.</div>';
     }
+
+    // تفعيل الأيقونات
     lucide.createIcons();
   </script>
 
-<!-- Firebase Auth & Role-check script (added) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
+  <!-- حماية إضافية: تأكيد الدور عبر users/{uid} -->
+  <script type="module">
+    import { firebaseConfig } from './firebase-config.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
-  }
-  try {
-    const udoc = await getDoc(doc(db, "users", user.uid));
-    if (!udoc.exists()) {
-      await signOut(auth);
-      alert("حسابك غير مفعل. تواصل مع المدير للحصول على دعوة.");
-      window.location.href = 'landing.html';
-      return;
-    }
-    const data = udoc.data();
-    const role = data.role || "";
-    if (role !== 'admin') { await signOut(auth); alert('هذه الصفحة للمدير فقط.'); window.location.href = 'landing.html'; return; }
-    console.log("Authenticated as", user.email, "role:", role);
-  } catch (e) {
-    console.error(e);
-    await signOut(auth);
-    window.location.href = 'landing.html';
-  }
-});
-</script>
-
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      try {
+        const udoc = await getDoc(doc(db,'users',user.uid));
+        if (!udoc.exists()) return; // لو ما وجود سجل، سمحنا (لكن فحصنا في الاسكربت الأول)
+        const role = (udoc.data().role || '').toLowerCase();
+        if (role !== 'admin') {
+          await signOut(auth);
+          alert('هذه الصفحة للمدير فقط.');
+          window.location.href = 'landing.html';
+        }
+      } catch (e) {
+        await signOut(auth);
+        window.location.href = 'landing.html';
+      }
+    });
+  </script>
 </body>
 </html>
