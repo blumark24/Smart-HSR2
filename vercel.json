@@ -1,5 +1,48 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/landing.html" }
+  "version": 2,
+  "name": "smart-hsr",
+  "builds": [
+    {
+      "src": "landing.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.pdf",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/landing.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/login.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/index.html"
+    }
   ]
 }
