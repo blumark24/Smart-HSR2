@@ -47,9 +47,23 @@
     .loading-spinner{ border:3px solid rgba(255,255,255,.3); border-top:3px solid white; border-radius:50%; width:20px; height:20px; animation:spin 1s linear infinite; margin-left:10px; }
     @keyframes spin{ 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
     @media (max-width:420px){ .card{ width:95%; padding:30px 20px; } .logo{ width:90px; } }
+
+    /* Snackbar */
+    #snackbar {
+      visibility: hidden; min-width: 260px; background: var(--primary-teal);
+      color: #fff; text-align: center; border-radius: 12px;
+      padding: 16px; position: fixed; top: 30px; right: 30px;
+      z-index: 9999; font-weight:700; box-shadow:0 8px 25px rgba(14,165,161,0.4);
+      opacity:0; transform:translateY(-15px); transition:all .4s ease;
+    }
+    #snackbar.show {
+      visibility: visible; opacity:1; transform:translateY(0);
+    }
   </style>
 </head>
 <body>
+  <div id="snackbar">✅ تم تسجيل الدخول بنجاح</div>
+
   <div class="card" role="main">
     <div class="card-header-line"></div>
     <img src="Smart_HSR_Dashboard_Logo.svg" alt="شعار Smart HSR" class="logo">
@@ -79,9 +93,11 @@
       getAuth, signInWithEmailAndPassword, onAuthStateChanged,
       setPersistence, browserLocalPersistence 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db   = getFirestore(app);
 
     await setPersistence(auth, browserLocalPersistence);
 
@@ -92,46 +108,62 @@
       el.className = 'message ' + (type || '');
     }
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        localStorage.setItem('userEmail', user.email || '');
-        window.location.href = "index.html";
+    function showSnackbar(text) {
+      const x = document.getElementById("snackbar");
+      x.textContent = text;
+      x.classList.add("show");
+      setTimeout(() => { x.classList.remove("show"); }, 2000);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      localStorage.setItem('userEmail', user.email || '');
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        const role = (snap.exists() && snap.data().role) ? snap.data().role.toLowerCase() : '';
+        if (role === 'admin') window.location.href = 'admin.html';
+        else window.location.href = 'index.html';
+      } catch {
+        window.location.href = 'index.html';
       }
     });
 
-window.signInWithEmail = async function() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  if (!email || !password) { msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error'); return; }
+    window.signInWithEmail = async function() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) { msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error'); return; }
 
-  loginButton.disabled = true;
-  loginButton.innerHTML = `<div class="loading-spinner"></div> جاري الدخول...`;
+      loginButton.disabled = true;
+      loginButton.innerHTML = `<div class="loading-spinner"></div> جاري الدخول...`;
 
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    localStorage.setItem('userEmail', cred.user?.email || '');
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        localStorage.setItem('userEmail', cred.user?.email || '');
 
-    let role = '';
-    try {
-      const snap = await getDoc(doc(db, 'users', cred.user.uid));
-      role = (snap.exists() && snap.data().role) ? String(snap.data().role).toLowerCase() : '';
-    } catch {}
+        let role = '';
+        try {
+          const snap = await getDoc(doc(db, 'users', cred.user.uid));
+          role = (snap.exists() && snap.data().role) ? String(snap.data().role).toLowerCase() : '';
+        } catch {}
 
-    msg('تم تسجيل الدخول بنجاح. جاري التوجيه...','success');
-    if (role === 'admin') window.location.href = 'admin.html';
-    else window.location.href = 'index.html';
+        msg('');
+        showSnackbar("✅ تم تسجيل الدخول بنجاح");
 
-  } catch(e) {
-    let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
-    if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-    else if (e.code === 'auth/too-many-requests') errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة فاشلة.';
-    msg(errorMessage,'error');
-  } finally {
-    loginButton.disabled = false;
-    loginButton.innerHTML = `تسجيل الدخول`;
-  }
-}
+        setTimeout(() => {
+          if (role === 'admin') window.location.href = 'admin.html';
+          else window.location.href = 'index.html';
+        }, 1200);
 
+      } catch(e) {
+        let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
+        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+        else if (e.code === 'auth/too-many-requests') errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة فاشلة.';
+        msg(errorMessage,'error');
+      } finally {
+        loginButton.disabled = false;
+        loginButton.innerHTML = `تسجيل الدخول`;
+      }
+    }
   </script>
 </body>
 </html>
