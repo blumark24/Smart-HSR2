@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart HSR | لوحة المدير التنفيذية</title>
+
+  <link rel="stylesheet" href="output.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root { --color-navy:#0A1931; --color-teal:#18A5A2; --color-gray-bg:#F7F9FC; }
+    body { font-family:'Tajawal',sans-serif; background:var(--color-gray-bg); color:var(--color-navy); margin:0; }
+    header { background:#fff; border-bottom:1px solid #e5e7eb; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+    .card { background:#fff; border-radius:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,.08); border:1px solid #e5e7eb; }
+    .kpi{ border-radius:1.5rem; padding:1.25rem; color:#fff; box-shadow:0 18px 40px rgba(0,0,0,.12); }
+    .kpi-teal{ background:linear-gradient(135deg,#10B981 0%,#18A5A2 100%); }
+    .kpi-red{ background:linear-gradient(135deg,#EF4444 0%,#B91C1C 100%); }
+    .kpi-blue{ background:linear-gradient(135deg,#3B82F6 0%,#0A1931 100%); }
+    .kpi-navy{ background:linear-gradient(135deg,#0A1931 0%,#1f375e 100%); }
+    .btn{ border-radius:999px; font-weight:800; padding:.6rem 1rem; color:#fff; background:var(--color-teal); box-shadow:0 10px 20px rgba(24,165,162,.4); transition:.2s; cursor:pointer; border:none; }
+    .btn:hover{ background:#148f8c; transform:translateY(-1px); }
+    .btn-dark{ background:#0A1931; } .btn-red{ background:#EF4444; } .btn-navy{ background:#0A1931; }
+    .muted{ color:#6b7280; }
+    .modal{ display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.55); align-items:center; justify-content:center; }
+    .modal .content{ background:#fff; width:95%; max-width:620px; border-radius:1.5rem; padding:24px; box-shadow:0 25px 60px rgba(0,0,0,.35); }
+    .pill{ padding:.4rem .9rem; border-radius:999px; border:2px solid #e5e7eb; cursor:pointer; font-weight:700; user-select:none; }
+    .pill[data-active="true"]{ border-color:var(--color-teal); background:#E6F3F3; color:#0A1931; }
+    table{ width:100%; border-collapse:separate; border-spacing:0 .6rem; } th,td{ text-align:right; padding:.75rem 1rem; }
+    tr{ background:#fff; box-shadow:0 6px 16px rgba(0,0,0,.06); border-radius:12px; }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    .field input,.field select{ border:1px solid #e5e7eb; border-radius:12px; padding:.8rem 1rem; font-size:15px; }
+    .row-actions{ display:flex; gap:.4rem; flex-wrap:wrap; }
+    .tag{ font-size:12px; padding:.2rem .6rem; border-radius:999px; background:#eef2ff; color:#1f2937; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="font-extrabold text-lg">Smart HSR — <span style="color:var(--color-teal)">لوحة المدير</span></div>
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="btn btn-dark">🏠 العودة للنظام</a>
+        <button id="logoutBtn" class="btn">🚪 تسجيل الخروج</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-10">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="kpi kpi-teal"><div class="text-sm">إجمالي الملاحظات</div><div id="kpiTotal" class="text-4xl font-extrabold mt-1">--</div></div>
+      <div class="kpi kpi-red"><div class="text-sm">مفتوحة/قيد الانتظار</div><div id="kpiOpen" class="text-4xl font-extrabold mt-1">--</div></div>
+      <div class="kpi kpi-navy"><div class="text-sm">مغلقة/معالجة</div><div id="kpiClosed" class="text-4xl font-extrabold mt-1">--</div></div>
+      <div class="kpi kpi-blue"><div class="text-sm">مستخدمون مسجّلون</div><div id="kpiUsers" class="text-4xl font-extrabold mt-1">--</div></div>
+    </section>
+
+    <section class="card p-6 mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-extrabold">إدارة المستخدمين</h2>
+        <div class="flex gap-2">
+          <button class="btn" id="openInvite">➕ إنشاء دعوة</button>
+          <button class="btn btn-navy" id="openAddUser">💾 إضافة مباشر</button>
+        </div>
+      </div>
+      <p class="muted text-sm mb-4">يمكن للمدير إنشاء دعوة تسجيل لمرة واحدة أو إضافة مستخدم مباشرًا وتحديد الدور (مراقب / مقاول / مدير).</p>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>آخر دخول</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+          <tbody id="usersTbody"><tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-extrabold">سجل الملاحظات</h2>
+        <a href="index.html" class="btn">📊 فتح لوحة التنفيذ</a>
+      </div>
+      <div id="obsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="muted text-center p-6">جاري التحميل...</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="inviteModal" class="modal">
+    <div class="content">
+      <div class="flex items-center justify-between mb-3"><h3 class="text-xl font-extrabold">إنشاء دعوة تسجيل</h3><button onclick="closeModal('inviteModal')" class="pill">إغلاق</button></div>
+      <div class="grid gap-3">
+        <div class="field"><label class="text-sm font-bold">البريد الإلكتروني</label><input id="inviteEmail" placeholder="user@example.com" /></div>
+        <div class="field">
+          <label class="text-sm font-bold">الدور</label>
+          <div class="flex gap-2 mt-1">
+            <div class="pill" data-role="inspector" data-active="true" onclick="pickRole(this)">👷‍♂️ مراقب</div>
+            <div class="pill" data-role="contractor" onclick="pickRole(this)">🏗️ مقاول</div>
+            <div class="pill" data-role="admin" onclick="pickRole(this)">👑 مدير</div>
+          </div>
+        </div>
+        <button class="btn" onclick="createInvite()">إنشاء دعوة</button>
+        <p class="muted text-xs">سيظهر رابط تسجيل لمرة واحدة بعد الإنشاء.</p>
+        <div id="inviteResult" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="addUserModal" class="modal">
+    <div class="content">
+      <div class="flex items-center justify-between mb-3"><h3 class="text-xl font-extrabold">إضافة مستخدم مباشر</h3><button onclick="closeModal('addUserModal')" class="pill">إغلاق</button></div>
+      <div class="grid gap-3">
+        <div class="field"><label class="text-sm font-bold">الاسم</label><input id="addName" placeholder="الاسم الكامل"/></div>
+        <div class="field"><label class="text-sm font-bold">البريد الإلكتروني</label><input id="addEmail" placeholder="user@example.com"/></div>
+        <div class="field"><label class="text-sm font-bold">الدور</label>
+          <select id="addRole"><option value="inspector">مراقب</option><option value="contractor">مقاول</option><option value="admin">مدير</option></select>
+        </div>
+        <button class="btn btn-navy" onclick="addUserDirect()">💾 حفظ المستخدم</button>
+        <p class="muted text-xs">إضافة مباشر لجدول users (ينشأ حسابه لاحقًا عبر Auth).</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="editUserModal" class="modal">
+    <div class="content">
+      <div class="flex items-center justify-between mb-3"><h3 class="text-xl font-extrabold">تعديل بيانات المستخدم</h3><button onclick="closeModal('editUserModal')" class="pill">إغلاق</button></div>
+      <div class="grid gap-3">
+        <input type="hidden" id="editId"/>
+        <div class="field"><label class="text-sm font-bold">الاسم</label><input id="editName"/></div>
+        <div class="field"><label class="text-sm font-bold">الدور</label>
+          <select id="editRole"><option value="inspector">مراقب</option><option value="contractor">مقاول</option><option value="admin">مدير</option></select>
+        </div>
+        <div class="field"><label class="text-sm font-bold">الحالة</label>
+          <select id="editStatus"><option value="active">نشط</option><option value="suspended">موقوف</option></select>
+        </div>
+        <button class="btn btn-navy" onclick="applyUserEdit()">✏️ حفظ التعديل</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { firebaseConfig } from './firebase-config.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, addDoc, query, orderBy, serverTimestamp, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    await setPersistence(auth, browserLocalPersistence);
+
+    const ADMIN_EMAIL = "blumark180@gmail.com";
+
+    const $  = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const openModal  = id => document.getElementById(id).style.display = 'flex';
+    const closeModal = id => document.getElementById(id).style.display = 'none';
+    window.closeModal = closeModal;
+
+    document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=>{ localStorage.clear(); window.location.href='login.html'; });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'login.html'; return; }
+
+      let isAdmin = (user.email || '').toLowerCase() === ADMIN_EMAIL.toLowerCase();
+      try {
+        const udoc = await getDoc(doc(db, 'users', user.uid));
+        if (udoc.exists()) {
+          const role = (udoc.data().role || '').toLowerCase();
+          if (role == 'admin') isAdmin = true;
+        }
+      } catch(e) {}
+
+      if (!isAdmin) {
+        alert("🚫 هذه الصفحة مخصصة للمدير فقط");
+        window.location.href = 'index.html';
+        return;
+      }
+
+      loadKPIs();
+      loadUsers();
+      loadObservations();
+    });
+
+    let inviteRole = 'inspector';
+    window.pickRole = (el) => {
+      $$('.pill[data-role]').forEach(p => p.dataset.active = 'false');
+      el.dataset.active = 'true';
+      inviteRole = el.dataset.role;
+    };
+    document.getElementById('openInvite').onclick  = () => { document.getElementById('inviteEmail').value=''; document.getElementById('inviteResult').innerHTML=''; openModal('inviteModal'); };
+    document.getElementById('openAddUser').onclick = () => { document.getElementById('addName').value=''; document.getElementById('addEmail').value=''; document.getElementById('addRole').value='inspector'; openModal('addUserModal'); };
+
+    window.createInvite = async () => {
+      const email = (document.getElementById('inviteEmail').value || '').trim().toLowerCase();
+      if (!email) return alert('📧 أدخل البريد الإلكتروني');
+      const ref = await addDoc(collection(db, 'invites'), { email, role: inviteRole, status: 'pending', createdAt: serverTimestamp() });
+      const link = `${location.origin}${location.pathname.replace('admin.html','')}register.html?token=${ref.id}`;
+      document.getElementById('inviteResult').innerHTML = `<div class="p-3 border rounded-xl" style="background:#F7F9FC"><b>رابط التسجيل:</b><br><a style="color:var(--color-teal)" href="${link}" target="_blank">${link}</a><p class="muted text-xs mt-1">🔒 يستخدم مرة واحدة فقط</p></div>`;
+    };
+
+    window.addUserDirect = async () => {
+      const name  = (document.getElementById('addName').value  || '').trim();
+      const email = (document.getElementById('addEmail').value || '').trim().toLowerCase();
+      const role  = document.getElementById('addRole').value || 'inspector';
+      if (!email) return alert('📧 أدخل البريد الإلكتروني');
+      await addDoc(collection(db, 'users'), { name: name || 'مستخدم جديد', email, role, status:'active', createdAt: serverTimestamp() });
+      closeModal('addUserModal');
+      alert('✅ تم إضافة المستخدم إلى الجدول (users)');
+      loadUsers();
+    };
+
+    async function loadUsers() {
+      const t = document.getElementById('usersTbody');
+      t.innerHTML = '<tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr>';
+      const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt','desc')));
+      let html = '';
+      snap.forEach(d => {
+        const u = d.data();
+        const id = d.id;
+        html += `<tr><td>${u.name || '-'}</td><td>${u.email || '-'}</td><td><span class="tag">${u.role || '-'}</span></td><td>${u.lastLogin || '-'}</td><td>${u.status || 'active'}</td><td class="row-actions"><button class="btn btn-navy" onclick="openEdit('${id}','${u.name||''}','${u.role||''}','${u.status||'active'}')">✏️ تعديل</button><button class="btn btn-red" onclick="deleteUser('${id}')">🗑️ حذف</button></td></tr>`;
+      });
+      t.innerHTML = html || '<tr><td colspan="6" class="muted text-center">لا يوجد مستخدمون بعد.</td></tr>';
+      lucide.createIcons();
+    }
+
+    window.openEdit = (id, name, role, status) => {
+      document.getElementById('editId').value = id;
+      document.getElementById('editName').value = name || '';
+      document.getElementById('editRole').value = (role || 'inspector');
+      document.getElementById('editStatus').value = (status || 'active');
+      openModal('editUserModal');
+    };
+
+    window.applyUserEdit = async () => {
+      const id     = document.getElementById('editId').value;
+      const name   = (document.getElementById('editName').value || '').trim();
+      const role   = document.getElementById('editRole').value || 'inspector';
+      const status = document.getElementById('editStatus').value || 'active';
+      await updateDoc(doc(db,'users',id), { name, role, status });
+      closeModal('editUserModal');
+      alert('✅ تم تعديل بيانات المستخدم');
+      loadUsers();
+    };
+
+    window.deleteUser = async (id) => {
+      if (!confirm('هل تريد حذف هذا المستخدم؟')) return;
+      await deleteDoc(doc(db,'users',id));
+      alert('🗑️ تم حذف المستخدم بنجاح');
+      loadUsers();
+    };
+
+    async function loadKPIs() {
+      const usersSnap = await getDocs(collection(db, 'users'));
+      document.getElementById('kpiUsers').textContent = usersSnap.size;
+      const obsSnap = await getDocs(collection(db, 'observations'));
+      let total = obsSnap.size, open = 0, closed = 0;
+      obsSnap.forEach(o => { const s = (o.data().status || '').toUpperCase(); if (s === 'COMPLETED') closed++; else open++; });
+      document.getElementById('kpiTotal').textContent  = total;
+      document.getElementById('kpiOpen').textContent   = open;
+      document.getElementById('kpiClosed').textContent = closed;
+    }
+
+    async function loadObservations() {
+      const box = document.getElementById('obsList');
+      box.innerHTML = '<div class="muted text-center p-6">جاري التحميل...</div>';
+      const snap = await getDocs(query(collection(db, 'observations'), orderBy('createdAt','desc')));
+      let html = '';
+      snap.forEach(d => {
+        const o = d.data();
+        const st = (o.status || 'PENDING').toUpperCase();
+        const color = st === 'COMPLETED' ? '#16a34a' : (st === 'IN_PROGRESS' ? '#ca8a04' : '#dc2626');
+        html += `<div class="card p-4"><div class="flex items-center justify-between"><div class="font-bold">${o.title || '-'}</div><span class="text-white px-3 py-1 rounded-full text-xs" style="background:${color}">${st}</span></div><div class="text-sm muted mt-1">${o.date || ''} • ${o.type || ''}</div><div class="text-sm mt-2">${(o.details || '').slice(0, 100)}...</div></div>`;
+      });
+      box.innerHTML = html || '<div class="muted text-center p-6">لا توجد ملاحظات بعد.</div>';
+    }
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
