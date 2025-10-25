@@ -95,6 +95,34 @@
 </head>
 
 <body class="text-gray-800">
+<!-- ✅ الهيدر الموحد للنظام -->
+<header id="smartHeader"
+  style="
+    background:linear-gradient(90deg,#0b2b3a 0%,#0ea5a1 100%);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 22px;
+    position:sticky;
+    top:0;
+    z-index:999;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+  ">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src='Smart_HSR_Dashboard_Logo.svg' alt='Smart HSR' style='height:36px;'>
+    <span style="font-weight:900;font-size:1.1rem;">Smart HSR Dashboard</span>
+  </div>
+  <div id="userInfo" style="display:flex;align-items:center;gap:14px;font-weight:600;">
+    <span id="userRole" style="background:rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;">
+      <!-- سيتم تعبئة الاسم والدور تلقائيًا -->
+    </span>
+    <button id="logoutBtn"
+      style="background:white;color:#0b2b3a;font-weight:800;border:none;border-radius:999px;padding:8px 16px;cursor:pointer;transition:.3s;">
+      🚪 خروج
+    </button>
+  </div>
+</header>
 
   <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex justify-start mb-6 no-print">
