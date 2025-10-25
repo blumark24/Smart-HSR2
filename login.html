@@ -99,28 +99,39 @@
       }
     });
 
-    window.signInWithEmail = async function() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!email || !password) { msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error'); return; }
+window.signInWithEmail = async function() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) { msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error'); return; }
 
-      loginButton.disabled = True;
-      loginButton.innerHTML = `<div class="loading-spinner"></div> جاري الدخول...`;
+  loginButton.disabled = true;
+  loginButton.innerHTML = `<div class="loading-spinner"></div> جاري الدخول...`;
 
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        localStorage.setItem('userEmail', cred.user?.email || '');
-        msg('تم تسجيل الدخول بنجاح. جاري التوجيه...','success');
-        window.location.href = "index.html";
-      } catch(e) {
-        let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-        else if (e.code === 'auth/too-many-requests') errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة فاشلة.';
-        msg(errorMessage,'error');
-        loginButton.disabled = false;
-        loginButton.innerHTML = `تسجيل الدخول`;
-      }
-    }
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    localStorage.setItem('userEmail', cred.user?.email || '');
+
+    let role = '';
+    try {
+      const snap = await getDoc(doc(db, 'users', cred.user.uid));
+      role = (snap.exists() && snap.data().role) ? String(snap.data().role).toLowerCase() : '';
+    } catch {}
+
+    msg('تم تسجيل الدخول بنجاح. جاري التوجيه...','success');
+    if (role === 'admin') window.location.href = 'admin.html';
+    else window.location.href = 'index.html';
+
+  } catch(e) {
+    let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+    else if (e.code === 'auth/too-many-requests') errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة فاشلة.';
+    msg(errorMessage,'error');
+  } finally {
+    loginButton.disabled = false;
+    loginButton.innerHTML = `تسجيل الدخول`;
+  }
+}
+
   </script>
 </body>
 </html>
