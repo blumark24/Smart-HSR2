@@ -90,7 +90,7 @@
         <a href="#contact" class="hover:text-white">تواصل</a>
       </nav>
       <div class="flex items-center gap-2">
-        <a href="#launch" class="btn glow">🚀 الدخول إلى النظام التنفيذي</a>
+        <a href="login.html" class="btn glow">🚀 الدخول إلى النظام التنفيذي</a>
       </div>
     </div>
   </header>
@@ -108,7 +108,7 @@
           الذكاء الصناعي لتحليل الصور والملاحظات الميدانية — لتتحول البيانات الفورية إلى قرارات تنفيذية دقيقة.
         </p>
         <div class="mt-7 flex flex-wrap gap-3">
-         <a href="#launch" class="btn glow">🚀 الدخول إلى النظام التنفيذي</a>
+        <a href="login.html" class="btn glow">🚀 الدخول إلى النظام التنفيذي</a>
           <a href="#about" class="btn btn-secondary">📘 الملف التعريفي</a>
         </div>
         <div class="mt-6 text-sm text-white/60 en">
@@ -352,7 +352,33 @@
       }, 900);
     });
   </script>
+  <!-- Chatbase Smart Assistant -->
+<script>
+(function(){
+  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+    window.chatbase=(...args)=>{
+      if(!window.chatbase.q){window.chatbase.q=[]}
+      window.chatbase.q.push(args)
+    };
+    window.chatbase=new Proxy(window.chatbase,{
+      get(target,prop){if(prop==="q"){return target.q}
+      return(...a)=>target(prop,...a)}
+    });
+  }
+  const onLoad=function(){
+    const script=document.createElement("script");
+    script.src="https://www.chatbase.co/embed.min.js";
+    script.id="55P9LCwiBxOhS1khs3-VT"; // 🔹 استبدل بالـID الخاص بمساعدك في Chatbase
+    script.domain="www.chatbase.co";
+    document.body.appendChild(script);
+  };
+  if(document.readyState==="complete"){onLoad()}
+  else{window.addEventListener("load",onLoad)}
+})();
+</script>
+
 </body>
 </html>
+
 
 
