@@ -192,16 +192,8 @@
     </div>
   </div>
 
- <script type="module">
-  import { firebaseConfig } from './firebase-config.js';
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-  // ✅ تهيئة آمنة لتجنب التكرار
-  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+<script type="module">
+ import { app, auth, db } from "./firebase-core.js";
 
   const overlay = document.getElementById('loadingOverlay');
   const roleBadge = document.getElementById('userRole');
