@@ -363,20 +363,34 @@
     lucide.createIcons();
   </script>
 
-<script type="module">
-  import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { firebaseConfig } from './firebase-config.js';
+<!-- 🌀 شاشة تحميل قبل عرض لوحة المدير -->
+<div id="loadingOverlay" style="
+  position:fixed;inset:0;
+  background:linear-gradient(135deg,#0b2b3a 0%,#0ea5a1 100%);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;z-index:9999;color:white;text-align:center;">
+  <img src="Smart_HSR_Dashboard_Logo.svg" alt="Smart HSR" style="width:100px;animation:pulse 1.5s infinite ease-in-out;">
+  <p style="margin-top:15px;font-weight:700;">جاري التحقق من صلاحيات المدير...</p>
+</div>
 
-  // ✅ منع التكرار (إذا التطبيق منشأ، لا يعيد إنشاؤه)
+<script type="module">
+  import { firebaseConfig } from './firebase-config.js';
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  // ✅ منع التكرار
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  const overlay = document.getElementById('loadingOverlay');
   const roleBadge = document.getElementById('userRole');
   const logoutBtn = document.getElementById('logoutBtn');
 
+  await setPersistence(auth, browserLocalPersistence);
+
+  // 🧩 وظيفة جلب الدور
   async function getUserRole(uid) {
     try {
       const snap = await getDoc(doc(db, 'users', uid));
@@ -387,12 +401,20 @@
     return '';
   }
 
-  // ✅ تحقق من الجلسة فقط (بدون إعادة إنشاء Firebase)
+  // ✅ تحقق من الجلسة
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return window.location.href = 'login.html';
+    if (!user) return (window.location.href = 'login.html');
     const role = await getUserRole(user.uid);
     const name = user.displayName || user.email;
     roleBadge.textContent = `${name} — ${role}`;
+
+    if (role !== 'admin') {
+      alert("🚫 هذه الصفحة مخصصة للمدير فقط");
+      return (window.location.href = 'index.html');
+    }
+
+    console.log("✅ تم التحقق من المدير:", user.email);
+    overlay.style.display = 'none'; // ✅ إخفاء شاشة التحميل بعد التحقق
   });
 
   // 🚪 تسجيل الخروج
@@ -402,6 +424,14 @@
     window.location.href = 'login.html';
   });
 </script>
+
+<style>
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
 
 
 
