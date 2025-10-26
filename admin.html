@@ -363,58 +363,45 @@
     lucide.createIcons();
   </script>
 
-  <script type="module">
-import { firebaseConfig } from './firebase-config.js';
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+ <script type="module">
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { firebaseConfig } from './firebase-config.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-const roleBadge = document.getElementById('userRole');
-const logoutBtn = document.getElementById('logoutBtn');
+  const roleBadge = document.getElementById('userRole');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-// ✅ وظيفة جلب الدور من Firestore
-async function getUserRole(uid) {
-  try {
-    const ref = doc(db, 'users', uid);
-    const snap = await getDoc(ref);
-    if (snap.exists()) return (snap.data().role || '').toLowerCase();
-  } catch (err) {
-    console.error("Firestore:", err);
-  }
-  return '';
-}
-
-// ✅ تحقق من الجلسة
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    console.warn("🚫 لا يوجد مستخدم، العودة لصفحة الدخول");
-    return window.location.href = 'login.html';
+  async function getUserRole(uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (snap.exists()) return (snap.data().role || '').toLowerCase();
+    } catch (err) { console.error("Firestore:", err); }
+    return '';
   }
 
-  const role = await getUserRole(user.uid);
-  const name = user.displayName || user.email;
-  roleBadge.textContent = `${name} — ${role}`;
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return window.location.href = 'login.html';
+    const role = await getUserRole(user.uid);
+    const name = user.displayName || user.email;
+    roleBadge.textContent = `${name} — ${role}`;
+    if (role !== 'admin') {
+      alert('🚫 هذه الصفحة مخصصة للمدير فقط');
+      window.location.href = 'index.html';
+    }
+  });
 
-  // 👑 المدير فقط
-  if (role !== 'admin') {
-    alert("🚫 هذه الصفحة مخصصة للمدير فقط");
-    return window.location.href = 'index.html';
-  }
-
-  console.log("✅ تم التحقق من جلسة المدير:", user.email);
-});
-
-// 🚪 زر تسجيل الخروج
-logoutBtn.addEventListener('click', async () => {
-  await signOut(auth);
-  localStorage.clear();
-  window.location.href = 'login.html';
-});
+  logoutBtn.addEventListener('click', async () => {
+    await signOut(auth);
+    localStorage.clear();
+    window.location.href = 'login.html';
+  });
 </script>
+
 
 
 </body>
