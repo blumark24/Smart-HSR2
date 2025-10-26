@@ -324,6 +324,16 @@
     if (banner) banner.classList.toggle("show", hasLate);
   }
 </script>
+<!-- 🌀 شاشة تحميل أنيقة -->
+<div id="loadingOverlay" style="
+  position:fixed;inset:0;
+  background:linear-gradient(135deg,#0b2b3a 0%,#0ea5a1 100%);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;z-index:9999;color:white;text-align:center;">
+  <img src="Smart_HSR_Dashboard_Logo.svg" alt="Smart HSR" style="width:120px;animation:pulse 1.5s infinite ease-in-out;">
+  <div style="margin-top:15px;font-weight:700;font-size:1.1rem;">جاري التحقق من صلاحيات المدير...</div>
+  <div class="spinner" style="margin-top:20px;width:36px;height:36px;border:3px solid rgba(255,255,255,.3);border-top:3px solid white;border-radius:50%;animation:spin 1s linear infinite;"></div>
+</div>
 
 <style>
 @keyframes pulse { 0%{transform:scale(1);opacity:1;}50%{transform:scale(1.1);opacity:0.8;}100%{transform:scale(1);opacity:1;} }
