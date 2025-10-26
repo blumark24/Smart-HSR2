@@ -150,38 +150,82 @@
   });
 
   // 🚀 عند الضغط على زر الدخول
-  window.signInWithEmail = async function() {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    if (!email || !password) {
-      msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.', 'error');
-      return;
-    }
+window.signInWithEmail = async function() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) { msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error'); return; }
 
-    loginButton.disabled = true;
-    loginButton.innerHTML = `<div class="loading-spinner"></div> جاري التحقق...`;
+  loginButton.disabled = true;
+  loginButton.innerHTML = `<div class="loading-spinner"></div> جاري التحقق...`;
 
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    localStorage.setItem('userEmail', cred.user?.email || '');
+
+    // ✅ إظهار شاشة التحميل
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    document.querySelector('.card').style.opacity = '0.3';
+
+    let role = '';
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem('userEmail', cred.user?.email || '');
-      msg('');
-      showSnackbar("✅ تم تسجيل الدخول بنجاح");
-      // ⏳ ننتظر لحظة بسيطة حتى تُجلب بيانات الدور من Firestore
-      setTimeout(() => redirectUser(cred.user), 800);
-    } catch (e) {
-      console.error(e);
-      let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
-      if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password')
-        errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-      else if (e.code === 'auth/too-many-requests')
-        errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة فاشلة.';
-      msg(errorMessage, 'error');
-    } finally {
-      loginButton.disabled = false;
-      loginButton.innerHTML = 'تسجيل الدخول';
-    }
-  };
+      const snap = await getDoc(doc(db, 'users', cred.user.uid));
+      role = (snap.exists() && snap.data().role) ? String(snap.data().role).toLowerCase() : '';
+    } catch {}
+
+    setTimeout(() => {
+      if (role === 'admin') window.location.href = 'admin.html';
+      else window.location.href = 'index.html';
+    }, 1500);
+
+  } catch(e) {
+    let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password') errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+    else if (e.code === 'auth/too-many-requests') errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة.';
+    msg(errorMessage,'error');
+  } finally {
+    loginButton.disabled = false;
+    loginButton.innerHTML = `تسجيل الدخول`;
+  }
+};
+
 </script>
+<!-- شاشة التحميل الأنيقة -->
+<div id="loadingOverlay">
+  <div class="loader-content">
+    <img src="Smart_HSR_Dashboard_Logo.svg" alt="Smart HSR" class="loader-logo">
+    <p class="loader-text">جاري الدخول إلى النظام...</p>
+  </div>
+</div>
+
+<style>
+  #loadingOverlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0b2b3a 0%, #0ea5a1 100%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+    color: white;
+    text-align: center;
+  }
+  .loader-logo {
+    width: 120px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  .loader-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    opacity: 0.9;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
 
 </body>
 </html>
