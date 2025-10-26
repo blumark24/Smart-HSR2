@@ -1053,28 +1053,46 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href='login.html'; return; }
+const roleBadge = document.getElementById('userRole');
+const logoutBtn = document.getElementById('logoutBtn');
 
+async function getUserRole(uid) {
   try {
-    const udoc = await getDoc(doc(db,'users',user.uid));
-    const data = udoc.exists() ? udoc.data() : {};
-    const role = data.role || 'مستخدم';
-    const name = data.name || user.email;
-
-    document.getElementById('userRole').innerHTML = `
-      <b>${name}</b> — <span style="opacity:.8">${role}</span>
-    `;
-  } catch {
-    document.getElementById('userRole').textContent = user.email;
+    const ref = doc(db, 'users', uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) return (snap.data().role || '').toLowerCase();
+  } catch (err) {
+    console.error("Firestore:", err);
   }
+  return '';
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    console.warn("🚫 لا يوجد مستخدم، العودة لصفحة الدخول");
+    return window.location.href = 'login.html';
+  }
+
+  const role = await getUserRole(user.uid);
+  const name = user.displayName || user.email;
+  roleBadge.textContent = `${name} — ${role}`;
+
+  // 🚫 المدير لا يفتح صفحة المراقبين
+  if (role === 'admin') {
+    console.log("🔁 المدير أُعيد إلى لوحة التحكم");
+    return window.location.href = 'admin.html';
+  }
+
+  console.log("✅ تم التحقق من الجلسة:", user.email, "• الدور:", role);
 });
 
-document.getElementById('logoutBtn').onclick = async () => {
+logoutBtn.addEventListener('click', async () => {
   await signOut(auth);
-  window.location.href='login.html';
-};
+  localStorage.clear();
+  window.location.href = 'login.html';
+});
 </script>
+
 
 </body>
 </html>
