@@ -144,10 +144,19 @@
     }
   }
 
-  // ✅ تحقق دائم من حالة المستخدم
-  onAuthStateChanged(auth, (user) => {
-    if (user) redirectUser(user);
-  });
+// ✅ تحقق دائم من حالة المستخدم (بشكل آمن)
+let firstCheck = true;
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  // 🔹 منع التوجيه المزدوج
+  if (!firstCheck) return;
+  firstCheck = false;
+
+  // ✅ تأخير بسيط لضمان تحميل Firestore
+  await new Promise(res => setTimeout(res, 500));
+  redirectUser(user);
+});
 
   // 🚀 عند الضغط على زر الدخول
 window.signInWithEmail = async function() {
@@ -172,10 +181,9 @@ window.signInWithEmail = async function() {
       role = (snap.exists() && snap.data().role) ? String(snap.data().role).toLowerCase() : '';
     } catch {}
 
-    setTimeout(() => {
-      if (role === 'admin') window.location.href = 'admin.html';
-      else window.location.href = 'index.html';
-    }, 1500);
+   // ✅ نستخدم الدالة الذكية للتوجيه
+setTimeout(() => redirectUser(cred.user), 1000);
+
 
   } catch(e) {
     let errorMessage = 'خطأ في تسجيل الدخول. تأكد من البريد وكلمة المرور.';
