@@ -351,8 +351,7 @@
         aiResult.innerHTML = `<div class="leading-relaxed">${pick}</div><div class="mt-3 text-white/60 text-sm en">*AI-like description generated for demo purposes.*</div>`;
       }, 900);
     });
-  </script>
-  <!-- Chatbase Smart Assistant -->
+<!-- Smart HSR Assistant (Chatbase) -->
 <script>
 (function(){
   if(!window.chatbase || window.chatbase("getState")!=="initialized"){
@@ -368,9 +367,22 @@
   const onLoad=function(){
     const script=document.createElement("script");
     script.src="https://www.chatbase.co/embed.min.js";
-    script.id="55P9LCwiBxOhS1khs3-VT"; // 🔹 استبدل بالـID الخاص بمساعدك في Chatbase
+    script.id="55P9LCwiBxOhS1khs3-VT";  // ✅ معرّف مساعدك الرسمي في Chatbase
     script.domain="www.chatbase.co";
     document.body.appendChild(script);
+
+    // 🎨 تخصيص مظهر المساعد وهوية Smart HSR
+    setTimeout(()=>{
+      try{
+        window.chatbase('config', {
+          color: '#0EA5A1',                // التركوازي
+          backgroundColor: '#0B2B3A',      // الكحلي
+          title: 'Smart HSR Assistant 🤖',
+          subtitle: 'مساعدك الذكي للمدن الذكية',
+          showWelcomeMessage: true
+        });
+      }catch(e){ console.log('Chatbase config pending...'); }
+    }, 2500);
   };
   if(document.readyState==="complete"){onLoad()}
   else{window.addEventListener("load",onLoad)}
@@ -379,6 +391,7 @@
 
 </body>
 </html>
+
 
 
 
