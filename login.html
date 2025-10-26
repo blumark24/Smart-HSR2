@@ -112,12 +112,16 @@ import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-import { setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ تأكد أن هذا السطر يُنفذ قبل أي شيء آخر
-await setPersistence(auth, browserLocalPersistence)
-  .then(() => console.log("✅ Session persistence: local"))
-  .catch(err => console.error("⚠️ Persistence error:", err));
+// ✅ ضمان بقاء الجلسة
+(async () => {
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    console.log("✅ Session persistence: local");
+  } catch (err) {
+    console.error("⚠️ Persistence error:", err);
+  }
+})();
 
 const msgBox = document.getElementById('msg');
 const loginButton = document.getElementById('loginButton');
@@ -154,7 +158,7 @@ onAuthStateChanged(auth, (user) => {
   if (user && !redirected) {
     redirected = true;
     showLoading(true);
-    setTimeout(() => redirectUser(user), 700);
+    setTimeout(() => redirectUser(user), 800);
   }
 });
 
@@ -171,7 +175,7 @@ window.signInWithEmail = async function() {
     const cred = await signInWithEmailAndPassword(auth, email, password);
     msg('', '');
     showLoading(true);
-    setTimeout(() => redirectUser(cred.user), 1800);
+    setTimeout(() => redirectUser(cred.user), 1200);
   } catch (e) {
     let errorMessage = 'خطأ في تسجيل الدخول.';
     if (e.code.includes('user-not-found') || e.code.includes('wrong-password'))
