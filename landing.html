@@ -341,57 +341,60 @@
     analyzeBtn?.addEventListener('click', ()=>{
       aiResult.textContent = '⏳ جاري التحليل التجريبي...';
       setTimeout(()=>{
-        // Mock output inspired by the product value
         const samples = [
           'تم رصد تلف في الرصيف مع حاجة لمعالجة فورية خلال 48 ساعة. مستوى الأولوية: مرتفع. تم تحديد الموقع بدقة وإضافة توصيات إصلاح تلقائي.',
           'تحليل الصورة يشير إلى تجمع نفايات حول عمود إنارة. يقترح النظام مهمة تنظيف عاجلة وتوثيق بعد المعالجة. الحالة: قيد الإنشاء.',
           'وجود حفر سطحية بطول ~1.2م. يُوصى بإعادة رصف موضعي ومتابعة خلال 72 ساعة. تم إنشاء بطاقة متابعة للمقاول.'
         ];
         const pick = samples[Math.floor(Math.random()*samples.length)];
-        aiResult.innerHTML = `<div class="leading-relaxed">${pick}</div><div class="mt-3 text-white/60 text-sm en">*AI-like description generated for demo purposes.*</div>`;
+        aiResult.innerHTML = `<div class="leading-relaxed">${pick}</div>
+        <div class="mt-3 text-white/60 text-sm en">
+          *AI-like description generated for demo purposes.*
+        </div>`;
       }, 900);
     });
-<!-- Smart HSR Assistant (Chatbase) -->
-<script>
-(function(){
-  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
-    window.chatbase=(...args)=>{
-      if(!window.chatbase.q){window.chatbase.q=[]}
-      window.chatbase.q.push(args)
-    };
-    window.chatbase=new Proxy(window.chatbase,{
-      get(target,prop){if(prop==="q"){return target.q}
-      return(...a)=>target(prop,...a)}
-    });
-  }
-  const onLoad=function(){
-    const script=document.createElement("script");
-    script.src="https://www.chatbase.co/embed.min.js";
-    script.id="55P9LCwiBxOhS1khs3-VT";  // ✅ معرّف مساعدك الرسمي في Chatbase
-    script.domain="www.chatbase.co";
-    document.body.appendChild(script);
+  </script>
 
-    // 🎨 تخصيص مظهر المساعد وهوية Smart HSR
-    setTimeout(()=>{
-      try{
-        window.chatbase('config', {
-          color: '#0EA5A1',                // التركوازي
-          backgroundColor: '#0B2B3A',      // الكحلي
-          title: 'Smart HSR Assistant 🤖',
-          subtitle: 'مساعدك الذكي للمدن الذكية',
-          showWelcomeMessage: true
-        });
-      }catch(e){ console.log('Chatbase config pending...'); }
-    }, 2500);
-  };
-  if(document.readyState==="complete"){onLoad()}
-  else{window.addEventListener("load",onLoad)}
-})();
-</script>
+  <!-- Smart HSR Assistant (Chatbase) -->
+  <script>
+  (function(){
+    if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+      window.chatbase=(...args)=>{
+        if(!window.chatbase.q){window.chatbase.q=[]}
+        window.chatbase.q.push(args)
+      };
+      window.chatbase=new Proxy(window.chatbase,{
+        get(target,prop){if(prop==="q"){return target.q}
+        return(...a)=>target(prop,...a)}
+      });
+    }
+    const onLoad=function(){
+      const script=document.createElement("script");
+      script.src="https://www.chatbase.co/embed.min.js";
+      script.id="55P9LCwiBxOhS1khs3-VT";  // ✅ معرّف مساعدك الرسمي في Chatbase
+      script.domain="www.chatbase.co";
+      document.body.appendChild(script);
+
+      // 🎨 تخصيص مظهر المساعد وهوية Smart HSR
+      setTimeout(()=>{
+        try{
+          window.chatbase('config', {
+            color: '#0EA5A1',                // تركوازي
+            backgroundColor: '#0B2B3A',      // كحلي
+            title: 'Smart HSR Assistant 🤖',
+            subtitle: 'مساعدك الذكي للمدن الذكية',
+            showWelcomeMessage: true
+          });
+        }catch(e){ console.log('Chatbase config pending...'); }
+      }, 2500);
+    };
+    if(document.readyState==="complete"){onLoad()}
+    else{window.addEventListener("load",onLoad)}
+  })();
+  </script>
 
 </body>
 </html>
-
 
 
 
