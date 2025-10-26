@@ -192,216 +192,35 @@
     </div>
   </div>
 
-  <script type="module">
-    import { firebaseConfig } from './firebase-config.js';
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, query, orderBy, serverTimestamp, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
-
-    await setPersistence(auth, browserLocalPersistence);
-
-    const ADMIN_EMAIL = "blumark180@gmail.com";
-
-    const $  = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-    const openModal  = id => document.getElementById(id).style.display = 'flex';
-    const closeModal = id => document.getElementById(id).style.display = 'none';
-    window.closeModal = closeModal;
-
-    document.getElementById('logoutBtn').onclick = () => signOut(auth).then(()=>{ localStorage.clear(); window.location.href='login.html'; });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = 'login.html'; return; }
-
-      let isAdmin = (user.email || '').toLowerCase() === ADMIN_EMAIL.toLowerCase();
-      try {
-        const udoc = await getDoc(doc(db, 'users', user.uid));
-        if (udoc.exists()) {
-          const role = (udoc.data().role || '').toLowerCase();
-          if (role == 'admin') isAdmin = true;
-        }
-      } catch(e) {}
-
-      if (!isAdmin) {
-        alert("🚫 هذه الصفحة مخصصة للمدير فقط");
-        window.location.href = 'index.html';
-        return;
-      }
-
-      loadKPIs();
-      loadUsers();
-      loadObservations();
-    });
-
-    let inviteRole = 'inspector';
-    window.pickRole = (el) => {
-      $$('.pill[data-role]').forEach(p => p.dataset.active = 'false');
-      el.dataset.active = 'true';
-      inviteRole = el.dataset.role;
-    };
-    document.getElementById('openInvite').onclick  = () => { document.getElementById('inviteEmail').value=''; document.getElementById('inviteResult').innerHTML=''; openModal('inviteModal'); };
-    document.getElementById('openAddUser').onclick = () => { document.getElementById('addName').value=''; document.getElementById('addEmail').value=''; document.getElementById('addRole').value='inspector'; openModal('addUserModal'); };
-
-    window.createInvite = async () => {
-      const email = (document.getElementById('inviteEmail').value || '').trim().toLowerCase();
-      if (!email) return alert('📧 أدخل البريد الإلكتروني');
-      const ref = await addDoc(collection(db, 'invites'), { email, role: inviteRole, status: 'pending', createdAt: serverTimestamp() });
-      const link = `${location.origin}${location.pathname.replace('admin.html','')}register.html?token=${ref.id}`;
-      document.getElementById('inviteResult').innerHTML = `<div class="p-3 border rounded-xl" style="background:#F7F9FC"><b>رابط التسجيل:</b><br><a style="color:var(--color-teal)" href="${link}" target="_blank">${link}</a><p class="muted text-xs mt-1">🔒 يستخدم مرة واحدة فقط</p></div>`;
-    };
-
-    window.addUserDirect = async () => {
-      const name  = (document.getElementById('addName').value  || '').trim();
-      const email = (document.getElementById('addEmail').value || '').trim().toLowerCase();
-      const role  = document.getElementById('addRole').value || 'inspector';
-      if (!email) return alert('📧 أدخل البريد الإلكتروني');
-      await addDoc(collection(db, 'users'), { name: name || 'مستخدم جديد', email, role, status:'active', createdAt: serverTimestamp() });
-      closeModal('addUserModal');
-      alert('✅ تم إضافة المستخدم إلى الجدول (users)');
-      loadUsers();
-    };
-
-    async function loadUsers() {
-      const t = document.getElementById('usersTbody');
-      t.innerHTML = '<tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr>';
-      const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt','desc')));
-      let html = '';
-      snap.forEach(d => {
-        const u = d.data();
-        const id = d.id;
-        html += `<tr><td>${u.name || '-'}</td><td>${u.email || '-'}</td><td><span class="tag">${u.role || '-'}</span></td><td>${u.lastLogin || '-'}</td><td>${u.status || 'active'}</td><td class="row-actions"><button class="btn btn-navy" onclick="openEdit('${id}','${u.name||''}','${u.role||''}','${u.status||'active'}')">✏️ تعديل</button><button class="btn btn-red" onclick="deleteUser('${id}')">🗑️ حذف</button></td></tr>`;
-      });
-      t.innerHTML = html || '<tr><td colspan="6" class="muted text-center">لا يوجد مستخدمون بعد.</td></tr>';
-      lucide.createIcons();
-    }
-
-    window.openEdit = (id, name, role, status) => {
-      document.getElementById('editId').value = id;
-      document.getElementById('editName').value = name || '';
-      document.getElementById('editRole').value = (role || 'inspector');
-      document.getElementById('editStatus').value = (status || 'active');
-      openModal('editUserModal');
-    };
-
-    window.applyUserEdit = async () => {
-      const id     = document.getElementById('editId').value;
-      const name   = (document.getElementById('editName').value || '').trim();
-      const role   = document.getElementById('editRole').value || 'inspector';
-      const status = document.getElementById('editStatus').value || 'active';
-      await updateDoc(doc(db,'users',id), { name, role, status });
-      closeModal('editUserModal');
-      alert('✅ تم تعديل بيانات المستخدم');
-      loadUsers();
-    };
-
-    window.deleteUser = async (id) => {
-      if (!confirm('هل تريد حذف هذا المستخدم؟')) return;
-      await deleteDoc(doc(db,'users',id));
-      alert('🗑️ تم حذف المستخدم بنجاح');
-      loadUsers();
-    };
-
-    async function loadKPIs() {
-      const usersSnap = await getDocs(collection(db, 'users'));
-      document.getElementById('kpiUsers').textContent = usersSnap.size;
-      const obsSnap = await getDocs(collection(db, 'observations'));
-      let total = obsSnap.size, open = 0, closed = 0;
-      obsSnap.forEach(o => { const s = (o.data().status || '').toUpperCase(); if (s === 'COMPLETED') closed++; else open++; });
-      document.getElementById('kpiTotal').textContent  = total;
-      document.getElementById('kpiOpen').textContent   = open;
-      document.getElementById('kpiClosed').textContent = closed;
-    }
-
- async function loadObservations() {
-  const box = document.getElementById("obsList");
-  box.innerHTML = '<div class="muted text-center p-6">جاري التحميل...</div>';
-
-  const snap = await getDocs(query(collection(db, "observations"), orderBy("createdAt", "desc")));
-  let html = "";
-  let hasLate = false;
-
-  snap.forEach((d) => {
-    const o = d.data();
-    const createdAt = o.createdAt?.toMillis ? o.createdAt.toMillis() : Date.now();
-    const daysPassed = Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
-    const isLate = o.status !== "COMPLETED" && daysPassed >= 7;
-    if (isLate) hasLate = true;
-
-    const color =
-      o.status === "COMPLETED"
-        ? "#16a34a"
-        : o.status === "IN_PROGRESS"
-        ? "#ca8a04"
-        : "#dc2626";
-
-    html += `
-      <div class="card p-4" style="position:relative">
-        ${isLate ? `<span class="late-ribbon">+${daysPassed}يوم</span>` : ""}
-        <div class="flex items-center justify-between">
-          <div class="font-bold">${o.title || "-"}</div>
-          <span class="text-white px-3 py-1 rounded-full text-xs" style="background:${color}">
-            ${o.status || "PENDING"}
-          </span>
-        </div>
-        <div class="text-sm muted mt-1">${o.date || ""} • ${o.type || ""}</div>
-        <div class="text-sm mt-2">${(o.details || "").slice(0, 100)}...</div>
-      </div>`;
-  });
-
-  box.innerHTML = html || '<div class="muted text-center p-6">لا توجد ملاحظات بعد.</div>';
-
-  // 🔔 عرض التنبيه إذا فيه ملاحظات متأخرة
-  const banner = document.getElementById("lateBanner");
-  if (banner) banner.classList.toggle("show", hasLate);
-}
-
-
-    lucide.createIcons();
-  </script>
-
-<!-- 🌀 شاشة تحميل أنيقة -->
-<div id="loadingOverlay" style="
-  position:fixed;inset:0;
-  background:linear-gradient(135deg,#0b2b3a 0%,#0ea5a1 100%);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;z-index:9999;color:white;text-align:center;">
-  <img src="Smart_HSR_Dashboard_Logo.svg" alt="Smart HSR" style="width:100px;animation:pulse 1.5s infinite ease-in-out;">
-  <div style="margin-top:15px;font-weight:700;">جاري التحقق من صلاحيات المدير...</div>
-  <div class="spinner" style="margin-top:20px;width:30px;height:30px;border:3px solid rgba(255,255,255,.3);border-top:3px solid white;border-radius:50%;animation:spin 1s linear infinite;"></div>
-</div>
-
-<script type="module">
+ <script type="module">
   import { firebaseConfig } from './firebase-config.js';
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, getDocs, orderBy, query, addDoc, serverTimestamp, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  // ✅ منع التكرار
+  // ✅ تهيئة آمنة لتجنب التكرار
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+
   const overlay = document.getElementById('loadingOverlay');
   const roleBadge = document.getElementById('userRole');
   const logoutBtn = document.getElementById('logoutBtn');
 
   await setPersistence(auth, browserLocalPersistence);
 
-  // 🧩 وظيفة جلب الدور من Firestore
+  // 🧩 جلب الدور من Firestore
   async function getUserRole(uid) {
     try {
       const snap = await getDoc(doc(db, 'users', uid));
       if (snap.exists()) return (snap.data().role || '').toLowerCase();
     } catch (err) {
-      console.error("Firestore:", err);
+      console.error("Firestore Error:", err);
     }
     return '';
   }
 
-  // ✅ تحقق من الجلسة
+  // ✅ تحقق من الجلسة وصلاحيات المدير
   onAuthStateChanged(auth, async (user) => {
     if (!user) return (window.location.href = 'login.html');
 
@@ -409,13 +228,11 @@
     const name = user.displayName || user.email;
     roleBadge.textContent = `${name} — ${role}`;
 
-    // 👑 المدير فقط
     if (role !== 'admin') {
       alert("🚫 هذه الصفحة مخصصة للمدير فقط");
       return (window.location.href = 'index.html');
     }
 
-    // ✅ المدير فقط: حمّل البيانات
     overlay.style.display = 'none';
     loadKPIs();
     loadUsers();
@@ -429,30 +246,7 @@
     window.location.href = 'login.html';
   });
 
-  // 📊 وظائف البيانات
-  async function loadUsers() {
-    const t = document.getElementById('usersTbody');
-    t.innerHTML = '<tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr>';
-    const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt', 'desc')));
-    let html = '';
-    snap.forEach(d => {
-      const u = d.data();
-      const id = d.id;
-      html += `<tr>
-        <td>${u.name || '-'}</td>
-        <td>${u.email || '-'}</td>
-        <td><span class="tag">${u.role || '-'}</span></td>
-        <td>${u.lastLogin || '-'}</td>
-        <td>${u.status || 'active'}</td>
-        <td class="row-actions">
-          <button class="btn btn-navy" onclick="openEdit('${id}','${u.name||''}','${u.role||''}','${u.status||'active'}')">✏️ تعديل</button>
-          <button class="btn btn-red" onclick="deleteUser('${id}')">🗑️ حذف</button>
-        </td>
-      </tr>`;
-    });
-    t.innerHTML = html || '<tr><td colspan="6" class="muted text-center">لا يوجد مستخدمون بعد.</td></tr>';
-  }
-
+  // 📊 تحميل مؤشرات الأداء (KPIs)
   async function loadKPIs() {
     const usersSnap = await getDocs(collection(db, 'users'));
     document.getElementById('kpiUsers').textContent = usersSnap.size;
@@ -462,18 +256,41 @@
       const s = (o.data().status || '').toUpperCase();
       if (s === 'COMPLETED') closed++; else open++;
     });
-    document.getElementById('kpiTotal').textContent = total;
-    document.getElementById('kpiOpen').textContent = open;
+    document.getElementById('kpiTotal').textContent  = total;
+    document.getElementById('kpiOpen').textContent   = open;
     document.getElementById('kpiClosed').textContent = closed;
   }
 
+  // 👥 تحميل المستخدمين
+  async function loadUsers() {
+    const t = document.getElementById('usersTbody');
+    t.innerHTML = '<tr><td colspan="6" class="muted text-center">جاري التحميل...</td></tr>';
+    const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt','desc')));
+    let html = '';
+    snap.forEach(d => {
+      const u = d.data(), id = d.id;
+      html += `<tr>
+        <td>${u.name || '-'}</td>
+        <td>${u.email || '-'}</td>
+        <td><span class="tag">${u.role || '-'}</span></td>
+        <td>${u.lastLogin || '-'}</td>
+        <td>${u.status || 'active'}</td>
+        <td class="row-actions">
+          <button class="btn btn-navy" onclick="alert('التعديل لاحقاً')">✏️ تعديل</button>
+          <button class="btn btn-red" onclick="alert('🗑️ حذف المستخدم لاحقاً')">🗑️ حذف</button>
+        </td>
+      </tr>`;
+    });
+    t.innerHTML = html || '<tr><td colspan="6" class="muted text-center">لا يوجد مستخدمون بعد.</td></tr>';
+  }
+
+  // 🧾 تحميل الملاحظات
   async function loadObservations() {
     const box = document.getElementById("obsList");
     box.innerHTML = '<div class="muted text-center p-6">جاري التحميل...</div>';
 
     const snap = await getDocs(query(collection(db, "observations"), orderBy("createdAt", "desc")));
-    let html = "";
-    let hasLate = false;
+    let html = "", hasLate = false;
 
     snap.forEach((d) => {
       const o = d.data();
@@ -482,9 +299,11 @@
       const isLate = o.status !== "COMPLETED" && daysPassed >= 7;
       if (isLate) hasLate = true;
 
-      const color =
-        o.status === "COMPLETED" ? "#16a34a" :
-        o.status === "IN_PROGRESS" ? "#ca8a04" : "#dc2626";
+      const color = o.status === "COMPLETED"
+        ? "#16a34a"
+        : o.status === "IN_PROGRESS"
+        ? "#ca8a04"
+        : "#dc2626";
 
       html += `
         <div class="card p-4" style="position:relative">
@@ -504,7 +323,6 @@
     const banner = document.getElementById("lateBanner");
     if (banner) banner.classList.toggle("show", hasLate);
   }
-
 </script>
 
 <style>
