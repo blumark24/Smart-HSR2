@@ -349,14 +349,14 @@
           <span class="chip">تقارير وتصدير</span>
         </div>
       </div>
-   <div class="art revealL show" aria-hidden="true"
-     style="position:relative; background-image:url('https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1400&q=80');
-            background-size:cover; background-position:center; border-radius:22px; overflow:hidden;">
-  <div style="position:absolute; inset:0;
-              background:linear-gradient(135deg, rgba(11,43,58,0.65), rgba(14,165,161,0.55));
-              mix-blend-mode:multiply;">
-  </div>
+<div class="art revealL show" aria-hidden="true"
+     style="position:relative; background:#fff; border-radius:22px; overflow:hidden;
+            box-shadow:0 12px 32px rgba(14,165,161,0.25); border:4px solid rgba(14,165,161,0.2);
+            transform:scale(0.9); opacity:0; transition:all .8s ease;">
+  <iframe src="https://drive.google.com/file/d/1_EC4AwAZmOYVF5NAQ3XcbP11MVQqSRYz/preview"
+          width="100%" height="100%" style="border:0;"></iframe>
 </div>
+    
     </div>
   </section>
 
@@ -504,7 +504,21 @@
     },{ threshold:.16 });
     document.querySelectorAll('.reveal,.revealL,.revealR').forEach(el=> io.observe(el));
   </script>
+  <script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "scale(1)";
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.art.revealL.show').forEach(el => observer.observe(el));
+</script>
+
 </body>
 </html>
+
 
 
