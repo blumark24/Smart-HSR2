@@ -363,13 +363,14 @@
     lucide.createIcons();
   </script>
 
- <script type="module">
+<script type="module">
+  import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
   import { firebaseConfig } from './firebase-config.js';
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 
-  const app = initializeApp(firebaseConfig);
+  // ✅ منع التكرار (إذا التطبيق منشأ، لا يعيد إنشاؤه)
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
@@ -380,21 +381,21 @@
     try {
       const snap = await getDoc(doc(db, 'users', uid));
       if (snap.exists()) return (snap.data().role || '').toLowerCase();
-    } catch (err) { console.error("Firestore:", err); }
+    } catch (err) {
+      console.error("Firestore:", err);
+    }
     return '';
   }
 
+  // ✅ تحقق من الجلسة فقط (بدون إعادة إنشاء Firebase)
   onAuthStateChanged(auth, async (user) => {
     if (!user) return window.location.href = 'login.html';
     const role = await getUserRole(user.uid);
     const name = user.displayName || user.email;
     roleBadge.textContent = `${name} — ${role}`;
-    if (role !== 'admin') {
-      alert('🚫 هذه الصفحة مخصصة للمدير فقط');
-      window.location.href = 'index.html';
-    }
   });
 
+  // 🚪 تسجيل الخروج
   logoutBtn.addEventListener('click', async () => {
     await signOut(auth);
     localStorage.clear();
