@@ -33,6 +33,31 @@
     .field input,.field select{ border:1px solid #e5e7eb; border-radius:12px; padding:.8rem 1rem; font-size:15px; }
     .row-actions{ display:flex; gap:.4rem; flex-wrap:wrap; }
     .tag{ font-size:12px; padding:.2rem .6rem; border-radius:999px; background:#eef2ff; color:#1f2937; }
+    /* ====== تنبيه الملاحظات المتأخرة ====== */
+.late-banner {
+  display: none;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  margin: 10px 0;
+  text-align: center;
+}
+.late-banner.show { display: block; }
+.late-ribbon {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #dc2626;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
   </style>
 </head>
 <body>
@@ -76,6 +101,10 @@
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-10">
+    <!-- 🔔 تنبيه الملاحظات المتأخرة -->
+<div id="lateBanner" class="late-banner">
+  ⚠️ توجد ملاحظات متأخرة تحتاج المتابعة.
+</div>
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
       <div class="kpi kpi-teal"><div class="text-sm">إجمالي الملاحظات</div><div id="kpiTotal" class="text-4xl font-extrabold mt-1">--</div></div>
       <div class="kpi kpi-red"><div class="text-sm">مفتوحة/قيد الانتظار</div><div id="kpiOpen" class="text-4xl font-extrabold mt-1">--</div></div>
@@ -287,19 +316,49 @@
       document.getElementById('kpiClosed').textContent = closed;
     }
 
-    async function loadObservations() {
-      const box = document.getElementById('obsList');
-      box.innerHTML = '<div class="muted text-center p-6">جاري التحميل...</div>';
-      const snap = await getDocs(query(collection(db, 'observations'), orderBy('createdAt','desc')));
-      let html = '';
-      snap.forEach(d => {
-        const o = d.data();
-        const st = (o.status || 'PENDING').toUpperCase();
-        const color = st === 'COMPLETED' ? '#16a34a' : (st === 'IN_PROGRESS' ? '#ca8a04' : '#dc2626');
-        html += `<div class="card p-4"><div class="flex items-center justify-between"><div class="font-bold">${o.title || '-'}</div><span class="text-white px-3 py-1 rounded-full text-xs" style="background:${color}">${st}</span></div><div class="text-sm muted mt-1">${o.date || ''} • ${o.type || ''}</div><div class="text-sm mt-2">${(o.details || '').slice(0, 100)}...</div></div>`;
-      });
-      box.innerHTML = html || '<div class="muted text-center p-6">لا توجد ملاحظات بعد.</div>';
-    }
+ async function loadObservations() {
+  const box = document.getElementById("obsList");
+  box.innerHTML = '<div class="muted text-center p-6">جاري التحميل...</div>';
+
+  const snap = await getDocs(query(collection(db, "observations"), orderBy("createdAt", "desc")));
+  let html = "";
+  let hasLate = false;
+
+  snap.forEach((d) => {
+    const o = d.data();
+    const createdAt = o.createdAt?.toMillis ? o.createdAt.toMillis() : Date.now();
+    const daysPassed = Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
+    const isLate = o.status !== "COMPLETED" && daysPassed >= 7;
+    if (isLate) hasLate = true;
+
+    const color =
+      o.status === "COMPLETED"
+        ? "#16a34a"
+        : o.status === "IN_PROGRESS"
+        ? "#ca8a04"
+        : "#dc2626";
+
+    html += `
+      <div class="card p-4" style="position:relative">
+        ${isLate ? `<span class="late-ribbon">+${daysPassed}يوم</span>` : ""}
+        <div class="flex items-center justify-between">
+          <div class="font-bold">${o.title || "-"}</div>
+          <span class="text-white px-3 py-1 rounded-full text-xs" style="background:${color}">
+            ${o.status || "PENDING"}
+          </span>
+        </div>
+        <div class="text-sm muted mt-1">${o.date || ""} • ${o.type || ""}</div>
+        <div class="text-sm mt-2">${(o.details || "").slice(0, 100)}...</div>
+      </div>`;
+  });
+
+  box.innerHTML = html || '<div class="muted text-center p-6">لا توجد ملاحظات بعد.</div>';
+
+  // 🔔 عرض التنبيه إذا فيه ملاحظات متأخرة
+  const banner = document.getElementById("lateBanner");
+  if (banner) banner.classList.toggle("show", hasLate);
+}
+
 
     lucide.createIcons();
   </script>
