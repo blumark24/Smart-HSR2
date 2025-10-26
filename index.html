@@ -425,39 +425,113 @@
     </div>
   </div>
 
-  <!-- APP LOGIC (Firebase + Firestore + ImgBB) -->
-  <script type="module">
-    // =============================
-    // 0) إعدادات عامة
-    // =============================
-    const IMGBB_API_KEY = 'fa1275ad54913c2eada7b0ea054dae80'; // مفتاحك
-    const COLLECTION = 'observations';
+<!-- APP LOGIC (Firebase + Firestore + ImgBB) -->
+<script type="module">
+  // =============================
+  // 0) إعدادات عامة
+  // =============================
+  const IMGBB_API_KEY = 'fa1275ad54913c2eada7b0ea054dae80'; // مفتاحك
+  const COLLECTION = 'observations';
 
+  // ✅ التهيئة الموحدة عبر firebase-core.js
+  import { app, auth, db } from "./firebase-core.js";
 
-// =============================
-// 1) إعداد Firebase الرسمي (مشروعك الحالي)
-// =============================
-import { firebaseConfig } from './firebase-config.js';
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import {
-  getFirestore, collection, getDocs, addDoc, updateDoc, doc,
-  serverTimestamp, query, orderBy
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  // =============================
+  // 2) حالة واجهة المستخدم + بيانات
+  // =============================
+  let observationsData = [];          
+  let currentSelectedObservation = null;
+  const statusMap = {
+    "PENDING": { color:'bg-red-600', text:'قيد الانتظار' },
+    "IN_PROGRESS": { color:'bg-yellow-600', text:'قيد التنفيذ' },
+    "COMPLETED": { color:'bg-green-600', text:'تمت المعالجة' }
+  };
 
-// تهيئة التطبيق وقاعدة البيانات
-let app, db, FIREBASE_READY = false;
+  let currentFile = null, currentFileUrl = null;
+  let currentAfterFile = null, currentAfterFileUrl = null;
 
-try {
-  app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  FIREBASE_READY = !!db;
-  document.getElementById('userInfo').textContent =
-    '✅ تم الاتصال بنجاح بقاعدة بيانات Smart HSR الرسمية.';
-} catch (e) {
-  console.warn('⚠️ فشل الاتصال بـ Firebase. سيتم التحويل للوضع التجريبي.', e);
-  document.getElementById('userInfo').textContent =
-    '⚠️ وضع تجريبي محلي (لم يتم ضبط Firebase).';
-}
+  // =============================
+  // 3) خدمات مساعدة (ImgBB + أدوات عامة)
+  // =============================
+  async function uploadImageBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function kpis() {
+    const totalReports = observationsData.length;
+    const openReports  = observationsData.filter(o => o.status !== 'COMPLETED').length;
+    const closedReports = totalReports - openReports;
+    const reportsWithImages = observationsData.filter(o => !!o.imagePath).length;
+    return { totalReports, openReports, closedReports, reportsWithImages };
+  }
+
+  function renderKPIs() {
+    const { totalReports, openReports, closedReports, reportsWithImages } = kpis();
+    const kpiContainer = document.getElementById('kpiContainer');
+    kpiContainer.innerHTML = '';
+    const kpiData = [
+      {title:'إجمالي الملاحظات', value:totalReports, icon:'clipboard-list', gradientClass:'kpi-closed-gradient'},
+      {title:'ملاحظات مفتوحة/انتظار', value:openReports, icon:'alert-triangle', gradientClass:'kpi-open-gradient'},
+      {title:'ملاحظات مغلقة/معالجة', value:closedReports, icon:'check-circle', gradientClass:'kpi-closed-gradient'},
+      {title:'ملاحظات موثقة بالصور', value:reportsWithImages, icon:'image', gradientClass:'kpi-images-gradient'}
+    ];
+    kpiData.forEach(kpi=>{
+      kpiContainer.innerHTML += `
+        <div class="kpi-card-professional p-6 ${kpi.gradientClass} flex items-center justify-between shadow-2xl">
+          <div><p class="text-sm md:text-md font-medium">${kpi.title}</p>
+          <p class="text-4xl md:text-5xl font-extrabold mt-1">${kpi.value}</p></div>
+          <i data-lucide="${kpi.icon}" class="w-10 h-10 opacity-70"></i>
+        </div>`;
+    });
+    lucide.createIcons();
+  }
+
+  // =============================
+  // 4) ربط Firestore
+  // =============================
+  async function loadFromFirestore() {
+    try {
+      const q = query(collection(db, COLLECTION), orderBy('createdAt','desc'));
+      const snapshot = await getDocs(q);
+      const arr = [];
+      snapshot.forEach(d=>{
+        const data = d.data();
+        arr.push({
+          docId:d.id,
+          id: data.displayId || 0,
+          type:data.type || 'MAINTENANCE',
+          date:data.date || '',
+          title:data.title || '',
+          status:data.status || 'PENDING',
+          details:data.details || '',
+          hasImage: !!data.imagePath,
+          isComparative: !!data.isComparative,
+          location:data.location || '',
+          isVideo:false,
+          imagePath:data.imagePath || null,
+          actionPlan:data.actionPlan || '',
+          riskAssessment:data.riskAssessment || { priority:'Medium', timeframe:'72 hours' },
+          resolutionNote:data.resolutionNote || null,
+          afterImagePath:data.afterImagePath || null,
+          createdAt:data.createdAt?.toMillis ? data.createdAt.toMillis(): (data.createdAt || Date.now()),
+          isNewInput:false
+        });
+      });
+      observationsData = arr;
+      document.getElementById('userInfo').textContent = '✅ تم الاتصال بنجاح بقاعدة بيانات Smart HSR.';
+    } catch (e) {
+      console.warn('⚠️ فشل الاتصال بـ Firestore.', e);
+      document.getElementById('userInfo').textContent = '⚠️ فشل الاتصال. الوضع التجريبي مفعّل.';
+    }
+  }
+
+  // ... (باقي الكود كما هو بدون تعديل)
+</script>
 
 
     // =============================
