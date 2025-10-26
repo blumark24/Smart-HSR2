@@ -95,7 +95,7 @@
       <div class="font-extrabold text-lg">Smart HSR — <span style="color:var(--color-teal)">لوحة المدير</span></div>
       <div class="flex items-center gap-2">
         <a href="index.html" class="btn btn-dark">🏠 العودة للنظام</a>
-        <button id="logoutBtn" class="btn">🚪 تسجيل الخروج</button>
+        <button id="logoutBtn2" class="btn">🚪 تسجيل الخروج</button>
       </div>
     </div>
   </header>
@@ -245,6 +245,12 @@
     localStorage.clear();
     window.location.href = 'login.html';
   });
+// 🚪 تسجيل الخروج (الزر الثاني في الهيدر الأبيض)
+document.getElementById('logoutBtn2')?.addEventListener('click', async () => {
+  await signOut(auth);
+  localStorage.clear();
+  window.location.href = 'login.html';
+});
 
   // 📊 تحميل مؤشرات الأداء (KPIs)
   async function loadKPIs() {
