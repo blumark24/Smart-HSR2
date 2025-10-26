@@ -109,93 +109,102 @@
     <div class="muted">هذا النظام مخصص للمديرين والمراقبين والمقاولين المعتمدين فقط.</div>
   </div>
 
-  <!-- شاشة التحميل -->
-  <div id="loadingOverlay">
-    <img src="Smart_HSR_Dashboard_Logo.svg" alt="Smart HSR" class="loader-logo">
-    <p class="loader-text">جاري الدخول إلى النظام...</p>
-  </div>
+<!-- شاشة التحميل -->
+<div id="loadingOverlay">
+  <img src="Smart_HSR_Dashboard_Logo.svg" alt="Smart HSR" class="loader-logo">
+  <p class="loader-text">جاري الدخول إلى النظام...</p>
+</div>
 
 <script type="module">
-import { firebaseConfig } from './firebase-config.js';
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import {
-  getAuth, signInWithEmailAndPassword, onAuthStateChanged,
-  setPersistence, browserLocalPersistence
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  // ✅ التهيئة الموحدة عبر firebase-core.js
+  import { app, auth, db } from "./firebase-core.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  import {
+    signInWithEmailAndPassword,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// ✅ تفعيل بقاء الجلسة المحلية مرة واحدة فقط
-try {
-  await setPersistence(auth, browserLocalPersistence);
-  console.log("✅ Session persistence: local");
-} catch (err) {
-  console.error("⚠️ Persistence error:", err);
-}
+  // =============================
+  // عناصر واجهة المستخدم
+  // =============================
+  const msgBox = document.getElementById('msg');
+  const loginButton = document.getElementById('loginButton');
+  const loadingOverlay = document.getElementById('loadingOverlay');
 
-const msgBox = document.getElementById('msg');
-const loginButton = document.getElementById('loginButton');
-const loadingOverlay = document.getElementById('loadingOverlay');
-
-function msg(text, type='') {
-  msgBox.innerText = text;
-  msgBox.className = 'message ' + type;
-}
-function showLoading(show=true){ loadingOverlay.style.display = show ? 'flex' : 'none'; }
-
-// ✅ توجيه المستخدم حسب الدور
-async function redirectUser(user) {
-  try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    const role = (snap.exists() && snap.data().role) ? snap.data().role.toLowerCase() : '';
-    showLoading(false);
-    window.location.href = (role === 'admin') ? 'admin.html' : 'index.html';
-  } catch (e) {
-    console.error("Firestore role fetch error:", e);
-    showLoading(false);
-    window.location.href = 'index.html';
+  function msg(text, type = '') {
+    msgBox.innerText = text;
+    msgBox.className = 'message ' + type;
   }
-}
 
-// ✅ تحقق من الجلسة عند الدخول
-let redirected = false;
-onAuthStateChanged(auth, (user) => {
-  if (user && !redirected) {
-    redirected = true;
-    showLoading(true);
-    setTimeout(() => redirectUser(user), 800);
+  function showLoading(show = true) {
+    loadingOverlay.style.display = show ? 'flex' : 'none';
   }
-});
 
-// 🚀 عند الضغط على تسجيل الدخول
-window.signInWithEmail = async function() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  if (!email || !password) return msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.','error');
+  // =============================
+  // ✅ توجيه المستخدم حسب الدور
+  // =============================
+  async function redirectUser(user) {
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const role = (snap.exists() && snap.data().role)
+        ? snap.data().role.toLowerCase()
+        : '';
 
-  loginButton.disabled = true;
-  loginButton.innerHTML = `<div class="loading-spinner"></div> جاري التحقق...`;
-
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    msg('', '');
-    showLoading(true);
-    setTimeout(() => redirectUser(cred.user), 1000);
-  } catch (e) {
-    let errorMessage = 'خطأ في تسجيل الدخول.';
-    if (e.code.includes('user-not-found') || e.code.includes('wrong-password'))
-      errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-    else if (e.code.includes('too-many-requests'))
-      errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة.';
-    msg(errorMessage, 'error');
-  } finally {
-    loginButton.disabled = false;
-    loginButton.innerHTML = `تسجيل الدخول`;
+      showLoading(false);
+      if (role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'index.html';
+      }
+    } catch (e) {
+      console.error("Firestore role fetch error:", e);
+      showLoading(false);
+      window.location.href = 'index.html';
+    }
   }
-};
+
+  // =============================
+  // ✅ تحقق من الجلسة عند الدخول
+  // =============================
+  let redirected = false;
+  onAuthStateChanged(auth, (user) => {
+    if (user && !redirected) {
+      redirected = true;
+      showLoading(true);
+      setTimeout(() => redirectUser(user), 800);
+    }
+  });
+
+  // =============================
+  // 🚀 عند الضغط على "تسجيل الدخول"
+  // =============================
+  window.signInWithEmail = async function () {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email || !password)
+      return msg('أدخل البريد الإلكتروني وكلمة المرور أولاً.', 'error');
+
+    loginButton.disabled = true;
+    loginButton.innerHTML = `<div class="loading-spinner"></div> جاري التحقق...`;
+
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      msg('', '');
+      showLoading(true);
+      setTimeout(() => redirectUser(cred.user), 1000);
+    } catch (e) {
+      let errorMessage = 'خطأ في تسجيل الدخول.';
+      if (e.code.includes('user-not-found') || e.code.includes('wrong-password'))
+        errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+      else if (e.code.includes('too-many-requests'))
+        errorMessage = 'تم حظر الحساب مؤقتاً بسبب محاولات كثيرة.';
+      msg(errorMessage, 'error');
+    } finally {
+      loginButton.disabled = false;
+      loginButton.innerHTML = `تسجيل الدخول`;
+    }
+  };
 </script>
 </body>
 </html>
