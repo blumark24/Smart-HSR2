@@ -95,34 +95,6 @@
 </head>
 
 <body class="text-gray-800">
-<!-- ✅ الهيدر الموحد للنظام -->
-<header id="smartHeader"
-  style="
-    background:linear-gradient(90deg,#0b2b3a 0%,#0ea5a1 100%);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:12px 22px;
-    position:sticky;
-    top:0;
-    z-index:999;
-    box-shadow:0 4px 15px rgba(0,0,0,.1);
-  ">
-  <div style="display:flex;align-items:center;gap:10px;">
-    <img src='Smart_HSR_Dashboard_Logo.svg' alt='Smart HSR' style='height:36px;'>
-    <span style="font-weight:900;font-size:1.1rem;">Smart HSR Dashboard</span>
-  </div>
-  <div id="userInfo" style="display:flex;align-items:center;gap:14px;font-weight:600;">
-    <span id="userRole" style="background:rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;">
-      <!-- سيتم تعبئة الاسم والدور تلقائيًا -->
-    </span>
-    <button id="logoutBtn"
-      style="background:white;color:#0b2b3a;font-weight:800;border:none;border-radius:999px;padding:8px 16px;cursor:pointer;transition:.3s;">
-      🚪 خروج
-    </button>
-  </div>
-</header>
 
   <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex justify-start mb-6 no-print">
@@ -425,114 +397,47 @@
     </div>
   </div>
 
-<!-- APP LOGIC (Firebase + Firestore + ImgBB) -->
-<script type="module">
-  // =============================
-  // 0) إعدادات عامة
-  // =============================
-  const IMGBB_API_KEY = 'fa1275ad54913c2eada7b0ea054dae80'; // مفتاحك
-  const COLLECTION = 'observations';
+  <!-- APP LOGIC (Firebase + Firestore + ImgBB) -->
+  <script type="module">
+    // =============================
+    // 0) إعدادات عامة
+    // =============================
+    const IMGBB_API_KEY = 'fa1275ad54913c2eada7b0ea054dae80'; // مفتاحك
+    const COLLECTION = 'observations';
 
-  // ✅ التهيئة الموحدة عبر firebase-core.js
-  import { app, auth, db } from "./firebase-core.js";
 
-  // =============================
-  // 2) حالة واجهة المستخدم + بيانات
-  // =============================
-  let observationsData = [];          
-  let currentSelectedObservation = null;
-  const statusMap = {
-    "PENDING": { color:'bg-red-600', text:'قيد الانتظار' },
-    "IN_PROGRESS": { color:'bg-yellow-600', text:'قيد التنفيذ' },
-    "COMPLETED": { color:'bg-green-600', text:'تمت المعالجة' }
-  };
+// =============================
+// 1) إعداد Firebase الرسمي (مشروعك الحالي)
+// =============================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, addDoc, updateDoc, doc,
+  serverTimestamp, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  let currentFile = null, currentFileUrl = null;
-  let currentAfterFile = null, currentAfterFileUrl = null;
+// إعدادات Firebase الخاصة بك
+const firebaseConfig = {
+  apiKey: "AIzaSyBfClVxFIXgUXL4olEv5SepUDtzk0dq3lo",
+  authDomain: "gen-lang-client-0349944917.firebaseapp.com",
+  projectId: "gen-lang-client-0349944917",
+  storageBucket: "gen-lang-client-0349944917.firebasestorage.app",
+  messagingSenderId: "883065484771",
+  appId: "1:883065484771:web:c907bb5a51f68caad75cd6",
+  measurementId: "G-V8WG5M8V5B"
+};
 
-  // =============================
-  // 3) خدمات مساعدة (ImgBB + أدوات عامة)
-  // =============================
-  async function uploadImageBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
+// تهيئة التطبيق وقاعدة البيانات
+let app, db, FIREBASE_READY = false;
 
-  function kpis() {
-    const totalReports = observationsData.length;
-    const openReports  = observationsData.filter(o => o.status !== 'COMPLETED').length;
-    const closedReports = totalReports - openReports;
-    const reportsWithImages = observationsData.filter(o => !!o.imagePath).length;
-    return { totalReports, openReports, closedReports, reportsWithImages };
-  }
-
-  function renderKPIs() {
-    const { totalReports, openReports, closedReports, reportsWithImages } = kpis();
-    const kpiContainer = document.getElementById('kpiContainer');
-    kpiContainer.innerHTML = '';
-    const kpiData = [
-      {title:'إجمالي الملاحظات', value:totalReports, icon:'clipboard-list', gradientClass:'kpi-closed-gradient'},
-      {title:'ملاحظات مفتوحة/انتظار', value:openReports, icon:'alert-triangle', gradientClass:'kpi-open-gradient'},
-      {title:'ملاحظات مغلقة/معالجة', value:closedReports, icon:'check-circle', gradientClass:'kpi-closed-gradient'},
-      {title:'ملاحظات موثقة بالصور', value:reportsWithImages, icon:'image', gradientClass:'kpi-images-gradient'}
-    ];
-    kpiData.forEach(kpi=>{
-      kpiContainer.innerHTML += `
-        <div class="kpi-card-professional p-6 ${kpi.gradientClass} flex items-center justify-between shadow-2xl">
-          <div><p class="text-sm md:text-md font-medium">${kpi.title}</p>
-          <p class="text-4xl md:text-5xl font-extrabold mt-1">${kpi.value}</p></div>
-          <i data-lucide="${kpi.icon}" class="w-10 h-10 opacity-70"></i>
-        </div>`;
-    });
-    lucide.createIcons();
-  }
-
-  // =============================
-  // 4) ربط Firestore
-  // =============================
-  async function loadFromFirestore() {
-    try {
-      const q = query(collection(db, COLLECTION), orderBy('createdAt','desc'));
-      const snapshot = await getDocs(q);
-      const arr = [];
-      snapshot.forEach(d=>{
-        const data = d.data();
-        arr.push({
-          docId:d.id,
-          id: data.displayId || 0,
-          type:data.type || 'MAINTENANCE',
-          date:data.date || '',
-          title:data.title || '',
-          status:data.status || 'PENDING',
-          details:data.details || '',
-          hasImage: !!data.imagePath,
-          isComparative: !!data.isComparative,
-          location:data.location || '',
-          isVideo:false,
-          imagePath:data.imagePath || null,
-          actionPlan:data.actionPlan || '',
-          riskAssessment:data.riskAssessment || { priority:'Medium', timeframe:'72 hours' },
-          resolutionNote:data.resolutionNote || null,
-          afterImagePath:data.afterImagePath || null,
-          createdAt:data.createdAt?.toMillis ? data.createdAt.toMillis(): (data.createdAt || Date.now()),
-          isNewInput:false
-        });
-      });
-      observationsData = arr;
-      document.getElementById('userInfo').textContent = '✅ تم الاتصال بنجاح بقاعدة بيانات Smart HSR.';
-    } catch (e) {
-      console.warn('⚠️ فشل الاتصال بـ Firestore.', e);
-      document.getElementById('userInfo').textContent = '⚠️ فشل الاتصال. الوضع التجريبي مفعّل.';
-    }
-  }
-
-  // ... (باقي الكود كما هو بدون تعديل)
-</script>
-
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  FIREBASE_READY = !!db;
+  document.getElementById('userInfo').textContent = '✅ تم الاتصال بنجاح بـ Firebase / Firestore.';
+} catch (e) {
+  console.warn('Firebase init failed, fallback to local demo mode.', e);
+  document.getElementById('userInfo').textContent = '⚠️ وضع تجريبي محلي (لم يتم ضبط Firebase).';
+}
 
     // =============================
     // 2) حالة واجهة المستخدم + بيانات
@@ -1074,92 +979,9 @@ function setButtonBusy(buttonId, busy) {
 }
 
   </script>
+</body>
+</html>
 
-<!-- Firebase Auth & Role-check script (added) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
-  }
-  try {
-    const udoc = await getDoc(doc(db, "users", user.uid));
-    if (!udoc.exists()) {
-      await signOut(auth);
-      alert("حسابك غير مفعل. تواصل مع المدير للحصول على دعوة.");
-      window.location.href = 'landing.html';
-      return;
-    }
-    const data = udoc.data();
-    const role = data.role || "";
-
-    console.log("Authenticated as", user.email, "role:", role);
-  } catch (e) {
-    console.error(e);
-    await signOut(auth);
-    window.location.href = 'landing.html';
-  }
-});
-</script>
-<script type="module">
-import { firebaseConfig } from './firebase-config.js';
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const roleBadge = document.getElementById('userRole');
-const logoutBtn = document.getElementById('logoutBtn');
-
-async function getUserRole(uid) {
-  try {
-    const ref = doc(db, 'users', uid);
-    const snap = await getDoc(ref);
-    if (snap.exists()) return (snap.data().role || '').toLowerCase();
-  } catch (err) {
-    console.error("Firestore:", err);
-  }
-  return '';
-}
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    console.warn("🚫 لا يوجد مستخدم، العودة لصفحة الدخول");
-    return window.location.href = 'login.html';
-  }
-
-  const role = await getUserRole(user.uid);
-  const name = user.displayName || user.email;
-  roleBadge.textContent = `${name} — ${role}`;
-
-  // 🚫 المدير لا يفتح صفحة المراقبين
-  if (role === 'admin') {
-    console.log("🔁 المدير أُعيد إلى لوحة التحكم");
-    return window.location.href = 'admin.html';
-  }
-
-  console.log("✅ تم التحقق من الجلسة:", user.email, "• الدور:", role);
-});
-
-logoutBtn.addEventListener('click', async () => {
-  await signOut(auth);
-  localStorage.clear();
-  window.location.href = 'login.html';
-});
-</script>
-
-
+  </script>
 </body>
 </html>
