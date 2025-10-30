@@ -20,6 +20,7 @@
       justify-content: center;
       text-align: center;
       animation: fadeIn 1.5s ease-in-out;
+      padding-top: 40px;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
@@ -28,23 +29,58 @@
     .logo {
       width: 160px;
       height: auto;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      margin-top: -40px;
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
       animation: fadeIn 2s ease-in-out;
     }
+
+    /* 🌟 أزرار احترافية بإبداع بصري */
     .btn {
-      margin-top: 30px;
-      background: white;
-      color: #0b2b3a;
-      font-weight: 700;
+      position: relative;
+      overflow: hidden;
+      border: none;
       border-radius: 999px;
-      padding: 0.8rem 2.2rem;
-      transition: 0.3s;
-      box-shadow: 0 4px 10px rgba(255,255,255,0.25);
+      padding: 0.9rem 2.5rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
+      background: linear-gradient(90deg, #00ffd5, #00a3ff);
+      box-shadow: 0 0 15px rgba(0, 255, 230, 0.5);
+    }
+    .btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+      transition: all 0.5s ease;
+    }
+    .btn:hover::before {
+      left: 100%;
     }
     .btn:hover {
-      transform: scale(1.05);
-      background: #e8faf8;
+      transform: scale(1.07);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(90deg, #ffb347, #ffcc33);
+      box-shadow: 0 0 15px rgba(255, 204, 51, 0.4);
+    }
+    .btn-secondary:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 25px rgba(255, 204, 51, 0.6);
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.875rem;
+      color: #cbd5e1;
     }
   </style>
 </head>
@@ -54,20 +90,20 @@
 
   <h1 class="text-3xl font-extrabold mb-3">مرحبًا بك في منصة Smart HSR</h1>
   <p class="text-lg text-teal-100 max-w-md leading-relaxed">
-   النظام الذكي لإدارة الجودة والملاحظات الميدانية — بوابة الإدارة والشركات لمتابعة المشاريع والمستخدمين بأحترافية عالية.
+    نظام ذكي لإدارة الجودة والملاحظات الميدانية — بوابة الإدارة والشركات لمتابعة المشاريع والمستخدمين بكفاءة عالية.
   </p>
 
-  <!-- زر دخول الإدارة -->
-  <button onclick="window.location.href='manager-login.html'" class="btn">
-    🏢 دخول الإدارة
-  </button>
+  <!-- 🔥 الأزرار الإبداعية -->
+  <div class="flex flex-col md:flex-row gap-4 mt-8">
+    <button onclick="window.location.href='manager-login.html'" class="btn">
+      🏢 دخول الإدارة
+    </button>
+    <button onclick="window.location.href='login.html'" class="btn btn-secondary">
+      👷 دخول المستخدمين
+    </button>
+  </div>
 
-  <!-- زر دخول المستخدم -->
-  <button onclick="window.location.href='login.html'" class="btn">
-    👷 دخول المستخدمين   
-  </button>
-
-  <footer class="mt-10 text-sm text-gray-300">
+  <footer>
     © 2025 Smart HSR — جميع الحقوق محفوظة.
   </footer>
 </body>
