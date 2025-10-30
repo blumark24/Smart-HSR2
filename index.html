@@ -154,41 +154,44 @@
   </section>
 
   <!-- About / Profile PDF -->
-  <section id="about" class="py-20">
-    <div class="max-w-7xl mx-auto px-6">
-      <header class="max-w-3xl" data-aos="fade-up">
-        <h2 class="text-3xl md:text-4xl font-extrabold">📘 تعرّف على Smart HSR من الداخل</h2>
-        <p class="mt-3 text-white/70 en">Explore the official profile from inside the product.</p>
-      </header>
-      <div class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div class="lg:col-span-8 pdf-frame glass ringed" data-aos="zoom-in">
-          <!-- NOTE: Replace the src with your hosted PDF path if needed. If you upload the PDF beside this file, use the exact file name. -->
-          <iframe 
-  title="Smart HSR Profile PDF" 
-  src="https://drive.google.com/file/d/1_EC4AwAZmOYVF5NAQ3XcbP11MVQqSRYz/preview" 
-  class="w-full h-[550px] bg-[#0a1b27] rounded-2xl" 
-  loading="lazy">
-</iframe>
-        </div>
-        <aside class="lg:col-span-4 space-y-4" data-aos="fade-left">
-          <div class="glass rounded-2xl p-5">
-            <h3 class="font-bold text-xl">ملخص سريع</h3>
-            <ul class="list-disc pr-5 mt-3 text-white/80 leading-relaxed">
-              <li>تحليل بصري فوري للصور.</li>
-              <li>تصنيف وأولويات ذكية.</li>
-              <li>لوحة قيادة تنفيذية تفاعلية.</li>
-              <li>تقارير وتوصيات لحظية.</li>
-            </ul>
+<section id="about" class="py-20">
+  <div class="max-w-7xl mx-auto px-6">
+    <header class="max-w-3xl" data-aos="fade-up">
+      <h2 class="text-3xl md:text-4xl font-extrabold">📘 تعرّف على Smart HSR من الداخل</h2>
+      <p class="mt-3 text-white/70 en">Explore the official profile from inside the product.</p>
+    </header>
+
+    <div class="mt-10 glass ringed rounded-3xl overflow-hidden" data-aos="zoom-in">
+      <div class="relative bg-[#0a1b27] rounded-2xl">
+        <!-- شريط تحكم أعلى الـPDF -->
+        <div class="flex items-center justify-between bg-[#0b2b3a]/70 backdrop-blur-md px-5 py-3 border-b border-white/10">
+          <h3 class="font-bold text-white text-lg flex items-center gap-2">
+            🧭 الملف التعريفي الرسمي
+          </h3>
+          <div class="flex gap-3">
+            <a href="Smart-HSR-Profile.pdf" download class="btn text-sm">⬇️ تنزيل</a>
+            <button onclick="document.getElementById('pdfFrame').scrollTo({ top: 0, behavior: 'smooth' })" class="btn-secondary px-3 py-1 rounded-lg text-sm">🔝 للأعلى</button>
           </div>
-          <a href="https://drive.google.com/uc?export=download&id=1_EC4AwAZmOYVF5NAQ3XcbP11MVQqSRYz" 
-   target="_blank" 
-   class="btn w-full justify-center">
-   ⬇️ تنزيل الملف التعريفي
-</a>
-        </aside>
+        </div>
+
+        <!-- عرض الـPDF -->
+        <iframe
+          id="pdfFrame"
+          title="Smart HSR Profile PDF"
+          src="Smart-HSR-Profile.pdf"
+          class="w-full h-[85vh] md:h-[90vh] rounded-b-2xl"
+          style="border:none;"
+          loading="lazy">
+        </iframe>
       </div>
     </div>
-  </section>
+
+    <!-- ملاحظة أسفل العرض -->
+    <div class="text-center mt-8 text-white/80 leading-relaxed max-w-3xl mx-auto">
+      يمكنك التمرير داخل الملف لاستعراض جميع الصفحات أو تنزيله بالزر أعلاه.
+    </div>
+  </div>
+</section>
 
   <!-- AI Demo -->
   <section id="demo" class="py-20">
@@ -807,6 +810,7 @@
 
 </body>
 </html>
+
 
 
 
