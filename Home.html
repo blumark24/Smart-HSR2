@@ -10,7 +10,7 @@
   <style>
     body {
       font-family: 'Tajawal', sans-serif;
-      background: linear-gradient(180deg, #0b2b3a, #0ea5a1);
+      background: radial-gradient(circle at top, #0ea5a1 0%, #0b2b3a 80%);
       color: white;
       min-height: 100vh;
       margin: 0;
@@ -19,37 +19,62 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      overflow: hidden;
       animation: fadeIn 1.5s ease-in-out;
-      padding-top: 40px;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .logo {
-      width: 160px;
-      height: auto;
-      margin-bottom: 20px;
-      margin-top: -40px;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
-      animation: fadeIn 2s ease-in-out;
+      padding-top: 100px; /* ✅ رفع عام للمحتوى للأعلى */
     }
 
-    /* 🌟 أزرار احترافية بإبداع بصري */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 25px;
+      margin-top: -100px; /* ✅ رفع الشعار فعلاً للأعلى */
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 8px rgba(0, 255, 255, 0.4);
+    }
+
+    p {
+      color: #ccfdfb;
+      font-size: 1.05rem;
+      max-width: 420px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* 🌟 أزرار زجاجية مبهرة */
     .btn {
       position: relative;
       overflow: hidden;
-      border: none;
+      border: 1px solid rgba(255,255,255,0.25);
       border-radius: 999px;
-      padding: 0.9rem 2.5rem;
-      font-weight: 800;
-      color: white;
-      letter-spacing: 0.5px;
+      padding: 0.65rem 1.8rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
       cursor: pointer;
-      transition: all 0.4s ease-in-out;
-      background: linear-gradient(90deg, #00ffd5, #00a3ff);
-      box-shadow: 0 0 15px rgba(0, 255, 230, 0.5);
+      transition: all 0.35s ease-in-out;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 12px rgba(0,255,255,0.2);
     }
+
     .btn::before {
       content: "";
       position: absolute;
@@ -57,30 +82,50 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+      background: linear-gradient(120deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
       transition: all 0.5s ease;
     }
+
     .btn:hover::before {
       left: 100%;
     }
+
     .btn:hover {
       transform: scale(1.07);
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 25px rgba(0,255,255,0.5);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .btn-primary {
+      color: #e0ffff;
+      background: linear-gradient(90deg, rgba(14,165,233,0.35), rgba(6,182,212,0.3));
     }
 
     .btn-secondary {
-      background: linear-gradient(90deg, #ffb347, #ffcc33);
-      box-shadow: 0 0 15px rgba(255, 204, 51, 0.4);
+      color: #fdfdfd;
+      background: linear-gradient(90deg, rgba(34,197,94,0.35), rgba(16,185,129,0.3));
     }
-    .btn-secondary:hover {
-      transform: scale(1.07);
-      box-shadow: 0 0 25px rgba(255, 204, 51, 0.6);
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 2rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    @media (min-width: 640px) {
+      .btn-group {
+        flex-direction: row;
+        gap: 1.2rem;
+      }
     }
 
     footer {
-      margin-top: 40px;
-      font-size: 0.875rem;
+      margin-top: 50px;
+      font-size: 0.8rem;
       color: #cbd5e1;
+      opacity: 0.85;
     }
   </style>
 </head>
@@ -88,16 +133,16 @@
   <!-- شعار Smart HSR -->
   <img src="Smart_HSR_Dashboard_Logo.svg" alt="شعار Smart HSR" class="logo" loading="eager" decoding="async" />
 
-  <h1 class="text-3xl font-extrabold mb-3">مرحبًا بك في منصة Smart HSR</h1>
-  <p class="text-lg text-teal-100 max-w-md leading-relaxed">
-    نظام ذكي لإدارة الجودة والملاحظات الميدانية — بوابة الإدارة والشركات لمتابعة المشاريع والمستخدمين بكفاءة عالية.
+  <h1>مرحبًا بك في منصة Smart HSR</h1>
+  <p>
+    النظام الذكي لإدارة الجودة والملاحظات الميدانية — بوابة الإدارة والشركات لمتابعة المشاريع والمستخدمين بذكاء واحترافية عالية.
   </p>
 
-  <!-- 🔥 الأزرار الإبداعية -->
-  <div class="flex flex-col md:flex-row gap-4 mt-8">
-    <button onclick="window.location.href='manager-login.html'" class="btn">
+  <div class="btn-group">
+    <button onclick="window.location.href='manager-login.html'" class="btn btn-primary">
       🏢 دخول الإدارة
     </button>
+
     <button onclick="window.location.href='login.html'" class="btn btn-secondary">
       👷 دخول المستخدمين
     </button>
