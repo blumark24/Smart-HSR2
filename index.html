@@ -201,60 +201,7 @@
         <div class="glass ringed rounded-2xl p-6 flex flex-col justify-center">
           <label class="block text-sm text-white/70 mb-2">اختر صورة (JPEG/PNG)</label>
           <input id="aiFile" type="file" accept="image/*" class="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[var(--turquoise)] file:text-[#062226] hover:file:opacity-90 text-white/80" />
-          <!-- ✅ عرض تلقائي للصور المختارة -->
-<div id="preview" class="mt-5 aspect-[16/10] bg-black/30 rounded-xl overflow-hidden relative shadow-lg ring-[2px] ring-[var(--turquoise)] ring-opacity-40">
-  <img id="slideshow" 
-       src="images/ChatGPT Image 31 أكتوبر 2025، 04_04_58 م.png" 
-       alt="Smart HSR Demo" 
-       class="w-full h-full object-cover rounded-xl transition-all duration-1000 ease-in-out opacity-100 scale-100" />
-  <!-- توهج متحرك -->
-  <div class="absolute inset-0 rounded-xl pointer-events-none animate-glow"></div>
-</div>
-
-<script>
-  // ✅ ضع الصور داخل مجلد "images" بنفس هذه الأسماء
-  const images = [
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_04_58 م.png",
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_05_00 م.png",
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_05_03 م.png",
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_05_28 م.png",
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_05_30 م.png",
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_05_35 م.png",
-    "images/ChatGPT Image 31 أكتوبر 2025، 04_05_36 م.png"
-  ];
-
-  let index = 0;
-  const imgEl = document.getElementById("slideshow");
-
-  // 🔁 تغيير الصورة كل 4 ثوانٍ بتأثير Zoom + Fade
-  setInterval(() => {
-    index = (index + 1) % images.length;
-    imgEl.style.opacity = 0;
-    imgEl.style.transform = "scale(1.05)";
-    setTimeout(() => {
-      imgEl.src = images[index];
-      imgEl.style.opacity = 1;
-      imgEl.style.transform = "scale(1)";
-    }, 1000);
-  }, 4000);
-</script>
-
-<style>
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(14,165,161,0.3), 0 0 40px rgba(14,165,161,0.25);
-  }
-  50% {
-    box-shadow: 0 0 35px rgba(14,165,161,0.55), 0 0 70px rgba(14,165,161,0.35);
-  }
-}
-.animate-glow {
-  animation: glowPulse 4s ease-in-out infinite;
-  border-radius: inherit;
-  border: 2px solid rgba(14,165,161,0.35);
-}
-</style>
-
+          <div id="preview" class="mt-5 aspect-[16/10] bg-black/30 rounded-xl grid place-items-center text-white/40 text-sm">لا توجد صورة بعد</div>
           <button id="analyzeBtn" class="btn mt-5 w-full glow">تحليل تجريبي بالذكاء الصناعي</button>
         </div>
         <div class="glass ringed rounded-2xl p-6">
@@ -271,7 +218,7 @@
     <div class="max-w-7xl mx-auto px-6">
       <header class="max-w-3xl" data-aos="fade-up">
         <h2 class="text-3xl md:text-4xl font-extrabold">الأثر والتحسين <span class="en">| Impact Metrics</span></h2>
-        
+       
       </header>
       <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div class="kpi rounded-2xl p-6" data-aos="zoom-in" data-aos-delay="0">
@@ -448,8 +395,6 @@
 
 </body>
 </html>
-
-
 
 
 
